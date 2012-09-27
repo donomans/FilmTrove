@@ -1,0 +1,143 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US">
+<head>
+<meta charset="utf-8" />
+<title>@ViewBag.Title</title> 
+<meta name="description" content="@ViewBag.Description"/>
+<meta name="keywords" content="@ViewBag.Keywords" />
+<meta name="author" content="@ViewBag.Author"/>
+<meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+@*// FB Open Graph*@
+<meta property="og:title" content="@ViewBag.OgTitle"/>
+<meta property="og:description" content="@ViewBag.OgDescription"/>
+<meta property="og:type" content="@ViewBag.OgType"/>
+<meta property="og:url" content="@ViewBag.OgUrl"/>
+<meta property="og:image" content="@ViewBag.OgImage"/>
+@*// /FB Open Graph*@
+
+<link rel="stylesheet" type="text/css" href="css/style.css" />
+<link rel="stylesheet" type="text/css" href="css/yellow.css" id="colors" />
+<link rel="stylesheet" type="text/css" href="css/social_icons.css" />
+<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" />
+<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif" />
+<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Boogaloo" />
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="js/fancybox.js"></script>
+<script src="js/carousel.js"></script>
+<script src="js/flexslider.js"></script>
+<script src="js/selectnav.js"></script>
+<script src="js/twitter.js"></script>
+<script src="js/tooltip.js"></script>
+<script src="js/effects.js"></script>
+<script src="http://maps.google.com/maps/api/js?sensor=true"></script>
+<script src="js/jquery.gmap.min.js"></script>
+<script defer="defer" src="js/template_functions.js"></script>
+<script defer="defer" src="js/isotope.js"></script>
+
+</head>
+
+<body>
+    <div id="header">
+	    <div class="container">
+		    <div class="one-third column">
+			    <div id="logo">
+				    <a href="#"><img src="images/logo.png" alt="logo" /></a>
+			    </div>
+		    </div>
+		    <div class="two-thirds column">
+			    <div id="social-links">
+				    <ul class="social-bookmarks">
+					    <li class="googleplus"><a href="#">google+</a></li>
+					    <li class="facebook"><a href="#">facebook</a></li>
+					    <li class="github"><a href="#">github</a></li>
+					    <li class="twitter"><a href="#">twitter</a></li>
+				    </ul>
+				    <div id="search">
+					    <input class="search-form" name="search-form" />
+				    </div>
+			    </div>	
+		    </div>
+	    </div>
+    </div>
+    <div id="navigation-wrapper">
+        <div class="container">
+		    <div id="logo-small"></div>
+		    <div id="navigation">
+			    <ul id="nav">
+				    <li><a href="index.html">Start</a></li>
+				    <li><a href="#">Categories</a>
+					    <ul>
+					    <li><a href="videos.html">Videos</a></li>
+					    <li><a href="pictures.html">Pictures</a></li>
+					    <li><a href="quotes.html">Quotes</a></li>
+					    <li><a href="projects.html">Projects</a></li>
+					    </ul>
+				    </li>
+				    <li><a href="#">How it works</a>
+					    <ul>
+					    <li><a href="shortcodes.html">Shortcodes</a></li>	
+					    <li><a href="full_width.html">Full Width</a></li>
+					    <li><a href="sidebar.html">Sidebar</a></li>
+					    <li><a href="post.html">Single Post</a></li>
+					    <li><a href="about.html">About Us</a></li>
+					    <li><a href="pricing_tables.html">Pricing Tables</a></li>
+					    </ul>
+				    </li>
+				    <li><a href="about.html">About</a></li>
+			    </ul>
+		    </div>
+		    <div class="clear"></div>
+        </div>
+    </div>
+    <div class="container">
+        @RenderBody()
+    </div>
+    <div id="footer">
+	    <div class="container">
+		    <div class="one-third column">
+			    <h3>About Us</h3>
+			    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.</p>
+		    </div>
+		    <div class="one-third column">
+			    @*<h3>Photo Stream</h3>
+			    <div class="flickr-widget">
+				    <script type="text/javascript" src="http://www.flickr.com/badge_code_v2.gne?count=8&display=latest&size=s&layout=x&source=user&user=29609591@N08"></script>
+				    <div class="clear"></div>
+			    </div>*@
+		    </div>
+		    <div class="one-third column">
+			    <h3>Latest Tweets</h3>
+			    <ul id="twitter"></ul>
+				    <script type="text/javascript">
+				        jQuery(document).ready(function ($) {
+				            $.getJSON('http://api.twitter.com/1/statuses/user_timeline/envato.json?count=3&callback=?', function (tweets) {
+				                $("#twitter").html(tz_format_twitter(tweets));
+				            });
+				        });
+				    </script>
+			    <div class="clear"></div>
+		    </div>
+	    </div>
+    </div>
+    <div id="under-footer">
+	    <div class="container">
+		    <div id="under-footer-text">
+			    <div class="sixteen columns">
+				    <h2>Herpaderp.</h2>	
+			    </div>
+		    </div>
+		    <div id="under-footer-copyright">
+			    <div class="sixteen columns">
+				    <p>© Copyright 2012 by <a href="#">FilmTrove</a>. All rights reserved.</p>		
+			    </div>
+		    </div>
+		    <div id="under-footer-logo">
+			    <div class="sixteen columns">
+				    <a href="#"><img src="images/logo-small.png" alt="logo" /></a>
+			    </div>
+		    </div>	
+	    </div>
+    </div>
+</body>
+</html>

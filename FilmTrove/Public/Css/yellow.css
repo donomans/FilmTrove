@@ -1,0 +1,236 @@
+/* 
+=================================================================== */
+/* Yellow #ffbb09
+=================================================================== */
+
+#wrapper {
+
+}
+
+a, a:visited {
+	color: #ffbb09;
+}
+/* Header
+=================================================================== */
+ 
+#under-header {
+	background: #ffbb09;
+}
+
+/* Navigation
+=================================================================== */
+
+#navigation ul li a:hover {
+	background: #ffbb09;
+	color: #000;
+}
+
+#navigation ul ul {
+	background: #ffbb09;
+}
+
+#navigation ul ul li a {color: #fff;}
+
+#navigation ul ul li:hover > a {
+	color: #fff;
+	background-color: #c9950d !important;
+}
+
+#navigation ul li a:hover, 
+#navigation ul li:hover > a {
+	background: #ffbb09 !important;
+	color: #fff !important;
+}
+
+#navigation ul li a.active, 
+#navigation ul li.active > a {
+	background: #fff url(../../images/nav-bg.png) repeat-x;
+	color: #555;
+}
+
+#navigation ul li a.active:hover, 
+#navigation ul li.active > a:hover {
+	background: #ffbb09;
+	color: #fff;
+}
+
+#navigation ul ul li a.active, 
+#navigation ul ul li.active > a {
+	background: #ffbb09;
+}
+
+/* Page title
+=================================================================== */
+
+#page-title-icon-inner {
+	background: #ffd35f;
+}
+
+#page-title h2 {
+	/* IE9 SVG, needs conditional override of 'filter' to 'none' */
+	background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjZmZiYjA5IiBzdG9wLW9wYWNpdHk9IjAuNjUiLz4KICAgIDxzdG9wIG9mZnNldD0iMTIlIiBzdG9wLWNvbG9yPSIjZmZiYjA5IiBzdG9wLW9wYWNpdHk9IjAuNjUiLz4KICAgIDxzdG9wIG9mZnNldD0iOTAlIiBzdG9wLWNvbG9yPSIjZmZiYjA5IiBzdG9wLW9wYWNpdHk9IjAiLz4KICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2ZmYmIwOSIgc3RvcC1vcGFjaXR5PSIwIi8+CiAgPC9saW5lYXJHcmFkaWVudD4KICA8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2dyYWQtdWNnZy1nZW5lcmF0ZWQpIiAvPgo8L3N2Zz4=);
+	background: -moz-linear-gradient(-45deg,  rgba(255,187,9,0.65) 0%, rgba(255,187,9,0.65) 12%, rgba(255,187,9,0) 90%, rgba(255,187,9,0) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(255,187,9,0.65)), color-stop(12%,rgba(255,187,9,0.65)), color-stop(90%,rgba(255,187,9,0)), color-stop(100%,rgba(255,187,9,0))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(-45deg,  rgba(255,187,9,0.65) 0%,rgba(255,187,9,0.65) 12%,rgba(255,187,9,0) 90%,rgba(255,187,9,0) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(-45deg,  rgba(255,187,9,0.65) 0%,rgba(255,187,9,0.65) 12%,rgba(255,187,9,0) 90%,rgba(255,187,9,0) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(-45deg,  rgba(255,187,9,0.65) 0%,rgba(255,187,9,0.65) 12%,rgba(255,187,9,0) 90%,rgba(255,187,9,0) 100%); /* IE10+ */
+	background: linear-gradient(135deg,  rgba(255,187,9,0.65) 0%,rgba(255,187,9,0.65) 12%,rgba(255,187,9,0) 90%,rgba(255,187,9,0) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6ffbb09', endColorstr='#00ffbb09',GradientType=1 ); /* IE6-8 fallback on horizontal gradient */
+}
+
+
+/* Slider
+=================================================================== */
+
+.flex-direction-nav .flex-prev:hover, 
+.flex-direction-nav .flex-next:hover, 
+#scroll-top-top a, 
+.post-icon {
+	background-color:#ffbb09;
+}
+
+.mr-rotato-prev:hover, 
+.mr-rotato-next:hover,
+li.current, 
+.tags a:hover {
+	background-color: #ffbb09;
+	border-color: #ffbb09;
+}
+
+#filters a:hover, 
+.selected, 
+#portfolio-navi a:hover {
+	background-color: #ffbb09 !important;
+	border: 1px solid #ffbb09 !important;
+}
+
+.flickr-widget a:hover {border-color: #ffbb09;}
+
+.field label span {color:#ffbb09; font-weight: bold}
+
+.flex-direction-nav a {
+	background: rgba(255, 187, 9, 0.8);
+}
+
+.slide-caption {
+	background: rgba(255, 187, 9, 0.8);
+}
+
+.slide-caption.n {
+	background: rgba(255, 187, 9, 0.8);
+}
+
+/* Team
+=================================================================== */
+
+.team-name span {
+	font-size: 12px;
+	font-weight: bold;
+	color: #ffbb09;
+}
+
+/* Pricing Table
+=================================================================== */
+
+.pricing-table .color-custom h3, .color-custom .buy {background-color: #c9950d;}
+.pricing-table .color-custom h4 {background-color: #ffbb09;}
+
+.testimonials-author {
+	color: #ffbb09;
+}
+
+a.post-entry {
+	color: #ffbb09;
+}
+
+/* Pictures
+=================================================================== */
+
+.image-overlay-link,
+.image-overlay-zoom {
+	background-color: #ffbb09;
+	background: rgba(255, 187, 9, 0.7);
+	background-repeat: no-repeat;
+	background-position: 50%;
+}
+
+.image-overlay-link {
+	background-image: url(../../images/overlay-icon-01.png);
+}
+
+.image-overlay-zoom {
+	background-image: url(../../images/overlay-icon-02.png);
+}
+
+/* Notice
+=================================================================== */
+
+.large-notice {
+	border-left: 4px solid #ffbb09;
+}
+
+.bcolor {
+	color: #ffbb09;
+}
+
+/* List styles
+=================================================================== */	
+
+.check_list li {background: url(../../images/icons/list/yellow/list_check.png) no-repeat 0% 50%; padding: 0 0 0 18px;}
+.plus_list  li {background: url(../../images/icons/list/yellow/list_plus.png) no-repeat 0% 50%; padding: 0 0 0 18px;}
+.minus_list  li {background: url(../../images/icons/list/yellow/list_minus.png) no-repeat 0% 50%; padding: 0 0 0 18px;}
+.star_list  li {background: url(../../images/icons/list/yellow/list_star.png) no-repeat 0% 50%; padding: 0 0 0 16px;}
+.arrow_list  li {background: url(../../images/icons/list/yellow/list_arrow.png) no-repeat 0% 50%; padding: 0 0 0 16px;}
+.square_list  li {background: url(../../images/icons/list/yellow/list_square.png) no-repeat 0% 50%; padding: 0 0 0 16px;}
+.circle_list  li {background: url(../../images/icons/list/yellow/list_circle.png) no-repeat 0% 50%; padding: 0 0 0 16px;}
+.cross_list  li {background: url(../../images/icons/list/yellow/list_cross.png) no-repeat 0% 50%; padding: 0 0 0 16px;}
+
+.project-info strong {
+	color: #ffbb09;
+}
+
+/* Buttons
+=================================================================== */
+
+.button.color {color:#fff; background:#ffbb09;}
+.button.color:hover {background:#aaa;}
+
+input[type="button"] {
+	background: #ffbb09;
+	color: #fff;
+}
+
+/* Dropcap
+=================================================================== */
+
+.dropcap.color {
+	background: #ffbb09;
+	color: #fff;
+}
+
+/* Icons
+=================================================================== */
+
+.ico-color {
+	background-image: url("../../images/icons/yellow/glyphicons.png");
+	opacity: 1;
+}
+
+.mini-color {
+  background-image: url("../../images/icons/yellow/glyphicons-mini.png");
+  opacity: 1;
+}
+
+/* Footer
+=================================================================== */
+
+#footer h3 {
+	color: #ffbb09;
+}
+
+/* Quotes
+=================================================================== */
+
+.quote, .author {
+	background: #ffbb09;
+}

@@ -1,10 +1,13 @@
 *.suo
 *.user
 *.sln.docstates
+*.mdf
+*.ldf
 
 packages/
 bin/
 obj/
+migrations/
 
 Thumbs.db
 Desktop.ini

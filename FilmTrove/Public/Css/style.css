@@ -8,7 +8,7 @@
 @import url("social_icons.css");		/* Social Icons */ 
 
 body {
-	background: #eee url(../images/texture1.jpg) repeat;
+	background: #eee url(../images/texture.jpg) repeat;
 	background-attachment: fixed;
 	font-family: 'Droid Sans';
 	font-size: 12px;
@@ -64,7 +64,7 @@ body {
 	}
 	
 	body {
-		background: #eee url(../images/texture.png) repeat;
+		background: #eee url(../images/texture.jpg) repeat;
 	}
 	
 	#footer {
@@ -102,7 +102,7 @@ body {
 	}
 	
 	body {
-		background: #eee url(../images/texture.png) repeat;
+		background: #eee url(../images/texture.jpg) repeat;
 	}
 	
 	#footer {

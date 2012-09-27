@@ -4,7 +4,7 @@
 }
 
 <div id="portfolio-wrapper">
-    @foreach (FilmTrove.Models.Movie m in Movies)
+    @foreach (FilmTrove.Models.Movie m in ViewBag.Movies)
     {
     <div class="one-third column portfolio-item">
         <div class="picture"><a href="/View/Movie/@m.MovieId" title="@m.Title"><img src="/View/Image/@m.PosterId" alt="@m.Title"/><div class="image-overlay-link"></div></a>
@@ -14,7 +14,7 @@
 				@m.Description
 				</p>
 			</div>
-			<div class="post-meta"><span><i class="mini-ico-calendar"></i>@m.Year</span> <span><i class="mini-ico-user"></i> <a href="#">@String.Join(", ", m.Director.Take(3))</a></span> <span><i class="mini-ico-comment"></i><a href="#">@m.Count</a></span></div>	
+			<div class="post-meta"><span><i class="mini-ico-calendar"></i>@m.Year</span><span>@m.MpaaRating</span> <span><i class="mini-ico-user"></i> <a href="#">@String.Join(", ", m.Director.Take(3))</a></span> <span><i class="mini-ico-comment"></i><a href="#">@m.Count</a></span></div>	
 		</div>
     </div>
     }

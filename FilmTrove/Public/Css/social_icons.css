@@ -50,33 +50,10 @@
 	border: none;
 }
 
-.amazon {background: url(../images/icons/social/amazon.png) no-repeat;}
-.behance {background: url(../images/icons/social/behance.png) no-repeat;}
-.blogger {background: url(../images/icons/social/blogger.png) no-repeat;}
-.deviantart{background: url(../images/icons/social/deviantart.png) no-repeat;}
-.dribbble {background: url(../images/icons/social/dribbble.png) no-repeat;}
-.dropbox {background: url(../images/icons/social/dropbox.png) no-repeat;}
-.evernote {background: url(../images/icons/social/evernote.png) no-repeat;}
-.facebook {background: url(../images/icons/social/facebook.png) no-repeat;}
-.forrst {background: url(../images/icons/social/forrst.png) no-repeat;}
-.github {background: url(../images/icons/social/github.png) no-repeat;}
-.googleplus {background: url(../images/icons/social/googleplus.png) no-repeat;}
-.jolicloud {background: url(../images/icons/social/jolicloud.png) no-repeat;}
-.last-fm {background: url(../images/icons/social/last-fm.png) no-repeat;}
-.linkedin {background: url(../images/icons/social/linkedin.png) no-repeat;}
-.picasa {background: url(../images/icons/social/picasa.png) no-repeat;}
-.pintrest {background: url(../images/icons/social/pintrest.png) no-repeat;}
-.rss {background: url(../images/icons/social/rss.png) no-repeat;}
-.skype {background: url(../images/icons/social/skype.png) no-repeat;}
-.spotify {background: url(../images/icons/social/spotify.png) no-repeat;}
-.stumbleupon {background: url(../images/icons/social/stumbleupon.png) no-repeat;}
-.tumblr {background: url(../images/icons/social/tumblr.png) no-repeat;}
-.twitter {background: url(../images/icons/social/twitter.png) no-repeat;}
-.vimeo {background: url(../images/icons/social/vimeo.png) no-repeat;}
-.wordpress {background: url(../images/icons/social/wordpress.png) no-repeat;}
-.xing {background: url(../images/icons/social/xing.png) no-repeat;}
-.yahoo {background: url(../images/icons/social/yahoo.png) no-repeat;}
-.youtube {background: url(../images/icons/social/youtube.png) no-repeat;}
+.facebook {background: url(../images/icons/facebook.png) no-repeat;}
+.github {background: url(../images/icons/github.png) no-repeat;}
+.googleplus {background: url(../images/icons/googleplus.png) no-repeat;}
+.twitter {background: url(../images/icons/twitter.png) no-repeat;}
 
 /* Social Icons - big
 =================================================================== */

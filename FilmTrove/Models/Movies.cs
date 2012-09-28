@@ -18,8 +18,12 @@ namespace FilmTrove.Models
         public MpaaRating MpaaRating { get; set; }
         public String PosterId { get; set; }
         public Int32 Year { get; set; }
+        public Int32 RunTime { get; set; }
 
-        public ICollection<String> Genres { get; set; }
+        public String NetflixId { get; set; }
+        public String ImdbId { get; set; }
+
+        public HashSet<String> Genres { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime DateAdded { get; set; }
@@ -37,6 +41,7 @@ namespace FilmTrove.Models
 
         public Movie()
         {
+            Genres = new HashSet<String>();
             Director = new HashSet<String>();
             Actors = new HashSet<String>();
             Writer = new HashSet<String>();

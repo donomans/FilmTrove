@@ -136,6 +136,10 @@
     <Compile Include="Migrations\201209272009065_manytomanybasic.Designer.cs">
       <DependentUpon>201209272009065_manytomanybasic.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201209272210265_addruntime.cs" />
+    <Compile Include="Migrations\201209272210265_addruntime.Designer.cs">
+      <DependentUpon>201209272210265_addruntime.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Movies.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -151,7 +155,7 @@
     <Content Include="Public\Css\skeleton.css" />
     <Content Include="Public\Css\social_icons.css" />
     <Content Include="Public\Css\style.css" />
-    <Content Include="Public\Css\yellow.css" />
+    <Content Include="Public\Css\color.css" />
     <Content Include="Public\Images\Icons\facebook.png" />
     <Content Include="Public\Images\Icons\github.png" />
     <Content Include="Public\Images\Icons\googleplus.png" />
@@ -206,6 +210,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201209272009065_manytomanybasic.resx">
       <DependentUpon>201209272009065_manytomanybasic.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201209272210265_addruntime.resx">
+      <DependentUpon>201209272210265_addruntime.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

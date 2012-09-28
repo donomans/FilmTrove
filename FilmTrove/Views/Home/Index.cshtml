@@ -13,8 +13,13 @@
 				<p>
 				@m.Description
 				</p>
+                @*need actors, directors, writers here*@
 			</div>
-			<div class="post-meta"><span><i class="mini-ico-calendar"></i>@m.Year</span><span>@m.MpaaRating</span> <span><i class="mini-ico-user"></i> <a href="#">@String.Join(", ", m.Director.Take(3))</a></span> <span><i class="mini-ico-comment"></i><a href="#">@m.Count</a></span></div>	
+			<div class="post-meta">
+                <span><i class="mini-ico-calendar"></i>@m.Year</span>
+                <span>@m.MpaaRating</span> 
+                <span><i class="mini-ico-comment"></i>@m.RunTime m</span>
+            </div>	
 		</div>
     </div>
     }

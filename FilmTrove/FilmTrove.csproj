@@ -39,10 +39,38 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DotNetOpenAuth.AspNet">
+      <HintPath>..\packages\DotNetOpenAuth.AspNet.4.1.2.12274\lib\net45-full\DotNetOpenAuth.AspNet.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth.Core">
+      <HintPath>..\packages\DotNetOpenAuth.Core.4.1.2.12274\lib\net45-full\DotNetOpenAuth.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth.OAuth">
+      <HintPath>..\packages\DotNetOpenAuth.OAuth.Core.4.1.2.12274\lib\net45-full\DotNetOpenAuth.OAuth.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth.OAuth.Common">
+      <HintPath>..\packages\DotNetOpenAuth.OAuth.Common.4.1.2.12274\lib\net45-full\DotNetOpenAuth.OAuth.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth.OAuth.Consumer">
+      <HintPath>..\packages\DotNetOpenAuth.OAuth.Consumer.4.1.2.12274\lib\net45-full\DotNetOpenAuth.OAuth.Consumer.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth.OAuth.ServiceProvider">
+      <HintPath>..\packages\DotNetOpenAuth.OAuth.ServiceProvider.4.1.2.12274\lib\net45-full\DotNetOpenAuth.OAuth.ServiceProvider.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth.OpenId">
+      <HintPath>..\packages\DotNetOpenAuth.OpenId.Core.4.1.2.12274\lib\net45-full\DotNetOpenAuth.OpenId.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth.OpenId.RelyingParty">
+      <HintPath>..\packages\DotNetOpenAuth.OpenId.RelyingParty.4.1.2.12274\lib\net45-full\DotNetOpenAuth.OpenId.RelyingParty.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth.OpenIdOAuth">
+      <HintPath>..\packages\DotNetOpenAuth.OpenIdOAuth.4.1.2.12274\lib\net45-full\DotNetOpenAuth.OpenIdOAuth.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Web.WebPages.OAuth, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity" />
@@ -106,9 +134,14 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
+    <Reference Include="WebMatrix.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="WebMatrix.WebData, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Start\AuthConfig.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -140,7 +173,68 @@
     <Compile Include="Migrations\201209272210265_addruntime.Designer.cs">
       <DependentUpon>201209272210265_addruntime.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201209281719221_tryagaon.cs" />
+    <Compile Include="Migrations\201209281719221_tryagaon.Designer.cs">
+      <DependentUpon>201209281719221_tryagaon.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201209281748104_tryagain.cs" />
+    <Compile Include="Migrations\201209281748104_tryagain.Designer.cs">
+      <DependentUpon>201209281748104_tryagain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201209281801030_tryagain2.cs" />
+    <Compile Include="Migrations\201209281801030_tryagain2.Designer.cs">
+      <DependentUpon>201209281801030_tryagain2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201209281809560_tryagain3.cs" />
+    <Compile Include="Migrations\201209281809560_tryagain3.Designer.cs">
+      <DependentUpon>201209281809560_tryagain3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201209281949220_tryagain4.cs" />
+    <Compile Include="Migrations\201209281949220_tryagain4.Designer.cs">
+      <DependentUpon>201209281949220_tryagain4.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201209281951394_tryagain41.cs" />
+    <Compile Include="Migrations\201209281951394_tryagain41.Designer.cs">
+      <DependentUpon>201209281951394_tryagain41.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201209282005456_tryagain42.cs" />
+    <Compile Include="Migrations\201209282005456_tryagain42.Designer.cs">
+      <DependentUpon>201209282005456_tryagain42.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201209282109421_tryagain43.cs" />
+    <Compile Include="Migrations\201209282109421_tryagain43.Designer.cs">
+      <DependentUpon>201209282109421_tryagain43.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201209282129192_tryagain44.cs" />
+    <Compile Include="Migrations\201209282129192_tryagain44.Designer.cs">
+      <DependentUpon>201209282129192_tryagain44.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201209282140588_tryagain45.cs" />
+    <Compile Include="Migrations\201209282140588_tryagain45.Designer.cs">
+      <DependentUpon>201209282140588_tryagain45.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201209302351068_m.cs" />
+    <Compile Include="Migrations\201209302351068_m.Designer.cs">
+      <DependentUpon>201209302351068_m.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201210010348159_m1.cs" />
+    <Compile Include="Migrations\201210010348159_m1.Designer.cs">
+      <DependentUpon>201210010348159_m1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201210010451284_m2.cs" />
+    <Compile Include="Migrations\201210010451284_m2.Designer.cs">
+      <DependentUpon>201210010451284_m2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201210010555397_m3.cs" />
+    <Compile Include="Migrations\201210010555397_m3.Designer.cs">
+      <DependentUpon>201210010555397_m3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201210010627122_m4.cs" />
+    <Compile Include="Migrations\201210010627122_m4.Designer.cs">
+      <DependentUpon>201210010627122_m4.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Accounts.cs" />
     <Compile Include="Models\Movies.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -213,6 +307,51 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201209272210265_addruntime.resx">
       <DependentUpon>201209272210265_addruntime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201209281719221_tryagaon.resx">
+      <DependentUpon>201209281719221_tryagaon.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201209281748104_tryagain.resx">
+      <DependentUpon>201209281748104_tryagain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201209281801030_tryagain2.resx">
+      <DependentUpon>201209281801030_tryagain2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201209281809560_tryagain3.resx">
+      <DependentUpon>201209281809560_tryagain3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201209281949220_tryagain4.resx">
+      <DependentUpon>201209281949220_tryagain4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201209281951394_tryagain41.resx">
+      <DependentUpon>201209281951394_tryagain41.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201209282005456_tryagain42.resx">
+      <DependentUpon>201209282005456_tryagain42.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201209282109421_tryagain43.resx">
+      <DependentUpon>201209282109421_tryagain43.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201209282129192_tryagain44.resx">
+      <DependentUpon>201209282129192_tryagain44.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201209282140588_tryagain45.resx">
+      <DependentUpon>201209282140588_tryagain45.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201209302351068_m.resx">
+      <DependentUpon>201209302351068_m.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201210010348159_m1.resx">
+      <DependentUpon>201210010348159_m1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201210010451284_m2.resx">
+      <DependentUpon>201210010451284_m2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201210010555397_m3.resx">
+      <DependentUpon>201210010555397_m3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201210010627122_m4.resx">
+      <DependentUpon>201210010627122_m4.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

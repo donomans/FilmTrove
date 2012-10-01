@@ -14,9 +14,12 @@ namespace FilmTrove
         {
             AreaRegistration.RegisterAllAreas();
 
+            if (!System.Web.Security.Roles.Enabled)
+
             WebApiConfig.Register(GlobalConfiguration.Configuration);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
+            AuthConfig.RegisterAuth();
         }
     }
 }

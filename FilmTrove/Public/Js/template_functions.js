@@ -24,12 +24,29 @@ jQuery(document).ready(function() {
 	});
 	
 	function endCount(){
-		
 		$('input.search-form').attr('class','search-form');
-
 	}
 	
+	$('.contact-toggle').mouseenter(function () {
+	    if ($('#contact').is(':visible')) {
+	        //do nothing
+	    } else {
+	        $('#contact-fake').slideDown(100);
+	    }
 
+	}).mouseleave(function () {
+	    $('#contact-fake').slideUp(100);
+	});
+
+	$('.contact-toggle').click(function () {
+	    $('#contact').slideToggle();
+	    return false;
+	});
+
+	$('#close-contact').click(function () {
+	    $('#contact').slideUp();
+	    return false;
+	});
 	
 	/* Menu */
 	(function() {

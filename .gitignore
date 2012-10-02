@@ -8,7 +8,7 @@ packages/
 bin/
 obj/
 migrations/
-
+/publishprofiles/
 /*.publishsettings
 
 Thumbs.db

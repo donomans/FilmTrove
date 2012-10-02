@@ -337,15 +337,40 @@ p, blockquote {
 	-o-transition: all 0.3s ease-in-out;
 	-ms-transition: all 0.3s ease-in-out;
 	transition: all 0.3s ease-in-out;
-	
 }
+#navigation ul li .userwelcome {
+    padding: 10px 15px 10px 100px;
+    text-transform: none;
+    font-weight: normal;
+    font-size:12px;
+    float:right; 
+}
+
+/*#navigation ul li button { 
+	display: inline-block;
+	color: #555;
+	text-decoration: none;
+	font-size: 12px;
+	font-weight: bold;
+	text-transform: uppercase;
+	padding: 10px 15px 13px 15px;
+	-webkit-transition: all 0.3s ease-in-out;
+	-moz-transition: all 0.3s ease-in-out;
+	-o-transition: all 0.3s ease-in-out;
+	-ms-transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
+    background: none;
+    border: 0;
+    margin: 0 auto;
+    cursor: pointer;
+    cursor: hand;
+}*/
 
 #navigation ul li:first-child a { 
 
 }
 
 #navigation ul li a:hover {
-	background: #72b626;
 	color: #fff;
 	-webkit-transition: all 0.3s ease-in-out;
 	-moz-transition: all 0.3s ease-in-out;
@@ -353,6 +378,15 @@ p, blockquote {
 	-ms-transition: all 0.3s ease-in-out;
 	transition: all 0.3s ease-in-out;
 }
+
+/*#navigation ul li button:hover {
+	color: #fff;
+	-webkit-transition: all 0.3s ease-in-out;
+	-moz-transition: all 0.3s ease-in-out;
+	-o-transition: all 0.3s ease-in-out;
+	-ms-transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
+}*/
 
 #navigation ul ul {
 	position: absolute;

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using WebMatrix.WebData;
 
 namespace FilmTrove.Controllers
 {
@@ -26,6 +27,14 @@ namespace FilmTrove.Controllers
         {
             OAuthWebSecurity.RequestAuthentication("Google", Url.Action("GoogleLoginCallBack"));
             return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Logout()
+        {
+            WebSecurity.Logout();
+            return RedirectToAction("Index", "Home");
         }
 
         [AllowAnonymous]

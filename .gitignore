@@ -9,6 +9,8 @@ bin/
 obj/
 migrations/
 
+/*.publishsettings
+
 Thumbs.db
 Desktop.ini
 .DS_Store

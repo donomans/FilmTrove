@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilmTrove", "FilmTrove\FilmTrove.csproj", "{D58B12F7-93DB-41CD-94F5-4ADCE44D2850}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilmTrove", "FilmTrove\FilmTrove.csproj", "{EFFF28DE-50A9-4FDD-B8D5-4CC774C03265}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,10 +9,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D58B12F7-93DB-41CD-94F5-4ADCE44D2850}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D58B12F7-93DB-41CD-94F5-4ADCE44D2850}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D58B12F7-93DB-41CD-94F5-4ADCE44D2850}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D58B12F7-93DB-41CD-94F5-4ADCE44D2850}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFFF28DE-50A9-4FDD-B8D5-4CC774C03265}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFFF28DE-50A9-4FDD-B8D5-4CC774C03265}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFFF28DE-50A9-4FDD-B8D5-4CC774C03265}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFFF28DE-50A9-4FDD-B8D5-4CC774C03265}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

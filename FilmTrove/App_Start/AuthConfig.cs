@@ -26,15 +26,7 @@ namespace FilmTrove
             //    appId: "",
             //    appSecret: "");
 
-            OAuthWebSecurity.RegisterGoogleClient();
-
-
-            /* Netflix
-            * Application: FilmTrove 
-            * Key: 7qf3845qydavuucmhj96b6hd 
-            * Shared Secret: 5jYe5FVhhF 
-            * Status: active 
-            */
+            //OAuthWebSecurity.RegisterGoogleClient();
         }
     }
 }

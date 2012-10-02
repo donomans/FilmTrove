@@ -25,11 +25,11 @@ namespace FilmTrove.Filters
         {
             public SimpleMembershipInitializer()
             {
-                Database.SetInitializer<MoviesContext>(null);
+                Database.SetInitializer<UsersContext>(null);
 
                 try
                 {
-                    using (var context = new MoviesContext())
+                    using (var context = new UsersContext())
                     {
                         if (!context.Database.Exists())
                         {
@@ -37,7 +37,6 @@ namespace FilmTrove.Filters
                             ((IObjectContextAdapter)context).ObjectContext.CreateDatabase();
                         }
                     }
-
 
                     WebSecurity.InitializeDatabaseConnection("DefaultConnection", "UserProfile", "UserId", "UserName", autoCreateTables: true);
                 }

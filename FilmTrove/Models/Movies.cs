@@ -152,6 +152,11 @@ namespace FilmTrove.Models
 
     public class MoviesContext : DbContext
     {
+        public MoviesContext()
+            : base("FilmTrove.Models.MoviesContext")
+        {
+        }
+
         public DbSet<Movie> Movies { get; set; }
         public DbSet<Person> People { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }

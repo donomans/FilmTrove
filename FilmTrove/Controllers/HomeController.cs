@@ -1,8 +1,5 @@
-﻿using FilmTrove.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity.Validation;
-using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -11,12 +8,24 @@ namespace FilmTrove.Controllers
 {
     public class HomeController : Controller
     {
-        private MoviesContext db = new MoviesContext();
-        
         public ActionResult Index()
         {
-            ViewBag.Movies = (from m in db.Movies
-                              select m).Take(10);
+            ViewBag.Message = "Modify this template to jump-start your ASP.NET MVC application.";
+
+            return View();
+        }
+
+        public ActionResult About()
+        {
+            ViewBag.Message = "Your app description page.";
+
+            return View();
+        }
+
+        public ActionResult Contact()
+        {
+            ViewBag.Message = "Your contact page.";
+
             return View();
         }
     }

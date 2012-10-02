@@ -25,11 +25,11 @@ namespace FilmTrove.Filters
         {
             public SimpleMembershipInitializer()
             {
-                Database.SetInitializer<UsersContext>(null);
+                Database.SetInitializer<MoviesContext>(null);
 
                 try
                 {
-                    using (var context = new UsersContext())
+                    using (var context = new MoviesContext())
                     {
                         if (!context.Database.Exists())
                         {

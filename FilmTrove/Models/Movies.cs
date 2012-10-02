@@ -153,7 +153,7 @@ namespace FilmTrove.Models
     public class MoviesContext : DbContext
     {
         public MoviesContext()
-            : base("FilmTrove.Models.MoviesContext")
+            : base("DefaultConnection")
         {
         }
 

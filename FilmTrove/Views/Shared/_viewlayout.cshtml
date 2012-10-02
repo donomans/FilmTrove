@@ -61,24 +61,26 @@
     <div id="navigation-wrapper">
 	    <div id="contact">
 		    <div class="container">
-			    @*@model ICollection<AuthenticationClientData>*@
-			    <div class="four columns">
-				@using (Html.BeginForm("GoogleLogin", "Account"))
+			    <div class="twelve columns">
+                @if(!WebSecurity.IsAuthenticated)
                 {
-                    @Html.AntiForgeryToken()
-                    
-                    <fieldset id="socialLoginList">
-                        <legend>Log in using another service</legend>
-                        <p>
-                            <button type="submit" name="provider" value="Google" title="Log in using your Google account">Google</button>
-                        </p>
-                    </fieldset>
+				    using (Html.BeginForm("GoogleLogin", "Account"))
+                    {
+                        @Html.AntiForgeryToken()
+                        <h4>Log in using:</h4>
+                        <div class="field"><button type="submit" name="provider" value="Google" title="Log in using your Google account">Google</button></div>
+                }
+                }
+                else
+                {
+                        <h4>You are currently logged in as @WebSecurity.CurrentUserName</h4>
+                        <div class="field"><button type="submit" name="provider" value="Logout" title="Logout">Logout</button></div>
                 }
 			    </div>	
 			
-			    <div class="twelve columns">
+			    @*<div class="twelve columns">
 			    <!-- start: Contact Form -->
-			    @*<div id="contact-form">
+			    <div id="contact-form">
 				    <form method="post" action="contact.php">
 					    <div class="contact-form-left">
 						    <div class="field">
@@ -102,9 +104,9 @@
 						    </div>
 					    </div>	
 				    </form>
-			    </div>*@
-			    <!-- end: Contact Form -->
 			    </div>
+			    <!-- end: Contact Form -->
+			    </div>*@
 				
 		    </div>
 		    <!-- end: Container -->	

@@ -17,6 +17,8 @@ namespace FilmTrove.Models
         [Key]
         public String MovieId { get; set; }
         public String Title { get; set; }
+        public String AltTitle { get; set; }
+
         public String Description { get; set; }
         public MpaaRating MpaaRating { get; set; }
         public String PosterId { get; set; }

@@ -160,9 +160,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Start\OAuthHelpers.cs" />
     <Compile Include="App_Start\AuthConfig.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\NetflixClient.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -174,6 +176,14 @@
     <Compile Include="Migrations\201210020323301_InitialCreate.cs" />
     <Compile Include="Migrations\201210020323301_InitialCreate.Designer.cs">
       <DependentUpon>201210020323301_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201210050346436_m.cs" />
+    <Compile Include="Migrations\201210050346436_m.Designer.cs">
+      <DependentUpon>201210050346436_m.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201210061545359_m1.cs" />
+    <Compile Include="Migrations\201210061545359_m1.Designer.cs">
+      <DependentUpon>201210061545359_m1.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Movies.cs" />
@@ -223,10 +233,10 @@
     <Content Include="Views\Web.config" />
     <Content Include="Views\Shared\_viewlayout.cshtml" />
     <Content Include="Views\view.cshtml" />
+    <Content Include="Views\Account\Me.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Account\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -234,6 +244,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201210020323301_InitialCreate.resx">
       <DependentUpon>201210020323301_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201210050346436_m.resx">
+      <DependentUpon>201210050346436_m.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201210061545359_m1.resx">
+      <DependentUpon>201210061545359_m1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

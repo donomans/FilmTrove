@@ -1,0 +1,58 @@
+﻿@{
+    ViewBag.Title = "Me";
+}
+
+@*<div class="container">
+    <section id="page-title">
+        <h2>Your account details-</h2>
+    </section>
+</div>*@
+<div id="wrapper" class="white-wrapper">
+    <div class="container" style="border-bottom: 1px solid #eee; margin-bottom:20px; padding-bottom:10px">
+    <section id="page-title">
+        <h2>Your account details-</h2>
+    </section>
+    @if (!WebSecurity.IsAuthenticated)
+    {
+        <div class="sixteen columns">
+            <div class="notification error">
+                <p><span>Error</span> Please login above to edit your account.</p>
+            </div>
+        </div>
+    }
+
+        <div class="sixteen columns">
+		<ul class="tabs-nav">
+			<li class="active"><a href="#tab1"><i class="mini-ico-glass"></i>Update Details</a></li>
+			<li><a href="#tab2"><i class="mini-ico-list"></i>Link Netflix</a></li>
+		</ul>
+				
+		<div class="tabs-container">
+			<div class="tab-content" id="tab1">
+                @model FilmTrove.Models.UserProfile
+                @using (Html.BeginForm("Me", "Account", FormMethod.Post, new { id = "accountupdateform" }))
+                {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary()
+                    <fieldset>
+                        <legend><h4>Account information</h4></legend>
+                        <div class="field">
+                            @Html.LabelFor(m => m.Name)
+                            @Html.TextBoxFor(m=> m.Name)
+                        </div>
+                        <div class="field">
+                            @Html.LabelFor(m => m.Email)
+                            @Html.TextBoxFor(m => m.Email, new { type = "email" })
+                        </div>
+                        <a href="javascript: document.forms['accountupdateform'].submit();" class="button color">Update</a>
+                    </fieldset>
+                }
+			</div>
+			<div class="tab-content" id="tab2">2. Lorem ipsum pharetra felis. Aliquam egestas consectetur elementum class aptent taciti sociosqu ad litora torquent perea conubia nostra lorem inceptos orem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+		</div>
+		
+	</div>
+    </div>
+
+
+</div>

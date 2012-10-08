@@ -15,9 +15,35 @@ namespace FilmTrove.Controllers
     [InitializeSimpleMembership]
     public class AccountController : Controller
     {
+        [HttpGet]
+        [AllowAnonymous]
         public ActionResult Me()
         {
+            if (WebSecurity.IsAuthenticated)
+            {
+                ///do something?
+            }
+            else
+            {
+                ///display some alert saying to log in.
+            }
             return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Me(UserProfile profile)
+        {
+            ///update the data and return to previous url or something?
+            return View();
+        }
+
+        [AllowAnonymous]
+        public ActionResult Login()
+        {
+            ///default to Google - 
+            ///MVC has some inherent desire to hit the Login action when you use the [Authorize] attribute
+            return GoogleLogin();
         }
 
         [HttpPost]
@@ -25,9 +51,19 @@ namespace FilmTrove.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult GoogleLogin()
         {
-            OAuthWebSecurity.RequestAuthentication("Google", Url.Action("GoogleLoginCallBack"));
+            OAuthWebSecurity.RequestAuthentication("Google", Url.Action("LoginCallBack"));
             return View();
         }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult FacebookLogin()
+        {
+            OAuthWebSecurity.RequestAuthentication("Facebook", Url.Action("LoginCallBack"));
+            return View();
+        }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -38,9 +74,9 @@ namespace FilmTrove.Controllers
         }
 
         [AllowAnonymous]
-        public ActionResult GoogleLoginCallBack()
+        public ActionResult LoginCallBack()
         {
-            AuthenticationResult result = OAuthWebSecurity.VerifyAuthentication(Url.Action("GoogleLoginCallBack"));
+            AuthenticationResult result = OAuthWebSecurity.VerifyAuthentication(Url.Action("LoginCallBack"));
 
             if (result.IsSuccessful)
             {

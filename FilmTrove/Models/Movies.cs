@@ -37,7 +37,7 @@ namespace FilmTrove.Models
         public virtual HashSet<Person> Actors { get; set; }
         public virtual HashSet<Person> Writer { get; set; }
 
-        public Int64 Count { get; set; } ///need to shard this somehow?
+        //public Int64 Count { get; set; } ///need to shard this somehow?
 
         public override string ToString()
         {
@@ -146,10 +146,23 @@ namespace FilmTrove.Models
     {
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public int UserId { get; set; }
-        public string UserName { get; set; }
+        public Int32 UserId { get; set; }
+        public String UserName { get; set; }
 
-        public string Provider { get; set; }
+        public String Provider { get; set; }
+
+        public String Name { get; set; }
+        public String Email { get; set; } ///not sure if I'm guaranteed to get an email back from Facebook
+
+        public NetflixAccount NetflixAccount { get; set; }
+    }
+
+    [ComplexType]
+    public class NetflixAccount
+    {
+        public String Token { get; set; }
+        public String TokenSecret { get; set; }
+        public String UserId { get; set; }
     }
 
     public class MoviesContext : DbContext

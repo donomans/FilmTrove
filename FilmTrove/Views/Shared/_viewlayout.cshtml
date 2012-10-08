@@ -6,7 +6,7 @@
 <meta name="description" content="@ViewBag.Description"/>
 <meta name="keywords" content="@ViewBag.Keywords" />
 <meta name="author" content="@ViewBag.Author"/>
-<meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1"/>
+<meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 @*// FB Open Graph*@
 <meta property="og:title" content="@ViewBag.OgTitle"/>
@@ -63,12 +63,11 @@
 		    <div id="navigation">
 			    <ul id="nav">
 				    <li><a href="#">Find me a movie</a></li>
-				    <li><a href="#">Me</a>
+				    <li><a href="/Me">Me</a>
 					    <ul>
 					        <li><a href="#">Collection</a></li>
 					        <li><a href="#">Lists</a></li>
 					        <li><a href="#">Friends</a></li>
-                            <li><a href="#">Account</a></li>
 					    </ul>
 				    </li>
 				    <li><a href="#">Movies</a>
@@ -83,18 +82,30 @@
                     <li>@*<a class="contact-toggle" href="@ViewBag.LoginUrl">@ViewBag.LoginText</a>*@
                         @if(!WebSecurity.IsAuthenticated)
                         {
-                            using (Html.BeginForm("GoogleLogin", "Account", FormMethod.Post, new { id = "loginform" }))
-                            {
-                            @Html.AntiForgeryToken()
-                        <a href="javascript: document.forms['loginform'].submit();">Login</a>
-                            }
+                        <a>Login</a>
+                        <ul>
+                            <li>
+                                @using (Html.BeginForm("GoogleLogin", "Account", FormMethod.Post, new { id = "googleform" }))
+                                {
+                                @Html.AntiForgeryToken()
+                                <a href="javascript: document.forms['googleform'].submit();">Google</a>
+                                }
+                            </li>
+                            <li>
+                                @using (Html.BeginForm("FacebookLogin", "Account", FormMethod.Post, new { id = "fbform" }))
+                                {
+                                @Html.AntiForgeryToken()
+                                <a href="javascript: document.forms['fbform'].submit();">Facebook</a>
+                                }
+                            </li>
+					    </ul>
                         }
                         else
                         {
-                            using (Html.BeginForm("Logout", "Account", FormMethod.Post, new { id = "loginform" }))
+                            using (Html.BeginForm("Logout", "Account", FormMethod.Post, new { id = "logoutform" }))
                             {
                             @Html.AntiForgeryToken()
-                        <a href="javascript: document.forms['loginform'].submit();">Logout</a>
+                        <a href="javascript: document.forms['logoutform'].submit();">Logout</a>
                             }
                         }
                     </li>

@@ -36,6 +36,10 @@ a, a:visited {
 	color: #fff;
 	background-color: #1279da !important;
 }
+#navigation ul ul li:hover > form a {
+	color: #fff;
+	background-color: #1279da !important;
+}
 
 #navigation ul li a:hover, 
 #navigation ul li:hover > a {

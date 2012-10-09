@@ -34,21 +34,37 @@
                 {
                 @Html.AntiForgeryToken()
                 @Html.ValidationSummary()
-                    <fieldset>
-                        <legend><h4>Account information</h4></legend>
-                        <div class="field">
-                            @Html.LabelFor(m => m.Name)
-                            @Html.TextBoxFor(m=> m.Name)
-                        </div>
-                        <div class="field">
-                            @Html.LabelFor(m => m.Email)
-                            @Html.TextBoxFor(m => m.Email, new { type = "email" })
-                        </div>
-                        <a href="javascript: document.forms['accountupdateform'].submit();" class="button color">Update</a>
-                    </fieldset>
+                    <h4>Account information:</h4>
+                    <div class="field">
+                        @Html.LabelFor(m => m.Name)
+                        @Html.TextBoxFor(m=> m.Name)
+                    </div>
+                    <div class="field">
+                        @Html.LabelFor(m => m.Email)
+                        @Html.TextBoxFor(m => m.Email, new { type = "email" })
+                    </div>
+                    <a href="javascript: document.forms['accountupdateform'].submit();" class="button color">Update</a>
                 }
 			</div>
-			<div class="tab-content" id="tab2">2. Lorem ipsum pharetra felis. Aliquam egestas consectetur elementum class aptent taciti sociosqu ad litora torquent perea conubia nostra lorem inceptos orem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+			<div class="tab-content" id="tab2">  
+                <h4>Netflix settings:</h4>              
+                @if (ViewBag.Success != null)
+                {
+                    @ViewBag.Success.ToString()
+                    <p>@ViewBag.Message</p>
+                }
+                @if(ViewBag.NetflixLinked == null)
+                {
+                    <p>Click the button to link your Netflix account so we can do awesome things like let your friends add movies to your queue and compare ratings with friends.</p>
+                    <a href="@Url.Action("NetflixLogin", "Account")" class="button color">Link Netflix</a>
+                }
+                else
+                {
+                    <p>Your Netflix account is already linked.</p>
+                    <p>If you would like to unlink your account, click the button below and then deauthorize FilmTrove from your Netflix account in the "Your Account" section of the Netflix website.</p>
+                    <a href="@Url.Action("NetflixUnlink", "Account")" class="button color">Un-link Netflix</a>
+                }
+			</div>
 		</div>
 		
 	</div>

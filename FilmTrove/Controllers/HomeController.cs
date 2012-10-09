@@ -11,7 +11,7 @@ namespace FilmTrove.Controllers
 {
     public class HomeController : Controller
     {
-        private MoviesContext db = new MoviesContext();
+        private FilmTroveContext db = new FilmTroveContext();
         
         public ActionResult Index()
         {

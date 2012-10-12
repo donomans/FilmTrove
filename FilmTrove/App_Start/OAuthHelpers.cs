@@ -88,8 +88,8 @@ namespace FilmTrove.OAuthClients
         }
 
         public static String GetOAuthRequestUrl(String consumerSecret, String consumerKey, 
-            String uri, String httpMethod, 
-            String tokenSecret = null, Dictionary<String, String> extraParameters = null)
+            String uri, String httpMethod, String tokenSecret = null,
+            Dictionary<String, String> extraParameters = null)
         {
             Dictionary<String, String> parameters = new Dictionary<String, String>();
             parameters.Add("oauth_nonce", GenerateNonce());
@@ -97,8 +97,10 @@ namespace FilmTrove.OAuthClients
             parameters.Add("oauth_signature_method", "HMAC-SHA1");
             parameters.Add("oauth_timestamp", GenerateTimestamp());
             parameters.Add("oauth_version", "1.0");
+
             if(extraParameters != null)
                 parameters.AddRange(extraParameters);
+            //String tokenSecret = parameters["oauth_token_secret"];
             ///theBody: sorted list of parameters
             ///  oauth_consumer_key=consumerKey
             ///  oauth_nonce=GenerateNonce()
@@ -126,9 +128,19 @@ namespace FilmTrove.OAuthClients
             if (extraParameters != null)
                 url += "&" + CalculateParameterString(extraParameters);
 
-            url += "&oauth_callback=" + callback + "&oauth_consumer_key=" + consumerKey;
+            url += "&oauth_callback=" + Encode(callback) + "&oauth_consumer_key=" + consumerKey;
 
             return url;
+        }
+
+        public static String GetOAuthAccessUrl(String consumerSecret, String consumerKey, 
+            String uri, String token, String tokenSecret)
+        {
+            Dictionary<String, String> extraParams = new Dictionary<String, String>();
+            extraParams.Add("oauth_token", token);
+            //extraParams.Add("oauth_token_secret", tokenSecret);
+
+            return GetOAuthRequestUrl(consumerSecret, consumerKey, uri, "GET", tokenSecret, extraParams);
         }
     }
 }

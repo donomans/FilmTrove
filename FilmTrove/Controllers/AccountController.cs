@@ -35,12 +35,10 @@ namespace FilmTrove.Controllers
                     UserProfile up = ftc.UserProfiles.Find(WebSecurity.CurrentUserId);
                     if (up.NetflixAccount.UserId != null && up.NetflixAccount.UserId != "")
                         ViewBag.NetflixLinked = true;
+                    UserUpdate userupdate = new UserUpdate(up);
+                    
+                    return View(userupdate);
                 }
-                ///do something?
-            }
-            else
-            {
-                ///display some alert saying to log in.
             }
             return View();
         }
@@ -57,9 +55,9 @@ namespace FilmTrove.Controllers
                     oauthstuff = web.DownloadString(url);
                 }
                 String oauth_token = "";
-                //String oauth_token_secret = "";
+                String oauth_token_secret = "";
                 //String application_name = "";
-                String login_url = "";
+                //String login_url = "";
                 
                 String[] oauthsplits = oauthstuff.Split(new[]{ "&", "="}, StringSplitOptions.None);
                 Int32 counter = 0;
@@ -84,20 +82,23 @@ namespace FilmTrove.Controllers
                             //case "login_url":
                             //    login_url = s;
                             //    break;
-                            //case "oauth_token_secret":
-                            //    oauth_token_secret = s;
-                            //    break;
+                            case "oauth_token_secret":
+                                oauth_token_secret = s;
+                                break;
                             default:
                                 break;
                         }
                     }
                     counter++;
                 }
-                
+
+                ///store it in the session and hope its still there?
+                Session.Add("oauth_token_secret", oauth_token_secret);
+
                 Dictionary<String,String> extraParams = new Dictionary<String,String>();
                 extraParams.Add("application_name", ApplicationName);
                 String loginurl = CustomOAuthHelpers.GetOAuthLoginUrl(ConsumerKey, oauth_token,
-                    Url.Action("NetflixLoginCallback", "Account", null, "http", "filmtrove.azurewebsites.net"),
+                    Url.Action("NetflixLoginCallback","Account", null, Request.Url.Scheme),
                     LoginUrl, extraParams);
 
                 return new RedirectResult(loginurl);
@@ -111,13 +112,26 @@ namespace FilmTrove.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpGet]
         public ActionResult NetflixLoginCallback(String oauth_token)
         {
             if (oauth_token != null && oauth_token != "")
             {
-                String accessUrl = CustomOAuthHelpers.GetOAuthRequestUrl(SharedSecret, ConsumerKey, AccessUrl,
-                    "GET", oauth_token);
+                Object oauth_token_secret = Session["oauth_token_secret"];
+                if (oauth_token_secret == null)
+                {
+                    ViewBag.Success = false;
+                    ViewBag.Message = "Well, this ended poorly.  Sorry.  Let's try again.";
+                    return View();
+                }
+                //Dictionary<String, String> extraParams = new Dictionary<String, String>();
+                //extraParams.Add("oauth_token", oauth_token);
+
+                String accessUrl = CustomOAuthHelpers.GetOAuthAccessUrl(SharedSecret, ConsumerKey,
+                    AccessUrl, oauth_token, oauth_token_secret.ToString());
+
+                //String accessUrl = CustomOAuthHelpers.GetOAuthRequestUrl(SharedSecret, ConsumerKey,
+                //    AccessUrl + "?oauth_token=" + oauth_token, "GET", oauth_token_secret.ToString());
 
                 String oauthstuff = "";
                 using (WebClient web = new WebClient())
@@ -128,7 +142,7 @@ namespace FilmTrove.Controllers
                 String[] oauthsplits = oauthstuff.Split(new []{"&", "="}, StringSplitOptions.None);
                     
                 String new_oauth_token = "";
-                String oauth_token_secret = "";
+                String new_oauth_token_secret = "";
                 String user_id = "";
                 
                 Int32 counter = 0;
@@ -151,7 +165,7 @@ namespace FilmTrove.Controllers
                                 user_id = s;
                                 break;
                             case "oauth_token_secret":
-                                oauth_token_secret = s;
+                                new_oauth_token_secret = s;
                                 break;
                             default:
                                 break;
@@ -163,30 +177,54 @@ namespace FilmTrove.Controllers
                 {
                     UserProfile up = ftc.UserProfiles.Find(WebSecurity.CurrentUserId);
                     up.NetflixAccount.Token = new_oauth_token;
-                    up.NetflixAccount.TokenSecret = oauth_token_secret;
+                    up.NetflixAccount.TokenSecret = new_oauth_token_secret;
                     up.NetflixAccount.UserId = user_id;
 
                     ftc.SaveChanges();
 
                     ViewBag.Success = true;
                     ViewBag.Message = "Successfully linked your Netflix account";
-                    return View();
+                    return View("Me");
                 }
             }
             else
             {
                 ViewBag.Success = false;
-                ViewBag.Message = "Some part of the login in process failed.  Let's try again.";
+                ViewBag.Message = "We screwed some part of the login process.  Sorry.  Let's try again.";
                 return View();
+            }
+        }
+
+        [HttpGet]
+        public ActionResult NetflixUnlink()
+        {
+            using (FilmTroveContext ftc = new FilmTroveContext())
+            {
+                UserProfile up = ftc.UserProfiles.Find(WebSecurity.CurrentUserId);
+                up.NetflixAccount.Token = "";
+                up.NetflixAccount.TokenSecret = "";
+                up.NetflixAccount.UserId = "";
+
+                UserUpdate userupdate = new UserUpdate(up);
+
+                return View("Me", userupdate);
             }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Me(UserProfile profile)
+        public ActionResult Me(UserUpdate changes)
         {
             ///update the data and return to previous url or something?
-            return View();
+            using (FilmTroveContext ftc = new FilmTroveContext())
+            {
+                UserProfile up = ftc.UserProfiles.Find(WebSecurity.CurrentUserId);
+                up.Name = changes.Name;
+                up.Email = changes.Email;
+
+                ftc.SaveChanges();
+            }
+            return View("Me", changes);
         }
 
         [HttpPost]

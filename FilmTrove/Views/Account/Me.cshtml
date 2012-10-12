@@ -29,11 +29,11 @@
 				
 		<div class="tabs-container">
 			<div class="tab-content" id="tab1">
-                @model FilmTrove.Models.UserProfile
+                @model FilmTrove.Models.UserUpdate
                 @using (Html.BeginForm("Me", "Account", FormMethod.Post, new { id = "accountupdateform" }))
                 {
-                @Html.AntiForgeryToken()
-                @Html.ValidationSummary()
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary()
                     <h4>Account information:</h4>
                     <div class="field">
                         @Html.LabelFor(m => m.Name)

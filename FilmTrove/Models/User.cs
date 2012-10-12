@@ -28,8 +28,6 @@ namespace FilmTrove.Models
         public NetflixAccount NetflixAccount { get; set; }
     }
 
-
-
     [ComplexType]
     public class NetflixAccount
     {
@@ -38,4 +36,21 @@ namespace FilmTrove.Models
         public String UserId { get; set; }
     }
 
+
+
+    public class UserUpdate
+    {
+        public UserUpdate()
+        {
+            Name = "";
+            Email = "";
+        }
+        public UserUpdate(UserProfile up)
+        {
+            Name = up.Name;
+            Email = up.Email;
+        }
+        public String Name { get; set; }
+        public String Email { get; set; }
+    }
 }

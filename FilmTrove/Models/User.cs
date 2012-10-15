@@ -47,8 +47,12 @@ namespace FilmTrove.Models
         }
         public UserUpdate(UserProfile up)
         {
+            if (up.UserName.Contains("@"))
+                Email = up.UserName;
+            else
+                Email = up.Email;
+
             Name = up.Name;
-            Email = up.Email;
         }
         public String Name { get; set; }
         public String Email { get; set; }

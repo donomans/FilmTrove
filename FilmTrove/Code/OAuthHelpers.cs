@@ -1,10 +1,4 @@
-﻿using DotNetOpenAuth.AspNet;
-using DotNetOpenAuth.AspNet.Clients;
-using DotNetOpenAuth.Messaging;
-using DotNetOpenAuth.OAuth;
-using DotNetOpenAuth.OAuth.ChannelElements;
-using DotNetOpenAuth.OAuth.Messages;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -13,20 +7,10 @@ using System.Net;
 using System.Web;
 using System.Xml.Linq;
 
-namespace FilmTrove.OAuthClients
+namespace FilmTrove.Code.OAuthClients
 {
     public class CustomOAuthHelpers
     {
-        
-        /*
-         * But to make signed requests you need to follow a simple process:
-
-            1)  Collecting request parameters
-            2)  Calculating signature
-            3)  Making request(signed/protoected)
-
-         */
-
         public static String GenerateTimestamp()
         {
             return DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds.ToString("F0");
@@ -34,32 +18,21 @@ namespace FilmTrove.OAuthClients
         public static String GenerateNonce()
         {
             Int64 nonce = 0;
-            //String nonce = "";
             Random r = new Random();
             for (Int32 i = 0; i < 15; i++)
-                nonce += (nonce << i) * r.Next(0, 9) + i;//(r.Next(999331, Int32.MaxValue) * (13 + i)) + 47 * i;
+                nonce += (nonce << i) * r.Next(0, 9) + i;
             return Math.Abs(nonce).ToString("F0");
-            //Byte[] bytes = new byte[32];
-            //Byte[] first = Guid.NewGuid().ToByteArray();
-            //Byte[] second = Guid.NewGuid().ToByteArray();
-            //for (var i = 0; i < 16; i++)
-            //    bytes[i] = first[i];
-            //for (var i = 16; i < 32; i++)
-            //    bytes[i] = second[i - 16];
-            //return new String(Convert.ToBase64String(bytes, Base64FormattingOptions.None).ToCharArray().Where(Char.IsLetter).ToArray());
         }
-
         public static String Encode(String source)
         {
             Func<Char, String> encodeCharacter = c =>
             {
                 if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '.' || c == '-' || c == '_' || c == '~'))
                     return new String(c, 1);
-                return HttpUtility.UrlEncode(c.ToString()).ToUpper();//EncodeCharacter(c);
+                return HttpUtility.UrlEncode(c.ToString()).ToUpper();
             };
             return String.Concat(source.ToCharArray().Select(encodeCharacter));
         }
-
         public static String CalculateParameterString(Dictionary<String, String> parameters)
         {
             var q = from entry in parameters
@@ -70,12 +43,10 @@ namespace FilmTrove.OAuthClients
                     select encodedEntry;
             return String.Join("&", q.ToArray());
         }
-
         public static String GetSigningKey(String ConsumerSecret, String OAuthTokenSecret = null)
         {
             return ConsumerSecret + "&" + (OAuthTokenSecret != null ? OAuthTokenSecret : "");
         }
-
         public static String Sign(String signatureBaseString, String signingKey)
         {
             Byte[] keyBytes = System.Text.Encoding.ASCII.GetBytes(signingKey);
@@ -100,7 +71,7 @@ namespace FilmTrove.OAuthClients
 
             if(extraParameters != null)
                 parameters.AddRange(extraParameters);
-            //String tokenSecret = parameters["oauth_token_secret"];
+
             ///theBody: sorted list of parameters
             ///  oauth_consumer_key=consumerKey
             ///  oauth_nonce=GenerateNonce()
@@ -138,7 +109,6 @@ namespace FilmTrove.OAuthClients
         {
             Dictionary<String, String> extraParams = new Dictionary<String, String>();
             extraParams.Add("oauth_token", token);
-            //extraParams.Add("oauth_token_secret", tokenSecret);
 
             return GetOAuthRequestUrl(consumerSecret, consumerKey, uri, "GET", tokenSecret, extraParams);
         }

@@ -22,6 +22,11 @@ namespace FilmTrove
                 name: "Home",
                 url: "",
                 defaults: new { controller = "Home", action = "Index" });
+
+            routes.MapRoute(
+                name: "Movies",
+                url: "Movies/{action}/{id}",
+                defaults: new { controller = "Movies", action = "Index", id = UrlParameter.Optional});
         }
     }
 }

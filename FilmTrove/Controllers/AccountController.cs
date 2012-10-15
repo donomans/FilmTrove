@@ -8,8 +8,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using WebMatrix.WebData;
-using FilmTrove.OAuthClients;
 using System.Net;
+using FilmTrove.Code;
 
 namespace FilmTrove.Controllers
 {
@@ -17,13 +17,6 @@ namespace FilmTrove.Controllers
     [InitializeSimpleMembership]
     public class AccountController : Controller
     {
-        public const String ConsumerKey = "7qf3845qydavuucmhj96b6hd";
-        public const String SharedSecret = "5jYe5FVhhF";
-        public const String RequestUrl = "http://api-public.netflix.com/oauth/request_token";
-        public const String AccessUrl = "http://api-public.netflix.com/oauth/access_token";
-        public const String LoginUrl = "https://api-user.netflix.com/oauth/login";
-        public const String ApplicationName = "FilmTrove";
-
         [HttpGet]
         [AllowAnonymous]
         public ActionResult Me()
@@ -48,7 +41,7 @@ namespace FilmTrove.Controllers
         {
             if (WebSecurity.IsAuthenticated)
             {
-                String url = CustomOAuthHelpers.GetOAuthRequestUrl(SharedSecret, ConsumerKey, RequestUrl, "GET");
+                String url = Netflix.Login.GetRequestUrl();
                 String oauthstuff = "";
                 using (WebClient web = new WebClient())
                 {
@@ -56,8 +49,6 @@ namespace FilmTrove.Controllers
                 }
                 String oauth_token = "";
                 String oauth_token_secret = "";
-                //String application_name = "";
-                //String login_url = "";
                 
                 String[] oauthsplits = oauthstuff.Split(new[]{ "&", "="}, StringSplitOptions.None);
                 Int32 counter = 0;
@@ -76,12 +67,6 @@ namespace FilmTrove.Controllers
                             case "oauth_token":
                                 oauth_token = s;
                                 break;
-                            //case "application_name":
-                            //    application_name = s;
-                            //    break;
-                            //case "login_url":
-                            //    login_url = s;
-                            //    break;
                             case "oauth_token_secret":
                                 oauth_token_secret = s;
                                 break;
@@ -96,10 +81,13 @@ namespace FilmTrove.Controllers
                 Session.Add("oauth_token_secret", oauth_token_secret);
 
                 Dictionary<String,String> extraParams = new Dictionary<String,String>();
-                extraParams.Add("application_name", ApplicationName);
-                String loginurl = CustomOAuthHelpers.GetOAuthLoginUrl(ConsumerKey, oauth_token,
-                    Url.Action("NetflixLoginCallback","Account", null, Request.Url.Scheme),
-                    LoginUrl, extraParams);
+                extraParams.Add("application_name", Netflix.Login.ApplicationName);
+                //String loginurl = CustomOAuthHelpers.GetOAuthLoginUrl(Netflix.ConsumerKey, oauth_token,
+                //    Url.Action("NetflixLoginCallback","Account", null, Request.Url.Scheme),
+                //    Netflix.LoginUrl, extraParams);
+                String loginurl = Netflix.Login.GetLoginUrl(oauth_token,
+                    Url.Action("NetflixLoginCallback", "Account", null, Request.Url.Scheme),
+                    extraParams);
 
                 return new RedirectResult(loginurl);
 
@@ -124,21 +112,13 @@ namespace FilmTrove.Controllers
                     ViewBag.Message = "Well, this ended poorly.  Sorry.  Let's try again.";
                     return View();
                 }
-                //Dictionary<String, String> extraParams = new Dictionary<String, String>();
-                //extraParams.Add("oauth_token", oauth_token);
-
-                String accessUrl = CustomOAuthHelpers.GetOAuthAccessUrl(SharedSecret, ConsumerKey,
-                    AccessUrl, oauth_token, oauth_token_secret.ToString());
-
-                //String accessUrl = CustomOAuthHelpers.GetOAuthRequestUrl(SharedSecret, ConsumerKey,
-                //    AccessUrl + "?oauth_token=" + oauth_token, "GET", oauth_token_secret.ToString());
+                String accessUrl = Netflix.Login.GetAccessUrl(oauth_token, oauth_token_secret.ToString());
 
                 String oauthstuff = "";
                 using (WebClient web = new WebClient())
                 {
                     oauthstuff = web.DownloadString(accessUrl);
                 }
-                ///oauth_token=YourAuthorizedOauthToken&user_id=YourSubscriberId&oauth_token_secret=YourAuthorizedTokenSecret
                 String[] oauthsplits = oauthstuff.Split(new []{"&", "="}, StringSplitOptions.None);
                     
                 String new_oauth_token = "";
@@ -151,9 +131,7 @@ namespace FilmTrove.Controllers
                 foreach(String s in oauthsplits)
                 {
                     if(counter % 2 == 0)
-                    {
                         stash = s;
-                    }
                     else
                     {
                         switch(stash)

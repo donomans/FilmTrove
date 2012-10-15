@@ -24,17 +24,24 @@
         <div class="sixteen columns">
 		<ul class="tabs-nav">
 			<li class="active"><a href="#tab1"><i class="mini-ico-glass"></i>Update Details</a></li>
-			<li><a href="#tab2"><i class="mini-ico-list"></i>Link Netflix</a></li>
+			<li><a href="#tab2"><i class="mini-ico-list"></i>Netflix</a></li>
+            <li><a href="#tab3"><i class="mini-ico-list"></i>Lists</a></li>
+            <li><a href="#tab4"><i class="mini-ico-list"></i>Friends</a></li>
 		</ul>
 				
 		<div class="tabs-container">
 			<div class="tab-content" id="tab1">
+                <h4>Account information:</h4>
+                @using Microsoft.Web.Helpers
+                <div class="field">
+                    <label>Gravatar</label>
+                    <img src="@Gravatar.GetUrl(WebSecurity.CurrentUserName)" title="@WebSecurity.CurrentUserName" />
+                </div><br />
                 @model FilmTrove.Models.UserUpdate
                 @using (Html.BeginForm("Me", "Account", FormMethod.Post, new { id = "accountupdateform" }))
                 {
                     @Html.AntiForgeryToken()
                     @Html.ValidationSummary()
-                    <h4>Account information:</h4>
                     <div class="field">
                         @Html.LabelFor(m => m.Name)
                         @Html.TextBoxFor(m=> m.Name)
@@ -50,7 +57,6 @@
                 <h4>Netflix settings:</h4>              
                 @if (ViewBag.Success != null)
                 {
-                    @ViewBag.Success.ToString()
                     <p>@ViewBag.Message</p>
                 }
                 @if(ViewBag.NetflixLinked == null)
@@ -65,6 +71,12 @@
                     <a href="@Url.Action("NetflixUnlink", "Account")" class="button color">Un-link Netflix</a>
                 }
 			</div>
+            <div class="tab-content" id="tab3">
+                <h4>Your Collection and Lists</h4>
+            </div>
+            <div class="tab-content" id="tab4">
+                <h4>Friends</h4>
+            </div>
 		</div>
 		
 	</div>

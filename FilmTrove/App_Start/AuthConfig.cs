@@ -6,7 +6,6 @@ using Microsoft.Web.WebPages.OAuth;
 using FilmTrove.Models;
 using DotNetOpenAuth.AspNet;
 using System.Web;
-using FilmTrove.OAuthClients;
 
 namespace FilmTrove
 {

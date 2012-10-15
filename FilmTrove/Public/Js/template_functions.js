@@ -6,47 +6,46 @@ jQuery(document).ready(function() {
 	
 	/* Search Form*/
 	
-	$('input.search-form').on('keyup',function(){
+	$("#searchbox").on('keyup',function(){
 		
 		$(this).attr('class', 'search-form active-search');
 		
 		var count;
 		var timeToEnd = 1000;
 
-		$('input.search-form').keydown(function(){
+		$("#searchbox").keydown(function () {
+		    if (event.keyCode == 13) {
+		        document.forms['searchform'].submit();
+		    }
 
-			clearTimeout(count);
-		    
-		    count = setTimeout(endCount, timeToEnd);
-
+		    clearTimeout(count);
+			count = setTimeout(endCount, timeToEnd);
 		});
 		
 	});
-	
-	function endCount(){
-		$('input.search-form').attr('class','search-form');
+	function endCount() {
+	    $("#searchbox").attr('class', 'search-form');
 	}
-	
-	$('.contact-toggle').mouseenter(function () {
-	    if ($('#contact').is(':visible')) {
-	        //do nothing
-	    } else {
-	        $('#contact-fake').slideDown(100);
+	var cache = {};
+	$("#searchbox").autocomplete({
+	    minLenght: 2,
+	    delay: 350,
+	    source: function (request, response) {
+	        var term = $.trim(request.term);
+	        if (term in cache){
+	            response(cache[term]);
+	            return;
+	        }
+                
+	        $.getJSON("/api/v1/netflixsearch",
+                request,
+                function (data, status, xhr) {
+                    cache[term] = data;
+                    response(data);
+                });
 	    }
-
-	}).mouseleave(function () {
-	    $('#contact-fake').slideUp(100);
 	});
 
-	$('.contact-toggle').click(function () {
-	    $('#contact').slideToggle();
-	    return false;
-	});
-
-	$('#close-contact').click(function () {
-	    $('#contact').slideUp();
-	    return false;
-	});
 	
 	/* Menu */
 	(function() {
@@ -95,7 +94,6 @@ jQuery(document).ready(function() {
 /* ------------------- Accordion -------------------- */	
 
 	(function() {
-
 		var $container = $('.acc-container'),
 			$trigger   = $('.acc-trigger');
 
@@ -342,98 +340,6 @@ $('#wrapper').imagesLoaded(function() {
 
 });
 
-/* ------------------ Back To Top ------------------- */
-
-$(window).scroll(function(){
-	
-	var y = $(window).scrollTop();
-	
-	if (y > 200) {
-		
-		$('#scroll-top-top').fadeIn();
-		
-	} else {
-		
-		$('#scroll-top-top').fadeOut();
-		
-	}
-
-});
-
-jQuery(document).ready(function($)
-{
-	var header_h = 74;
-	var menu_h = 0;
-	var body_l = $("body").width();
-	var speed = 500;
-	var logo2_url = $("link[rel='alternate']").attr("href");
-	var logo2_link = $("link[rel='start']").attr("href");
-	
-	var scroll_critical = 74;
-	var window_y = 0;
-	var menu_left_margin = 100;
-	menu_left_margin = parseInt($("#navigation-wrapper").css("width")) - parseInt($("ul.menu").width());
-	
-	window_y = $(window).scrollTop();
-	var $logo2_link = $("<a/>", {"href": logo2_link})
-	var $logo2 = $("<img />", {"src" : logo2_url, "class" : "logo2"}).appendTo($logo2_link);
-	
-		
-	if ( (window_y > scroll_critical) && !(is_touch_device()) ) header_transform();
-	
-	function is_touch_device() {
-	  return !!('ontouchstart' in window);
-	}
-	
-	function header_transform(){
-		
-		var wrapper_l = $("#wrapper").width();
-				
-		if (wrapper_l > 767) {
-
-			window_y = $(window).scrollTop();
-
-			if (window_y > scroll_critical) {
-				
-				if (!($("#navigation-wrapper").hasClass("fixed"))){
-						$("#header").css("margin-bottom", header_h + "px");
-						$("#navigation-wrapper").addClass("fixed").css("top", "0px");
-						$logo2_link.fadeIn().appendTo("#navigation-wrapper");
-						$("#navigation").animate({ marginLeft: "70px" },500, function(){
-							$("#logo-small").fadeIn();
-						});
-				}
-
-				
-			} else {
-				
-				if (($("#navigation-wrapper").hasClass("fixed"))){
-						$("#navigation-wrapper").removeClass("fixed");
-						$("#header").css("margin-bottom", "");
-						$("#logo-small").fadeOut(function(){
-							$(this).hide();
-							$("#navigation").animate({ marginLeft: "0px" },500);
-						});
-					
-				}
-
-			}
-			
-		} else {
-			$(".contact-toggle").removeAttr("class","contact-toggle");
-		}	
-	
-	}
-	
-	
-
-	
-	$(window).scroll(function(){
-		if (!(is_touch_device())) header_transform();			
-
-	})
-	
-});
 
 jQuery(document).ready(function($){
 
@@ -443,18 +349,16 @@ jQuery(document).ready(function($){
 		
 	if (url == 0) {
 		
-		$('#nav a[href="index.html"]').addClass('active');
+		$('#nav a[href="/"]').addClass('active');
 		
 	} else {
 		
-		$('#nav a[href="'+url+'"]').addClass('active');
+		$('#nav a[href="/'+url+'"]').addClass('active');
 		
 	}
 	
 	var $activeUL = $('.active').closest('ul');
-	/*
-	Revise below condition that tests if .active is a submenu
-	*/
+	/* Revise below condition that tests if .active is a submenu */
 	if($activeUL.attr('id') != 'nav') { //check if it is submenu
 	    $activeUL
 	        .parent() //This should return the li

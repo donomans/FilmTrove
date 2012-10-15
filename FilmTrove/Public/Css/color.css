@@ -49,7 +49,7 @@ a, a:visited {
 
 #navigation ul li a.active, 
 #navigation ul li.active > a {
-	background: #fff url(../../images/nav-bg.png) repeat-x;
+	background: #fff url(/public/images/nav-bg.png) repeat-x;
 	color: #555;
 }
 
@@ -64,33 +64,6 @@ a, a:visited {
 	background: #499ff0;
 }
 
-
-
-
-
-
-/*#navigation ul li button:hover, 
-#navigation ul li:hover > button {
-	background: #499ff0 !important;
-	color: #fff !important;
-}
-
-#navigation ul li button.active, 
-#navigation ul li.active > button {
-	background: #fff url(../../images/nav-bg.png) repeat-x;
-	color: #555;
-}
-
-#navigation ul li button.active:hover, 
-#navigation ul li.active > button:hover {
-	background: #499ff0;
-	color: #fff;
-}
-
-#navigation ul ul li button.active, 
-#navigation ul ul li.active > button {
-	background: #499ff0;
-}*/
 
 /* Page title
 =================================================================== */
@@ -188,11 +161,11 @@ a.post-entry {
 }
 
 .image-overlay-link {
-	background-image: url(../../images/overlay-icon-01.png);
+	background-image: url(/public/images/overlay-icon-01.png);
 }
 
 .image-overlay-zoom {
-	background-image: url(../../images/overlay-icon-02.png);
+	background-image: url(/public/images/overlay-icon-02.png);
 }
 
 /* Notice
@@ -209,14 +182,14 @@ a.post-entry {
 /* List styles
 =================================================================== */	
 
-.check_list li {background: url(../../images/icons/list/yellow/list_check.png) no-repeat 0% 50%; padding: 0 0 0 18px;}
-.plus_list  li {background: url(../../images/icons/list/yellow/list_plus.png) no-repeat 0% 50%; padding: 0 0 0 18px;}
-.minus_list  li {background: url(../../images/icons/list/yellow/list_minus.png) no-repeat 0% 50%; padding: 0 0 0 18px;}
-.star_list  li {background: url(../../images/icons/list/yellow/list_star.png) no-repeat 0% 50%; padding: 0 0 0 16px;}
-.arrow_list  li {background: url(../../images/icons/list/yellow/list_arrow.png) no-repeat 0% 50%; padding: 0 0 0 16px;}
-.square_list  li {background: url(../../images/icons/list/yellow/list_square.png) no-repeat 0% 50%; padding: 0 0 0 16px;}
-.circle_list  li {background: url(../../images/icons/list/yellow/list_circle.png) no-repeat 0% 50%; padding: 0 0 0 16px;}
-.cross_list  li {background: url(../../images/icons/list/yellow/list_cross.png) no-repeat 0% 50%; padding: 0 0 0 16px;}
+.check_list li {background: url(/public/images/icons/list/yellow/list_check.png) no-repeat 0% 50%; padding: 0 0 0 18px;}
+.plus_list  li {background: url(/public/images/icons/list/yellow/list_plus.png) no-repeat 0% 50%; padding: 0 0 0 18px;}
+.minus_list  li {background: url(/public/images/icons/list/yellow/list_minus.png) no-repeat 0% 50%; padding: 0 0 0 18px;}
+.star_list  li {background: url(/public/images/icons/list/yellow/list_star.png) no-repeat 0% 50%; padding: 0 0 0 16px;}
+.arrow_list  li {background: url(/public/images/icons/list/yellow/list_arrow.png) no-repeat 0% 50%; padding: 0 0 0 16px;}
+.square_list  li {background: url(/public/images/icons/list/yellow/list_square.png) no-repeat 0% 50%; padding: 0 0 0 16px;}
+.circle_list  li {background: url(/public/images/icons/list/yellow/list_circle.png) no-repeat 0% 50%; padding: 0 0 0 16px;}
+.cross_list  li {background: url(/public/images/icons/list/yellow/list_cross.png) no-repeat 0% 50%; padding: 0 0 0 16px;}
 
 .project-info strong {
 	color: #499ff0;
@@ -245,12 +218,12 @@ input[type="button"] {
 =================================================================== */
 
 .ico-color {
-	background-image: url("../../images/icons/yellow/glyphicons.png");
+	background-image: url("/public/images/icons/yellow/glyphicons.png");
 	opacity: 1;
 }
 
 .mini-color {
-  background-image: url("../../images/icons/yellow/glyphicons-mini.png");
+  background-image: url("/public/images/icons/yellow/glyphicons-mini.png");
   opacity: 1;
 }
 

@@ -1,0 +1,3 @@
+[submodule "flixsharp"]
+	path = flixsharp
+	url = https://github.com/fronn/FlixSharp.git

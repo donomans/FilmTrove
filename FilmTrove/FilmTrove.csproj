@@ -206,6 +206,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Public\themes\base\minified\jquery-ui.min.css" />
     <Content Include="Public\themes\base\minified\jquery.ui.autocomplete.min.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -261,7 +262,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Public\themes\base\images\" />
     <Folder Include="Public\themes\base\minified\images\" />
   </ItemGroup>
   <ItemGroup>

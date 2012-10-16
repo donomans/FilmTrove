@@ -34,8 +34,28 @@ namespace FilmTrove.Models
         public String Token { get; set; }
         public String TokenSecret { get; set; }
         public String UserId { get; set; }
-    }
 
+        public static FilmTrove.Code.NetflixAccount GetCurrentUserNetflixUserInfo()
+        {
+            Object netflixuserid = HttpContext.Current.Session["netflixuserid"];
+            if (netflixuserid == null)
+            {
+                if (WebMatrix.WebData.WebSecurity.IsAuthenticated)
+                    using (FilmTroveContext ftc = new FilmTroveContext())
+                    {
+                        UserProfile profile = ftc.UserProfiles.Find(WebSecurity.CurrentUserId);
+
+                        HttpContext.Current.Session["netflixuserid"] = profile.NetflixAccount;
+
+                        return profile.NetflixAccount;
+                    }
+                else
+                    return null;
+            }
+            else
+                return (NetflixAccount)netflixuserid;
+        }
+    }
 
 
     public class UserUpdate

@@ -6,9 +6,9 @@ using System.Data.Entity;
 using System.Collections;
 using System.Linq;
 using System.Web;
-//using System.Data.Entity.Infrastructure;
 using System.Data.Objects;
 using System.Data;
+using FlixSharp.Holders;
 
 namespace FilmTrove.Models
 {
@@ -132,12 +132,5 @@ namespace FilmTrove.Models
         public DateTime? DateLastModified { get; set; }
     }
 
-    public enum MpaaRating
-    {
-        Unrated,
-        R,
-        PG13,
-        PG,
-        G
-    }
+    
 }

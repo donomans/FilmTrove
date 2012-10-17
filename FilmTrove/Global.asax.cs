@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FlixSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -23,6 +24,12 @@ namespace FilmTrove
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AuthConfig.RegisterAuth();
+
+            Netflix.Login.SetCredentials(
+                "7qf3845qydavuucmhj96b6hd",
+                "5jYe5FVhhF",
+                "FilmTrove");
+
         }
     }
 }

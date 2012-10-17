@@ -29,7 +29,7 @@ jQuery(document).ready(function() {
 	var cache = {};
 	$("#searchbox").autocomplete({
 	    minLenght: 2,
-	    delay: 350,
+	    delay: 250,
 	    source: function (request, response) {
 	        var term = $.trim(request.term);
 	        if (term in cache){

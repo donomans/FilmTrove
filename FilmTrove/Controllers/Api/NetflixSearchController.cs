@@ -12,22 +12,17 @@ using System.Web.Mvc;
 using System.Web;
 using System.Web.Caching;
 using FilmTrove.App_Code;
+using FlixSharp;
 
 namespace FilmTrove.Controllers.Api
 {
     public class NetflixSearchController : ApiController
     {
         // Get api/netflixsearch
-        const String SearchUrl = "http://api-public.netflix.com/catalog/titles/autocomplete?oauth_consumer_key=7qf3845qydavuucmhj96b6hd&term=";
         public IEnumerable<String> Get([FromUri] String term)
         {
-            String url = SearchUrl + term;
-            
-            XDocument doc = XDocument.Load(url);
-            
-            var titles = from someelement
-                                   in doc.Descendants("title")
-                               select someelement.Attribute("short").Value;
+            Netflix n = new Netflix();
+            IEnumerable<String> titles = n.Search.AutoCompleteTitle(term, 50);
 
             ///toss the full list into another service that will churn 
             ///through the records and populate the database.

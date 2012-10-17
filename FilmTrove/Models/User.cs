@@ -9,6 +9,8 @@ using System.Web;
 using System.Data.Entity.Infrastructure;
 using System.Data.Objects;
 using System.Data;
+using WebMatrix.WebData;
+using FlixSharp.Holders;
 
 namespace FilmTrove.Models
 {
@@ -35,7 +37,7 @@ namespace FilmTrove.Models
         public String TokenSecret { get; set; }
         public String UserId { get; set; }
 
-        public static FilmTrove.Code.NetflixAccount GetCurrentUserNetflixUserInfo()
+        public static Account GetCurrentUserNetflixUserInfo()
         {
             Object netflixuserid = HttpContext.Current.Session["netflixuserid"];
             if (netflixuserid == null)
@@ -45,15 +47,21 @@ namespace FilmTrove.Models
                     {
                         UserProfile profile = ftc.UserProfiles.Find(WebSecurity.CurrentUserId);
 
-                        HttpContext.Current.Session["netflixuserid"] = profile.NetflixAccount;
+                        Account na = new Account()
+                        {
+                            Token = profile.NetflixAccount.Token,
+                            TokenSecret = profile.NetflixAccount.TokenSecret,
+                            UserId = profile.NetflixAccount.UserId
+                        };
+                        HttpContext.Current.Session["netflixuserid"] = na;
 
-                        return profile.NetflixAccount;
+                        return na;
                     }
                 else
                     return null;
             }
             else
-                return (NetflixAccount)netflixuserid;
+                return (Account)netflixuserid;
         }
     }
 

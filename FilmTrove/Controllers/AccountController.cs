@@ -10,6 +10,7 @@ using System.Web.Mvc;
 using WebMatrix.WebData;
 using System.Net;
 using FilmTrove.Code;
+using FlixSharp;
 
 namespace FilmTrove.Controllers
 {
@@ -79,15 +80,12 @@ namespace FilmTrove.Controllers
 
                 ///store it in the session and hope its still there?
                 Session.Add("oauth_token_secret", oauth_token_secret);
-
-                Dictionary<String,String> extraParams = new Dictionary<String,String>();
-                extraParams.Add("application_name", Netflix.Login.ApplicationName);
+                
                 //String loginurl = CustomOAuthHelpers.GetOAuthLoginUrl(Netflix.ConsumerKey, oauth_token,
                 //    Url.Action("NetflixLoginCallback","Account", null, Request.Url.Scheme),
                 //    Netflix.LoginUrl, extraParams);
                 String loginurl = Netflix.Login.GetLoginUrl(oauth_token,
-                    Url.Action("NetflixLoginCallback", "Account", null, Request.Url.Scheme),
-                    extraParams);
+                    Url.Action("NetflixLoginCallback", "Account", null, Request.Url.Scheme));
 
                 return new RedirectResult(loginurl);
 
@@ -112,6 +110,7 @@ namespace FilmTrove.Controllers
                     ViewBag.Message = "Well, this ended poorly.  Sorry.  Let's try again.";
                     return View();
                 }
+                //Netflix.Login n = new Netflix();
                 String accessUrl = Netflix.Login.GetAccessUrl(oauth_token, oauth_token_secret.ToString());
 
                 String oauthstuff = "";
@@ -274,7 +273,6 @@ namespace FilmTrove.Controllers
 
                             OAuthWebSecurity.CreateOrUpdateAccount(provider, providerUserId, result.UserName);
                             OAuthWebSecurity.Login(provider, providerUserId, createPersistentCookie: false);
-
                         }
                         else
                         {

@@ -225,7 +225,7 @@ p, blockquote {
 /* Contact
 =================================================================== */
 
-#contact {
+/*#contact {
 	display: none;
 	border-bottom: 1px solid #eee;
 	position: relative;
@@ -267,8 +267,8 @@ p, blockquote {
 	height: 200px;
 	width: 400px;
 }
-
-/*#contact-fake {
+    
+#contact-fake {
 	display: none;
 	height: 5px;
 	width: 100%;
@@ -1109,7 +1109,7 @@ iframe {
 
 /* Back To Top
 =================================================================== */
-#scroll-top-top {
+/*#scroll-top-top {
 	position: fixed;
 	right: 25px;
 	bottom: 25px;
@@ -1135,24 +1135,24 @@ iframe {
 	transition: all 0.1s ease-in-out;
 }
 
-#scroll-top-top a:hover {background-color: #aaa;}
+#scroll-top-top a:hover {background-color: #aaa;}*/
 
 /* Contact
 =================================================================== */
 
 /* Google Map
 =================================================================== */
-#google-map {
+/*#google-map {
 	position: relative;
 	padding: 0px;
 	padding-bottom: 110%;
 	height: 0;
 	overflow: hidden;
-}
+}*/
 
 /* Contact Details
 =================================================================== */
-.contact-details li {
+/*.contact-details li {
 	margin: 0 0 15px 0;
 }
 
@@ -1164,7 +1164,7 @@ iframe {
 .contact-details li i {
 	float: left;
 	margin: 2px 0 0 0;
-}
+}*/
 
 
 /* Contact Form
@@ -1468,7 +1468,7 @@ ol li ol.childlist .comment-des {
 
 /* Pricing Tables
 =================================================================== */
-.five-tables .pricing-table {
+/*.five-tables .pricing-table {
 	width: 187px;
 }
 	
@@ -1530,11 +1530,11 @@ a.buy {
 a.buy:hover {
 	opacity: 0.9;
 	filter: alpha(opacity=90);
-}
+}*/
 
 /* Table
 =================================================================== */
-.pricing-table h3,
+/*.pricing-table h3,
 .pricing-table h4 {
 	color: #fff;
 	margin: 0;
@@ -1559,7 +1559,7 @@ a.buy:hover {
 .time {
 	font-size: 12px;
 	font-weight: normal;
-}
+}*/
 
 /* Color Schemes
 =================================================================== */
@@ -1908,7 +1908,7 @@ input[type="button"]:hover {background:#aaa}
 
 /* Testimonial's Carousel
 =================================================================== */
-.testimonial-container {
+/*.testimonial-container {
 	position: relative;
 }
 
@@ -1939,7 +1939,7 @@ input[type="button"]:hover {background:#aaa}
 
 .testimonials-author span {
 	color:#a0a0a0
-}
+}*/
 
 /* Carousel */
 .carousel-disabled,

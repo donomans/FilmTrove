@@ -13,5 +13,14 @@ namespace FilmTrove.Code
                 if (!collection.Contains(v))
                     collection.Add(v);
         }
+
+        public static String UrlFriendly(this String source)
+        {
+            return source.Replace(" ", "_").Replace(":", "-");
+        }
+        public static String UrlFriendly(this String source, Int32 year)
+        {
+            return (source + " (" + year + ")").UrlFriendly();
+        }
     }
 }

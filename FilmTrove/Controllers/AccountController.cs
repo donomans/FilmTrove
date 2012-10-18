@@ -92,6 +92,7 @@ namespace FilmTrove.Controllers
             }
             else
             {
+                ViewBag.NetflixLinked = null;
                 ViewBag.Success = false;
                 ViewBag.Message = "You must be logged in to link your Netflix account to FilmTrove.";
                 return View();
@@ -158,7 +159,7 @@ namespace FilmTrove.Controllers
                     up.NetflixAccount.UserId = user_id;
 
                     ftc.SaveChanges();
-
+                    ViewBag.NetflixLinked = true;
                     ViewBag.Success = true;
                     ViewBag.Message = "Successfully linked your Netflix account";
                     return View("Me");
@@ -166,6 +167,7 @@ namespace FilmTrove.Controllers
             }
             else
             {
+                ViewBag.NetflixLinked = null;
                 ViewBag.Success = false;
                 ViewBag.Message = "We screwed some part of the login process.  Sorry.  Let's try again.";
                 return View();
@@ -181,9 +183,11 @@ namespace FilmTrove.Controllers
                 up.NetflixAccount.Token = "";
                 up.NetflixAccount.TokenSecret = "";
                 up.NetflixAccount.UserId = "";
+                Int32 changed = ftc.SaveChanges();
 
                 UserUpdate userupdate = new UserUpdate(up);
 
+                ViewBag.NetflixLinked = null;
                 return View("Me", userupdate);
             }
         }

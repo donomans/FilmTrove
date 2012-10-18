@@ -20,7 +20,8 @@ namespace FilmTrove.Models
         public String AltTitle { get; set; }
 
         public String Description { get; set; }
-        public MpaaRating MpaaRating { get; set; }
+        public String Rating { get; set; }
+        public RatingType RatingType { get; set; }
         public String PosterId { get; set; }
         public Int32 Year { get; set; }
         public Int32 RunTime { get; set; }

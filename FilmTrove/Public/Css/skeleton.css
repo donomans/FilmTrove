@@ -50,6 +50,7 @@
     .container .sixteen.columns                 { width: 940px; }
 
     .container .one-third.column                { width: 300px; }
+    .container .one-fourth.column                { width: 220px; }
     .container .two-thirds.column               { width: 620px; }
 
     /* Offsets */
@@ -102,6 +103,7 @@
         .container .sixteen.columns                 { width: 748px; }
 
         .container .one-third.column                { width: 236px; }
+        .container .one-fourth.column                { width: 172px; }
         .container .two-thirds.column               { width: 492px; }
 
         /* Offsets */
@@ -151,6 +153,7 @@
         .container .fifteen.columns,
         .container .sixteen.columns,
         .container .one-third.column,
+        .container .one-fourth.column,
         .container .two-thirds.column  { width: 300px; }
 
         /* Offsets */
@@ -201,6 +204,7 @@
         .container .fifteen.columns,
         .container .sixteen.columns,
         .container .one-third.column,
+        .container .one-fourth.column,
         .container .two-thirds.column { width: 420px; }
     }
 

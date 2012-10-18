@@ -13,16 +13,17 @@ using System.Web;
 using System.Web.Caching;
 using FilmTrove.App_Code;
 using FlixSharp;
+using System.Threading.Tasks;
 
 namespace FilmTrove.Controllers.Api
 {
     public class NetflixSearchController : ApiController
     {
         // Get api/netflixsearch
-        public IEnumerable<String> Get([FromUri] String term)
+        public async Task<IEnumerable<String>> Get([FromUri] String term)
         {
             Netflix n = new Netflix();
-            IEnumerable<String> titles = n.Search.AutoCompleteTitle(term, 50);
+            IEnumerable<String> titles = await n.Search.AutoCompleteTitle(term, 50);
 
             ///toss the full list into another service that will churn 
             ///through the records and populate the database.

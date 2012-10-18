@@ -9,7 +9,8 @@
     <div class="one-third column portfolio-item">
         <div class="picture"><a href="/View/Movie/@m.MovieId" title="@m.Title"><img src="/View/Image/@m.PosterId" alt="@m.Title"/><div class="image-overlay-link"></div></a>
 			<div class="item-description alt">
-				<h5><a href="/View/Movie/@m.MovieId">@m.Title</a></h5>
+                @using FilmTrove.Code
+				<h5><a href="/View/Movie/@m.MovieId/@m.Title.UrlFriendly(m.Year)">@m.Title</a></h5>
 				<p>
 				@m.Description
 				</p>
@@ -20,8 +21,8 @@
                 <span>@m.Director.Count</span>
                 <span>@m.SimilarTitles.Count</span>
                 <span><i class="mini-ico-calendar"></i>@m.Year</span>
-                <span>@m.MpaaRating</span> 
-                <span><i class="mini-ico-comment"></i>@m.RunTime m</span>
+                <span>@m.Rating</span> 
+                <span><i class="mini-ico-comment"></i>@(m.RunTime/60) m</span>
             </div>	
 		</div>
     </div>

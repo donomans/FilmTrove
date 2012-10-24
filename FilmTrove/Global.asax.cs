@@ -29,6 +29,7 @@ namespace FilmTrove
                 "7qf3845qydavuucmhj96b6hd",
                 "5jYe5FVhhF",
                 "FilmTrove");
+            
             Netflix.SetMethodForGettingCurrentUserAccount(FilmTrove.Models.NetflixAccount.GetCurrentUserNetflixUserInfo);
         }
     }

@@ -16,7 +16,7 @@ namespace FilmTrove.Controllers
         public ActionResult Index()
         {
             ViewBag.Movies = (from m in db.Movies
-                              select m).Take(10);
+                              select m).Take(50);
             return View();
         }
     }

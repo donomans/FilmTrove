@@ -1,4 +1,5 @@
-﻿@{
+﻿@using FilmTrove.Code
+@{
     ViewBag.Title = "FilmTrove. beta.";
     Layout = "~/Views/Shared/_viewlayout.cshtml";
 }
@@ -6,23 +7,25 @@
 <div id="portfolio-wrapper">
     @foreach (FilmTrove.Models.Movie m in ViewBag.Movies)
     {
-    <div class="one-third column portfolio-item">
-        <div class="picture"><a href="/View/Movie/@m.MovieId" title="@m.Title"><img src="/View/Image/@m.PosterId" alt="@m.Title"/><div class="image-overlay-link"></div></a>
+        String friendlytitle = m.Title.UrlFriendly(m.Year);
+    <div class="one-fourth column portfolio-item">
+        <div class="movie"><a href="/Movies/Details/@m.MovieId/@friendlytitle" title="@m.Title"><img src="@m.BestPosterUrl" alt="@m.Title"/><div class="image-overlay-link"></div></a>
 			<div class="item-description alt">
-                @using FilmTrove.Code
-				<h5><a href="/View/Movie/@m.MovieId/@m.Title.UrlFriendly(m.Year)">@m.Title</a></h5>
+				<h5><a href="/Movies/Details/@m.MovieId/@friendlytitle">@m.Title</a></h5>
 				<p>
 				@m.Description
 				</p>
                 @*need actors, directors, writers here*@
 			</div>
-			<div class="post-meta">
-                <span>@m.Actors.Count</span>
+			<div class="post-meta center">
+                <span>
+                @*<span>@m.Actors.Count</span>
                 <span>@m.Director.Count</span>
                 <span>@m.SimilarTitles.Count</span>
                 <span><i class="mini-ico-calendar"></i>@m.Year</span>
                 <span>@m.Rating</span> 
-                <span><i class="mini-ico-comment"></i>@(m.RunTime/60) m</span>
+                <span><i class="mini-ico-comment"></i>@(m.RunTime/60) m</span>*@
+                </span>
             </div>	
 		</div>
     </div>

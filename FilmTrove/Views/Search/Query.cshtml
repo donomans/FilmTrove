@@ -1,0 +1,43 @@
+﻿@using FilmTrove.Code;
+@using FlixSharp.Holders;
+@{
+    ViewBag.Title = "Search results";
+}
+
+<div id="portfolio-wrapper">
+    @foreach(FilmTrove.Models.Movie m in ViewBag.MovieResults)
+    {
+            String friendlytitle = m.Title.UrlFriendly(m.Year);
+    <div class="one-fourth column portfolio-item">
+        <div class="movie">
+            <a href="/Movies/Details/@m.MovieId/@friendlytitle" title="@m.Title">
+            <img src="@m.BestPosterUrl" alt="@m.Title"/>@*<div class="image-overlay-link"></div>*@</a>
+			<div class="item-description alt">
+				<h5><a href="/Movies/Details/@m.MovieId/@friendlytitle">@m.Title</a></h5>
+				@*<p>@m.ShortTitle</p>*@
+			</div>
+			<div class="post-meta center">
+                <span>
+                    <span>@m.Year</span>
+                    @*<span>@(m.Rating.RatingType == FlixSharp.Holders.RatingType.Mpaa ? 
+                    m.Rating.MpaaRating.ToString() : m.Rating.TvRating.ToString())</span>*@
+                    <span><a href="/Lists/Links/@m.MovieId/@friendlytitle" class="button color addtocollection">Add To...</a></span>
+                </span>
+            </div>	
+		</div>
+    </div>
+    }
+    @foreach(FilmTrove.Models.Person p in ViewBag.PeopleResults)
+    {
+        //Person p = (Person)r;
+        String friendlyname = p.Name.UrlFriendly();
+    <div class="one-fourth column portfolio-item">
+        <div class="person">
+           <a href="/People/Details/@p.PersonId/@friendlyname" title="@p.Name">@p.Name</a>
+            <div class="item-description alt">
+                @p.Bio
+            </div>
+        </div>
+    </div>
+    }
+</div>

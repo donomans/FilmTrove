@@ -16,11 +16,17 @@ namespace FilmTrove.Code
 
         public static String UrlFriendly(this String source)
         {
-            return source.Replace(" ", "_").Replace(":", "-");
+            if (source == null)
+                return null;
+            else
+                return source.Replace(" ", "_").Replace(":", "-")
+                .Replace("'", "").Replace("?", "").Replace(",", "")
+                .Replace("&", "and").Replace("/", "-"); ;
         }
         public static String UrlFriendly(this String source, Int32 year)
         {
             return (source + " (" + year + ")").UrlFriendly();
         }
+
     }
 }

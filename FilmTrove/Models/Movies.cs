@@ -15,28 +15,43 @@ namespace FilmTrove.Models
     public class Movie : Dateable
     {
         [Key]
-        public String MovieId { get; set; }
+        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
+        public Int32 MovieId { get; set; }
         public String Title { get; set; }
         public String AltTitle { get; set; }
 
         public String Description { get; set; }
         public String Rating { get; set; }
         public RatingType RatingType { get; set; }
-        public String PosterId { get; set; }
+        public String BestPosterUrl { get; set; }
         public Int32 Year { get; set; }
-        public Int32 RunTime { get; set; }
+        public Int32? RunTime { get; set; }
 
         public NetflixInfo Netflix { get; set; }
         public ImdbInfo Imdb { get; set; }
         public AmazonInfo Amazon { get; set; }
+        public RottenTomatoesInfo RottenTomatoes { get; set; }
 
-        public HashSet<String> Genres { get; set; }
+        public List<String> Genres
+        {
+            get { return _Genres; }
+            set { _Genres = value; }
+        }
+        private List<String> _Genres { get; set; }
+        public String GenresCompact
+        {
+            get { return _Genres != null ? String.Join(";#!", _Genres) : null; }
+            set { _Genres = value != null ? value.Split(new[] { ";#!" }, StringSplitOptions.RemoveEmptyEntries).ToList() : null; }
+        }
 
-        public virtual HashSet<Movie> SimilarTitles { get; set; }
+        public virtual ICollection<UserList> OnLists { get; set; }
 
-        public virtual HashSet<Person> Director { get; set; }
-        public virtual HashSet<Person> Actors { get; set; }
-        public virtual HashSet<Person> Writer { get; set; }
+        public virtual ICollection<Role> Roles { get; set; }
+
+        //public virtual ICollection<Person> Director { get; set; }
+        //public virtual ICollection<Person> Actors { get; set; }
+        //public virtual ICollection<Person> Writer { get; set; }
+        //public virtual ICollection<Person> Producer { get; set; }
 
         //public Int64 Count { get; set; } ///need to shard this somehow?
 
@@ -50,88 +65,14 @@ namespace FilmTrove.Models
             Netflix = new NetflixInfo();
             Imdb = new ImdbInfo();
             Amazon = new AmazonInfo();
+            RottenTomatoes = new RottenTomatoesInfo();
 
-            Genres = new HashSet<String>();
-
-            SimilarTitles = new HashSet<Movie>();
-
-            Director = new HashSet<Person>();
-            Actors = new HashSet<Person>();
-            Writer = new HashSet<Person>();
+            OnLists = new List<UserList>();
+            //Director = new HashSet<Person>();
+            //Actors = new HashSet<Person>();
+            //Writer = new HashSet<Person>();
         }
     }
 
 
-    [ComplexType]
-    public class NetflixInfo : ProviderInfo
-    {
-        public NetflixInfo()
-        {
-            Id = "";
-            Url = "";
-            AvgRating = "";
-            NeedsUpdate = true;
-        }
-    }
-    [ComplexType]
-    public class ImdbInfo : ProviderInfo
-    {
-        public ImdbInfo()
-        {
-            Id = "";
-            Url = "";
-            AvgRating = "";
-            NeedsUpdate = true;
-        }
-    }
-    [ComplexType]
-    public class AmazonInfo : ProviderInfo
-    {
-        public AmazonInfo()
-        {
-            Id = "";
-            Url = "";
-            AvgRating = "";
-            NeedsUpdate = true;
-        }
-    }
-
-    public abstract class ProviderInfo
-    {
-        public String Id { get; set; }
-        public String Url { get; set; }
-        public String AvgRating { get; set; }
-        public Boolean NeedsUpdate { get; set; }
-    }
-
-    public class Person : Dateable
-    {
-        [Key]
-        public String PersonId { get; set; }
-        public String Name { get; set; }
-
-        public virtual HashSet<Movie> Acted { get; set; }
-        public virtual HashSet<Movie> Directed { get; set; }
-        public virtual HashSet<Movie> Wrote { get; set; }
-
-        public override string ToString()
-        {
-            return Name;
-        }
-
-        public Person()
-        {
-            Acted = new HashSet<Movie>();
-            Directed = new HashSet<Movie>();
-            Wrote = new HashSet<Movie>();
-        }
-    }
-
-    public class Dateable
-    {
-        public DateTime? DateCreated { get; set; }
-        public DateTime? DateLastModified { get; set; }
-    }
-
-    
 }

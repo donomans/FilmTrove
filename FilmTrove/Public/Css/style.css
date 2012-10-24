@@ -10,7 +10,8 @@
 body {
 	background: #eee url(../images/texture.jpg) repeat;
 	background-attachment: fixed;
-	font-family: 'Droid Sans';
+	font-family: 'HelveticaNeue-Light', 'Helvetica Neue Light','RobotoLight';
+    /*text-shadow: 0px 0px 1px #888;*/
 	font-size: 12px;
 	color: #666;
 	-webkit-font-smoothing: antialiased; /* Fix for webkit rendering */
@@ -140,6 +141,10 @@ p, blockquote {
 	position: fixed; 
 	top: 0px; 
 	z-index:999;
+}
+
+.center {
+    text-align:center;
 }
 
 #header {
@@ -411,7 +416,7 @@ p, blockquote {
 	width: 150px;
 	margin: 0;
 	padding: 9px 18px;
-	font-family: Arial, sans-serif;
+	font-family: 'HelveticaNeue-Light', 'Helvetica Neue Light','RobotoThin'; /*Arial, sans-serif;*/
 	font-weight: normal;
 	font-size: 12px;
 	border-bottom: 1px solid #;
@@ -659,9 +664,9 @@ html[xmlns] .slides {display: block;}
 	margin-bottom: 15px;
 }
 
-/* Images Overlay
+/* Movies Overlay
 =================================================================== */
-.picture {
+.movie {
 	position: relative;
 	background: #fff;
 	padding: 9px; 
@@ -670,13 +675,13 @@ html[xmlns] .slides {display: block;}
     box-shadow: 0px 1px 1px rgba(0,0,0,.25);
 	}
 	
-.picture .item-description {
+.movie .item-description {
 	margin-bottom: 0px;
 	padding: 5px;
 	border: none;
 	margin: 0px;
 }	
-.picture img {width: 100%; height: auto; }
+.movie img {width: 100%; height: auto; }
 
 .image-overlay-link,
 .image-overlay-zoom {
@@ -692,8 +697,8 @@ html[xmlns] .slides {display: block;}
 	position: absolute;
 	z-index: 40;
 	display: none;
-	background-color: #222;
-	background: rgba(0, 0, 0, 0.7);
+	background-color: #999;
+	background: rgba(0, 0, 0, 0.1);
 	background-repeat: no-repeat;
 	background-position: 50%;
 	cursor: pointer;
@@ -707,11 +712,31 @@ html[xmlns] .slides {display: block;}
 	background-image: url(../images/overlay-icon-02.png);
 }
 
-.video {
+/*.video {
 	border: 10px solid #fff;
 	-webkit-box-shadow: 0px 1px 1px rgba(0,0,0,.25);
     box-shadow: 0px 1px 1px rgba(0,0,0,.25);
-}
+}*/
+
+/* Person
+=================================================================== */
+.person {
+	position: relative;
+	background: #fff;
+	padding: 9px; 
+	border: 1px solid #fcfcfc;
+	-webkit-box-shadow: 0px 1px 1px rgba(0,0,0,.25);
+    box-shadow: 0px 1px 1px rgba(0,0,0,.25);
+	}
+	
+.person .item-description {
+	margin-bottom: 0px;
+	padding: 5px;
+	border: none;
+	margin: 0px;
+}	
+
+
 
 /* Page Title
 =================================================================== */
@@ -767,7 +792,7 @@ html[xmlns] .slides {display: block;}
 }
 
 #page-title h2 {
-	font-family: "Boogaloo" !important;
+	font-family: 'HelveticaNeue', 'Helvetica Neue','RobotoBlack';/*"Boogaloo" !important;*/
 	color: #fff;
 	border-left: 4px solid #499ff0;
 	padding: 5px 20px 5px 20px;
@@ -813,8 +838,9 @@ iframe {
 
 .item-description h5 {
 	font-size: 12px;
-	font-family: Arial, sans-serif;
+	font-family: 'HelveticaNeue-Light', 'Helvetica Neue Light','RobotoLight';/*Arial, sans-serif;*/
 	font-weight: bold;
+    /*text-shadow: 0px 0px 1px #888;*/
 	line-height: 16px;
 	padding: 0px 0 8px 0;
 	margin: 0 0 8px 0;
@@ -1605,7 +1631,7 @@ input[type="button"] {
 	padding: 9px 12px;
 	display: inline-block;
 	border: 0px;
-	font-family: Arial, sans-serif;
+	font-family: 'HelveticaNeue-Light', 'Helvetica Neue Light','RobotoLight';/*Arial, sans-serif;*/
 	font-weight: bold;
 	cursor: pointer;
 	width: auto;
@@ -1742,7 +1768,7 @@ input[type="button"]:hover {background:#aaa}
 /* Alert Boxes
 =================================================================== */
 .notification {
-	font-family: Arial, sans-serif;
+	font-family: 'HelveticaNeue-Light', 'Helvetica Neue Light','RobotoLight'; /*Arial, sans-serif;*/
 	font-size: 12px;
 	line-height: 18px;
 	margin-bottom: 15px;
@@ -2040,7 +2066,7 @@ blockquote {
 	border: 1px solid #fcfcfc;
 	-webkit-box-shadow: 0px 1px 1px rgba(0,0,0,.25);
     box-shadow: 0px 1px 1px rgba(0,0,0,.25);
-	font-family: "Boogaloo";
+	font-family: 'HelveticaNeue-Light', 'Helvetica Neue Light','RobotoLight';/*"Boogaloo";*/
 	
 }
 
@@ -2049,7 +2075,7 @@ blockquote {
 		font-size: 24px;
 		padding: 15px;
 		color: #fff;
-		font-family: "Boogaloo";
+		font-family: 'HelveticaNeue-Light', 'Helvetica Neue Light','RobotoLight';/*"Boogaloo";*/
 	}
 	
 	.author {

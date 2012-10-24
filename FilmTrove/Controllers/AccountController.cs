@@ -267,7 +267,13 @@ namespace FilmTrove.Controllers
                         if (user == null)
                         {
                             // Insert name into the profile table
-                            db.UserProfiles.Add(new UserProfile { UserName = result.UserName, Provider = result.Provider });
+                            UserProfile prof = new UserProfile() { UserName = result.UserName, Provider = result.Provider, NetflixAccount = new NetflixAccount() };
+                            //UserList l = new UserList();
+                            //l.Owner = prof;
+                            //l.Movies
+                            //prof.Collection = l;
+                            db.UserProfiles.Add(prof);
+                            //db.Lists.Add(l);
                             db.SaveChanges();
 
                             String provider;

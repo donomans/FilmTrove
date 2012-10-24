@@ -22,6 +22,8 @@ namespace FilmTrove.Models
         public DbSet<Movie> Movies { get; set; }
         public DbSet<Person> People { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
+        public DbSet<UserList> Lists { get; set; }
+        public DbSet<Role> Roles { get; set; }
 
         public override Int32 SaveChanges()
         {
@@ -33,7 +35,8 @@ namespace FilmTrove.Models
                 where
                     e.IsRelationship == false &&
                     e.Entity != null &&
-                    (e.Entity is Dateable) //typeof(Dateable).IsAssignableFrom(e.Entity.GetType())
+                    (e.Entity is Dateable)
+                //typeof(Dateable).IsAssignableFrom(e.Entity.GetType())
                 select e;
 
             var currentTime = DateTime.Now;
@@ -55,42 +58,76 @@ namespace FilmTrove.Models
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Movie>().
-              HasMany(m => m.Director).
-              WithMany(p => p.Directed).
-              Map(
-               m =>
-               {
-                   m.MapLeftKey("MovieId");
-                   m.MapRightKey("PersonId");
-                   m.ToTable("MovieDirected");
-               });
+            //modelBuilder.Entity<Movie>().
+            //  HasMany(m => m.Director).
+            //  WithMany(p => p.Directed).
+            //  Map(
+            //   m =>
+            //   {
+            //       m.MapLeftKey("MovieId");
+            //       m.MapRightKey("PersonId");
+            //       m.ToTable("MovieDirected");
+            //   });
 
-            modelBuilder.Entity<Movie>().
-              HasMany(m => m.Actors).
-              WithMany(p => p.Acted).
-              Map(
-               m =>
-               {
-                   m.MapLeftKey("MovieId");
-                   m.MapRightKey("PersonId");
-                   m.ToTable("MovieActed");
-               });
+            //modelBuilder.Entity<Movie>().
+            //  HasMany(m => m.Actors).
+            //  WithMany(p => p.Acted).
+            //  Map(
+            //   m =>
+            //   {
+            //       m.MapLeftKey("MovieId");
+            //       m.MapRightKey("PersonId");
+            //       m.ToTable("MovieActed");
+            //   });
 
-            modelBuilder.Entity<Movie>().
-              HasMany(m => m.Writer).
-              WithMany(p => p.Wrote).
-              Map(
-               m =>
-               {
-                   m.MapLeftKey("MovieId");
-                   m.MapRightKey("PersonId");
-                   m.ToTable("MovieWrote");
-               });
+            //modelBuilder.Entity<Movie>().
+            //  HasMany(m => m.Writer).
+            //  WithMany(p => p.Wrote).
+            //  Map(
+            //   m =>
+            //   {
+            //       m.MapLeftKey("MovieId");
+            //       m.MapRightKey("PersonId");
+            //       m.ToTable("MovieWrote");
+            //   });
 
-            modelBuilder.Entity<Movie>().
-                HasMany(m => m.SimilarTitles).
-                WithMany();
+            //modelBuilder.Entity<Movie>().
+            // HasMany(m => m.Producer).
+            // WithMany(p => p.Produced).
+            // Map(
+            //  m =>
+            //  {
+            //      m.MapLeftKey("MovieId");
+            //      m.MapRightKey("PersonId");
+            //      m.ToTable("MovieProduced");
+            //  });
+
+            //modelBuilder.Entity<Movie>().
+            //    HasMany(m => m.SimilarTitles);
+
+
+
+            modelBuilder.Entity<UserList>().
+                HasRequired(l => l.Owner).
+                WithMany(u => u.UserLists);
+
+            modelBuilder.Entity<UserProfile>().
+                HasMany(u => u.UserLists).
+                WithRequired(l => l.Owner);
+
+
+
+            modelBuilder.Entity<UserList>().
+                HasMany(m => m.Movies).
+                WithMany(m => m.OnLists).
+                Map(
+                m =>
+                {
+                    m.MapLeftKey("ListId");
+                    m.MapRightKey("MovieId");
+                    m.ToTable("MoviesLists");
+                });
+
         }
     }
 

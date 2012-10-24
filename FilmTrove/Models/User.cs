@@ -21,13 +21,54 @@ namespace FilmTrove.Models
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public Int32 UserId { get; set; }
         public String UserName { get; set; }
-
         public String Provider { get; set; }
 
         public String Name { get; set; }
-        public String Email { get; set; } ///not sure if I'm guaranteed to get an email back from Facebook
+        public String Email { get; set; } ///not sure if I'm guaranteed to get an email back from Facebook?
+
+        //public UserList Collection { get; set; }
+        public virtual ICollection<UserList> UserLists { get; set; }
 
         public NetflixAccount NetflixAccount { get; set; }
+    }
+
+
+    public class UserList : Dateable
+    {
+        [Key]
+        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
+        public Int32 ListId { get; set; }
+        public String ListName { get; set; }
+        public UserProfile Owner { get; set; }
+
+        public virtual ICollection<Movie> Movies { get; set; }
+    }
+
+    public class UserListItem : Dateable
+    {
+        [Key]
+        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
+        public Int32 ListItemId { get; set; }
+
+        public String MovieTitle { get; set; }
+        public Int32? Rating { get; set; }
+
+        public DateTime LastWatched { get; set; }
+        public Boolean LoanedOut { get; set; }
+        public virtual UserProfile LoanedTo { get; set; }
+        public Format OwnedFormats { get; set; }
+
+
+        public virtual Movie Movie { get; set; }
+        public UserList List { get; set; }
+    }
+
+    [Flags]
+    public enum Format
+    {
+        DVD = 1,
+        Digital = 2,
+        Bluray = 4
     }
 
     [ComplexType]

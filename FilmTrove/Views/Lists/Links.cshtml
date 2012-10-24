@@ -1,0 +1,24 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Your lists</title>
+</head>
+<body>
+    <h2>Select a list:</h2>
+    <div>
+        @if(WebSecurity.IsAuthenticated){
+        <p>it worked:@ViewBag.Id<br />@ViewBag.FriendlyTitle </p>
+        }
+        else
+        {
+            <p>Please log in to add movies to your lists</p>
+        }
+    </div>
+</body>
+</html>

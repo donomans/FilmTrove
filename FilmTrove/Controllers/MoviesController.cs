@@ -7,26 +7,34 @@ using System.Web.Mvc;
 using FlixSharp;
 using FlixSharp.Holders;
 using FilmTrove.Filters;
+using System.Threading.Tasks;
+using FilmTrove.Models;
 
 namespace FilmTrove.Controllers
 {
     [InitializeSimpleMembership]
     public class MoviesController : Controller
     {
-        [HttpPost]
-        public ActionResult Search(FormCollection form)
+        //[HttpPost]
+        //public async Task<ActionResult> Search(FormCollection form)
+        //{
+        //    String term = form["searchterm"].ToString();
+        //    Netflix n = new Netflix();
+        //    SearchResults results = await n.Search.Search(term);
+        //    ///need to check if the results are in the database and populate it if not
+        //    ViewBag.MovieResults = await AsyncHelpers.GetDatabaseMovies(results.MovieResults);
+        //    //ViewBag.PeopleResults = await AsyncHelpers.GetDatabasePeople(results.PeopleResults);
+            
+        //    //ViewBag.SearchResults = results;
+
+        //    return View();
+        //}
+
+
+        [HttpGet]
+        public ActionResult Details(String id, String title)
         {
-            String term = form["search-form"].ToString();
-            Netflix n = new Netflix();
-            SearchResults results = n.Search.Search(term).Result;
-
-            ViewBag.SearchResults = results;
-
-            return View();
-        }
-
-        public ActionResult Index()
-        {
+            ViewBag.Id = id;
             return View();
         }
     }

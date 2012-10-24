@@ -62,6 +62,22 @@ jQuery(document).ready(function() {
 		});
 		
 	})();
+
+    /* Menu */
+	(function () {
+
+	    var $addtoNav = $('.addtonavigation').children('ul');
+
+	    $addtoNav.on('mouseenter', 'li', function () {
+	        var $this = $(this),
+				$subMenu = $this.children('ul');
+	        if ($subMenu.length) $this.addClass('hover');
+	        $subMenu.hide().stop(true, true).slideDown('fast');
+	    }).on('mouseleave', 'li', function () {
+	        $(this).removeClass('hover').children('ul').stop(true, true).slideUp('fast');
+	    });
+
+	})();
 	
 	/* Responsive Menu */
 	(function() {
@@ -75,21 +91,21 @@ jQuery(document).ready(function() {
 
 /* ------------------ Image Overlay ----------------- */
 
-	$(document).ready(function () {
-	  $('.picture a').hover(function () {
-		$(this).find('.image-overlay-zoom, .image-overlay-link').stop().fadeTo('fast', 1);
-	  },function () {
-		$(this).find('.image-overlay-zoom, .image-overlay-link').stop().fadeTo('fast', 0);
-	  });
-	});
+	//$(document).ready(function () {
+	//  $('.picture a').hover(function () {
+	//	$(this).find('.image-overlay-zoom, .image-overlay-link').stop().fadeTo('fast', 1);
+	//  },function () {
+	//	$(this).find('.image-overlay-zoom, .image-overlay-link').stop().fadeTo('fast', 0);
+	//  });
+	//});
 
 
 /* ------------------ Back To Top ------------------- */
 	
-	jQuery('#scroll-top-top a').click(function(){
-		jQuery('html, body').animate({scrollTop:0}, 300); 
-		return false; 
-	}); 
+	//jQuery('#scroll-top-top a').click(function(){
+	//	jQuery('html, body').animate({scrollTop:0}, 300); 
+	//	return false; 
+	//}); 
 	
 /* ------------------- Accordion -------------------- */	
 
@@ -335,6 +351,23 @@ $('#wrapper').imagesLoaded(function() {
 		}
 	});
 	
+	$(".addtocollection").fancybox({
+	    type: 'ajax',
+	    ajax: {
+	        dataType: 'html',
+	        headers:
+            { 'Accept': 'application/json' }
+	    },
+	    maxWidth: 300,
+	    maxHeight: 800,
+	    fitToView: true,
+	    width: '30%',
+	    height: '30%',
+	    autoSize: true,
+	    closeClick: false,
+	    openEffect: 'none',
+	    closeEffect: 'none'
+	});
 	
 })();
 

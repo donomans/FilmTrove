@@ -16,12 +16,10 @@
     <meta property="og:image" content="@ViewBag.OgImage"/>*@
     @*// /FB Open Graph*@
 
+    <link rel="stylesheet" type="text/css" href="/public/css/roboto.css" />
     <link rel="stylesheet" type="text/css" href="/public/css/style.css" />
     <link rel="stylesheet" type="text/css" href="/public/css/color.css" id="colors" />
     <link rel="stylesheet" type="text/css" href="/public/css/social_icons.css" />
-    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" />
-    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif" />
-    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Boogaloo" />
     <link rel="stylesheet" type="text/css" href="/public/themes/base/minified/jquery-ui.min.css" />
     @*<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>*@
     @*<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/jquery-ui.min.js"></script>*@
@@ -56,8 +54,8 @@
                         @*@using (Html.BeginForm("Search", "Movies", FormMethod.Post, new { id = "searchform"}))
                         {
                         *@
-                        <form action="@Url.Action("Search", "Movies")" id="searchform" method="post">
-					        <input id="searchbox" class="search-form" name="search-form" />
+                        <form action="@Url.Action("Query", "Search")" id="searchform" method="post">
+					        <input id="searchbox" class="search-form" name="searchterm" />
                         </form>
                         @*}*@
 				    </div>
@@ -70,12 +68,12 @@
 		    <div id="logo-small"></div>
 		    <div id="navigation">
 			    <ul id="nav">
-				    <li><a href="#">Find me a movie</a></li>
+				    <li><a href="/Search/Picker">Find me a movie</a></li>
 				    <li><a href="/Me">Me</a>
 					    <ul>
-					        <li><a href="#">Collection</a></li>
-					        <li><a href="#">Lists</a></li>
-					        <li><a href="#">Friends</a></li>
+					        <li><a href="/Lists/Collection/">Collection</a></li>
+					        <li><a href="/Lists/View">Lists</a></li>
+					        <li><a href="/Me/#Friends">Friends</a></li>
 					    </ul>
 				    </li>
 				    <li><a href="#">Movies</a>

@@ -23,10 +23,42 @@ namespace FilmTrove
                 url: "",
                 defaults: new { controller = "Home", action = "Index" });
 
+            #region Movies
             routes.MapRoute(
                 name: "Movies",
-                url: "Movies/{action}/{id}",
-                defaults: new { controller = "Movies", action = "Index", id = UrlParameter.Optional});
+                url: "Movies/{action}/{id}/{title}",
+                defaults: new { controller = "Movies", action = "Details", id = UrlParameter.Optional, title= UrlParameter.Optional});
+            routes.MapRoute(
+                name: "People",
+                url: "People/{action}/{id}/{title}",
+                defaults: new { controller = "People", action = "Details", id = UrlParameter.Optional, title = UrlParameter.Optional });
+            #endregion
+
+            #region Search
+            routes.MapRoute(
+                name: "Search",
+                url: "Search/{action}/{searchterm}",
+                defaults: new { controller = "Search", action = "Query", searchterm = UrlParameter.Optional});
+            #endregion
+
+            #region Lists
+            routes.MapRoute(
+                name: "Collection",
+                url: "Lists/Collection/{id}/{title}",
+                defaults: new { controller = "Lists", action = "Collection", id = UrlParameter.Optional, title = UrlParameter.Optional });
+            routes.MapRoute(
+                name: "List Links",
+                url: "Lists/Links/{id}/{title}",
+                defaults: new { controller = "Lists", action = "Links", id = UrlParameter.Optional, title = UrlParameter.Optional });
+            //routes.MapRoute(
+            //    name: "Lists",
+            //    url: "Lists/Add/Title/{movieid}/{movietitle}/{listid}/{listtitle}",
+            //    defaults: new { controller = "Lists", list = UrlParameter.Optional, action = "Add", id = UrlParameter.Optional, title = UrlParameter.Optional });
+            routes.MapRoute(
+                name: "Lists",
+                url: "Lists/{action}/{list}/{id}/{title}",
+                defaults: new { controller = "Lists", list = UrlParameter.Optional, action = UrlParameter.Optional, id = UrlParameter.Optional, title = UrlParameter.Optional });
+            #endregion
         }
     }
 }

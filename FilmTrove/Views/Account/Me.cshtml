@@ -1,5 +1,6 @@
-﻿@{
-    ViewBag.Title = "Me";
+﻿@using Microsoft.Web.Helpers
+@{
+    ViewBag.Title = "Me - My Account";
 }
 
 @*<div class="container">
@@ -10,7 +11,7 @@
 <div id="wrapper" class="white-wrapper">
     <div class="container" style="border-bottom: 1px solid #eee; margin-bottom:20px; padding-bottom:10px">
     <section id="page-title">
-        <h2>Your account details-</h2>
+        <h2>Your account details</h2>
     </section>
     @if (!WebSecurity.IsAuthenticated)
     {
@@ -31,16 +32,18 @@
 		<div class="tabs-container">
 			<div class="tab-content" id="tab1">
                 <h4>Account information:</h4>
-                @using Microsoft.Web.Helpers
+                @if (WebSecurity.IsAuthenticated)
+                {
                 <div class="field">
                     <label>Gravatar</label>
                     <img src="@Gravatar.GetUrl(WebSecurity.CurrentUserName)" title="@WebSecurity.CurrentUserName" />
                 </div><br />
+
                 @model FilmTrove.Models.UserUpdate
-                @using (Html.BeginForm("Me", "Account", FormMethod.Post, new { id = "accountupdateform" }))
+                using (Html.BeginForm("Me", "Account", FormMethod.Post, new { id = "accountupdateform" }))
                 {
-                    @Html.AntiForgeryToken()
-                    @Html.ValidationSummary()
+                    Html.AntiForgeryToken();
+                    Html.ValidationSummary();
                     <div class="field">
                         @Html.LabelFor(m => m.Name)
                         @Html.TextBoxFor(m=> m.Name)
@@ -51,14 +54,21 @@
                     </div>
                     <a href="javascript: document.forms['accountupdateform'].submit();" class="button color">Update</a>
                 }
+                }
+                else
+                {
+                    <div>Stop looking here. Log in to edit your account details.</div>
+                }
 			</div>
 			<div class="tab-content" id="tab2">  
-                <h4>Netflix settings:</h4>              
-                @if (ViewBag.Success != null)
+                <h4>Netflix settings:</h4>      
+                @if(WebSecurity.IsAuthenticated)
+                {        
+                if (ViewBag.Success != null)
                 {
                     <p>@ViewBag.Message</p>
                 }
-                @if(ViewBag.NetflixLinked == null)
+                if(ViewBag.NetflixLinked == null)
                 {
                     <p>Click the button to link your Netflix account so we can do awesome things like let your friends add movies to your queue and compare ratings with friends.</p>
                     <a href="@Url.Action("NetflixLogin", "Account")" class="button color">Link Netflix</a>
@@ -69,9 +79,21 @@
                     <p>If you would like to unlink your account, click the button below and then deauthorize FilmTrove from your Netflix account in the "Your Account" section of the Netflix website.</p>
                     <a href="@Url.Action("NetflixUnlink", "Account")" class="button color">Un-link Netflix</a>
                 }
+                }
+                else
+                {
+                    <div>Stop looking here. Log in to Link or Un-link your Netflix account.</div>
+                }
 			</div>
             <div class="tab-content" id="tab3">
                 <h4>Friends</h4>
+                @if (WebSecurity.IsAuthenticated)
+                {
+                }
+                else
+                {
+                    <div>Stop looking here. Log in to view your Friends.</div>
+                }
             </div>
 		</div>
 		

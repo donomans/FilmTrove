@@ -7,7 +7,6 @@
 packages/
 bin/
 obj/
-migrations/
 /publishprofiles/
 /*.publishsettings
 

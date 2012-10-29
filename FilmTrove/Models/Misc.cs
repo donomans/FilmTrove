@@ -19,9 +19,8 @@ namespace FilmTrove.Models
             AvgRating = null;
             NeedsUpdate = true;
         }
-        public Int32? AvgRating { get; set; }
+        public Single? AvgRating { get; set; }
         public String Synopsis { get; set; }
-        public String Studio { get; set; }
 
         //public String PosterUrlMedium { get; set; }
         public String PosterUrlLarge { get; set; }
@@ -64,7 +63,8 @@ namespace FilmTrove.Models
             set { _Awards = value != null ? value.Split(new[] { ";#!" }, StringSplitOptions.RemoveEmptyEntries).ToList() : null; }
         }
 
-        public ScreenFormat ScreenFormat { get; set; }
+        //public List<ScreenFormats> Formats { get; set; }
+        //public ScreenFormat ScreenFormat { get; set; }
         public Format Format { get; set; }
     }
     [ComplexType]
@@ -92,6 +92,9 @@ namespace FilmTrove.Models
             NeedsUpdate = true;
         }
 
+        public Double? LastPrice { get; set; }
+        public DateTime? LastPriceUpdate { get; set; }
+        public DateTime? LastFullUpdate { get; set; }
         public String PosterUrlMedium { get; set; }
         public String PosterUrlLarge { get; set; }
         public Int32? AvgRating { get; set; }
@@ -109,6 +112,7 @@ namespace FilmTrove.Models
             NeedsUpdate = true;
         }
 
+        public DateTime? LastFullUpdate { get; set; }
         public Int32? CriticScore { get; set; }
         public String CriticConsensus { get; set; }
         public String PosterUrlMedium { get; set; }
@@ -118,6 +122,7 @@ namespace FilmTrove.Models
         public Int32? AvgRating { get; set; }
         public String Synopsis { get; set; }
         public String Studio { get; set; }
+        public String TrailerUrl { get; set; }
     }
 
     public abstract class ProviderInfo
@@ -126,8 +131,6 @@ namespace FilmTrove.Models
         public String Id { get; set; }
         public String Url { get; set; }
         public Boolean NeedsUpdate { get; set; }
-
-
     }
 
     [ComplexType]

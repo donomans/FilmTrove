@@ -10,7 +10,7 @@ namespace FilmTrove.Code
 {
     public class AsyncHelpers
     {
-        public async static Task<List<Models.Movie>> GetDatabaseMovies(Movies results)
+        public async static Task<List<Models.Movie>> GetDatabaseMovies(Titles results)
         {
             var netflixids = results.Select((m) => m.Id);
             using (FilmTroveContext ftc = new FilmTroveContext())
@@ -27,15 +27,16 @@ namespace FilmTrove.Code
                 {
                     ///create FT database records for each of these with the movies basic information for now
                     FilmTrove.Models.Movie newmovie = ftc.Movies.Create();
-                    FlixSharp.Holders.Movie netflixmovie = results.Find(nid);
+                    FlixSharp.Holders.Title netflixmovie = results.Find(nid);
                     newmovie.Netflix = new NetflixInfo();
                     newmovie.Netflix.Id = nid;
                     newmovie.Netflix.Url = netflixmovie.IdUrl;
+                    newmovie.Netflix.AvgRating = netflixmovie.AverageRating;
                     newmovie.Netflix.PosterUrlLarge = netflixmovie.BoxArtUrlLarge;
                     newmovie.BestPosterUrl = netflixmovie.BoxArtUrlLarge;
                     newmovie.Year = netflixmovie.Year;
-                    newmovie.Title = netflixmovie.Title;
-
+                    newmovie.Title = netflixmovie.FullTitle;
+                    newmovie.Genres = netflixmovie.Genres;
                     ftc.Movies.Add(newmovie);
                     count++;
                 }
@@ -51,6 +52,7 @@ namespace FilmTrove.Code
                 catch (Exception)
                 {
                     ///need to add some sort of logging?
+                    
                 }
                 if (count > 0)
                     matchedmovies = ftc.Movies.Where(m => netflixids.Contains(m.Netflix.Id));

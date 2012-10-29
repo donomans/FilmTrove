@@ -24,6 +24,7 @@ namespace FilmTrove.Models
         public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<UserList> Lists { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<UserListItem> ListItems { get; set; }
 
         public override Int32 SaveChanges()
         {

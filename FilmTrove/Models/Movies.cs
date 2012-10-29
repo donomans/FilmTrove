@@ -48,12 +48,10 @@ namespace FilmTrove.Models
 
         public virtual ICollection<Role> Roles { get; set; }
 
-        //public virtual ICollection<Person> Director { get; set; }
-        //public virtual ICollection<Person> Actors { get; set; }
-        //public virtual ICollection<Person> Writer { get; set; }
-        //public virtual ICollection<Person> Producer { get; set; }
+        //public FlixSharp.Holders.NetflixType Type { get; set; }
 
-        //public Int64 Count { get; set; } ///need to shard this somehow?
+        public Int64 ViewCount { get; set; } ///eventual shard
+        public Int64 SearchCount { get; set; } ///eventual shard
 
         public override string ToString()
         {

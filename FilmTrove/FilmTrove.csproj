@@ -191,6 +191,22 @@
     <Compile Include="Migrations\201210240101445_i.Designer.cs">
       <DependentUpon>201210240101445_i.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201210242233467_u.cs" />
+    <Compile Include="Migrations\201210242233467_u.Designer.cs">
+      <DependentUpon>201210242233467_u.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201210251938065_m.cs" />
+    <Compile Include="Migrations\201210251938065_m.Designer.cs">
+      <DependentUpon>201210251938065_m.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201210251938493_m1.cs" />
+    <Compile Include="Migrations\201210251938493_m1.Designer.cs">
+      <DependentUpon>201210251938493_m1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201210272206044_m2.cs" />
+    <Compile Include="Migrations\201210272206044_m2.Designer.cs">
+      <DependentUpon>201210272206044_m2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\FilmTroveContext.cs" />
     <Compile Include="Models\Misc.cs" />
@@ -344,6 +360,18 @@
     <EmbeddedResource Include="Migrations\201210240101445_i.resx">
       <DependentUpon>201210240101445_i.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201210242233467_u.resx">
+      <DependentUpon>201210242233467_u.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201210251938065_m.resx">
+      <DependentUpon>201210251938065_m.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201210251938493_m1.resx">
+      <DependentUpon>201210251938493_m1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201210272206044_m2.resx">
+      <DependentUpon>201210272206044_m2.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -361,7 +389,7 @@
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerPort>61549</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost:53259/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>

@@ -11,9 +11,9 @@ using System.Xml.Linq;
 using System.Web.Mvc;
 using System.Web;
 using System.Web.Caching;
-using FilmTrove.App_Code;
-using FlixSharp;
 using System.Threading.Tasks;
+using FlixSharp;
+using FilmTrove.Code;
 
 namespace FilmTrove.Controllers.Api
 {
@@ -22,8 +22,8 @@ namespace FilmTrove.Controllers.Api
         // Get api/netflixsearch
         public async Task<IEnumerable<String>> Get([FromUri] String term)
         {
-            Netflix n = new Netflix();
-            IEnumerable<String> titles = await n.Search.AutoCompleteTitle(term, 50);
+            //Netflix n = new Netflix();
+            IEnumerable<String> titles = await Netflix.Search.AutoCompleteTitle(term, 50);
 
             ///toss the full list into another service that will churn 
             ///through the records and populate the database.

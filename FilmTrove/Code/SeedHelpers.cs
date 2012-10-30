@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Caching;
 
-namespace FilmTrove.App_Code
+namespace FilmTrove.Code
 {
     public static class SeedHelpers
     {

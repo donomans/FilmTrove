@@ -25,7 +25,7 @@ namespace FilmTrove.Controllers
 
                 if (m.Netflix.NeedsUpdate)
                 {
-                    nfm = FillNetflix(m.Netflix.Url);
+                    nfm = Netflix.Fill.Titles.GetCompleteTitle(id, true);
                 }
                 if (m.Amazon.NeedsUpdate || (m.Amazon.LastPriceUpdate.HasValue && ((m.Amazon.LastPriceUpdate.Value - DateTime.Now) > new TimeSpan(1, 0, 0, 0))))
                 {
@@ -79,41 +79,5 @@ namespace FilmTrove.Controllers
             return View();
         }
 
-        private static async Task<FlixSharp.Holders.Title> FillNetflix(String id)
-        {
-            Netflix n = new Netflix();
-            FlixSharp.Holders.Title nfm = await n.Fill.GetBaseTitle(id);
-            
-            ///4) get synopsis
-            var synopsis = n.Fill.GetSynopsis(id);
-            
-            ///6) get similar titles (add those to database in basic format, similar to AsyncHelpers.GetDatabaseMovies
-            var similartitles = n.Fill.GetSimilarTitles(id, 20);
-            
-            ///8) get awards
-            var awards = n.Fill.GetAwards(id);
-
-            ///9) screen format / title format
-            var screenformats = n.Fill.GetScreenFormats(id);
-
-            ///10) format availability
-            var formatavailability = n.Fill.GetFormatAvailability(id);
-
-            ///12) Actors
-            var actors = n.Fill.GetActors(id);
-            
-            ///13) Directors
-            var directors = n.Fill.GetDirectors(id);
-
-
-            nfm.Synopsis = await synopsis;
-            nfm.SimilarTitles = await similartitles;
-            nfm.Awards = await awards;
-            nfm.ScreenFormats = await screenformats;
-            nfm.Formats = await formatavailability;
-            nfm.Actors = await actors;
-            nfm.Directors = await directors;
-            return nfm;
-        }
     }
 }

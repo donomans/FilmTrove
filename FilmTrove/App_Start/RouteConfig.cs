@@ -27,7 +27,7 @@ namespace FilmTrove
             routes.MapRoute(
                 name: "Movies",
                 url: "Movies/{action}/{id}/{title}",
-                defaults: new { controller = "Movies", action = "Details", id = UrlParameter.Optional, title= UrlParameter.Optional});
+                defaults: new { controller = "Movies", action = "Details", id = UrlParameter.Optional, title = UrlParameter.Optional});
             routes.MapRoute(
                 name: "People",
                 url: "People/{action}/{id}/{title}",
@@ -50,10 +50,6 @@ namespace FilmTrove
                 name: "List Links",
                 url: "Lists/Links/{id}/{title}",
                 defaults: new { controller = "Lists", action = "Links", id = UrlParameter.Optional, title = UrlParameter.Optional });
-            //routes.MapRoute(
-            //    name: "Lists",
-            //    url: "Lists/Add/Title/{movieid}/{movietitle}/{listid}/{listtitle}",
-            //    defaults: new { controller = "Lists", list = UrlParameter.Optional, action = "Add", id = UrlParameter.Optional, title = UrlParameter.Optional });
             routes.MapRoute(
                 name: "Lists",
                 url: "Lists/{action}/{list}/{id}/{title}",

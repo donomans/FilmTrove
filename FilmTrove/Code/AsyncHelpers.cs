@@ -33,9 +33,13 @@ namespace FilmTrove.Code
                     newmovie.Netflix.Url = netflixmovie.IdUrl;
                     newmovie.Netflix.AvgRating = netflixmovie.AverageRating;
                     newmovie.Netflix.PosterUrlLarge = netflixmovie.BoxArtUrlLarge;
+                    newmovie.Netflix.OfficialWebsiteUrl = netflixmovie.OfficialWebsite;
                     newmovie.BestPosterUrl = netflixmovie.BoxArtUrlLarge;
+                    newmovie.Rating = netflixmovie.Rating.RatingType == RatingType.Mpaa ?
+                        netflixmovie.Rating.MpaaRating.ToString() : netflixmovie.Rating.TvRating.ToString();
                     newmovie.Year = netflixmovie.Year;
                     newmovie.Title = netflixmovie.FullTitle;
+                    newmovie.AltTitle = netflixmovie.ShortTitle;
                     newmovie.Genres = netflixmovie.Genres;
                     ftc.Movies.Add(newmovie);
                     count++;

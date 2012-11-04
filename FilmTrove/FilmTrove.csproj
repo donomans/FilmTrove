@@ -178,6 +178,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Api\NetflixController.cs" />
     <Compile Include="Controllers\Api\NetflixSearchController.cs" />
+    <Compile Include="Controllers\PeopleController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Controllers\Api\UserServicesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -206,6 +207,10 @@
     <Compile Include="Migrations\201210272206044_m2.cs" />
     <Compile Include="Migrations\201210272206044_m2.Designer.cs">
       <DependentUpon>201210272206044_m2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201211021948112_m3.cs" />
+    <Compile Include="Migrations\201211021948112_m3.Designer.cs">
+      <DependentUpon>201211021948112_m3.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\FilmTroveContext.cs" />
@@ -371,6 +376,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201210272206044_m2.resx">
       <DependentUpon>201210272206044_m2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201211021948112_m3.resx">
+      <DependentUpon>201211021948112_m3.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

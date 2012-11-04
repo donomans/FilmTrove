@@ -64,11 +64,11 @@ namespace FilmTrove.Models
             Imdb = new ImdbInfo();
             Amazon = new AmazonInfo();
             RottenTomatoes = new RottenTomatoesInfo();
+            
+            ViewCount = 0;
 
             OnLists = new List<UserList>();
-            //Director = new HashSet<Person>();
-            //Actors = new HashSet<Person>();
-            //Writer = new HashSet<Person>();
+            Roles = new List<Role>();
         }
     }
 

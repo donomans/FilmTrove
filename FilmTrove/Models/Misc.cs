@@ -33,23 +33,23 @@ namespace FilmTrove.Models
             set { _SimilarTitles = value; }
         }
         private List<String> _SimilarTitles { get; set; }
-        public virtual String SimilarTitlesCompact
+        public String SimilarTitlesCompact
         {
             get { return _SimilarTitles != null ? String.Join(";#!", _SimilarTitles) : null; }
             set { _SimilarTitles = value != null ? value.Split(new[] { ";#!" }, StringSplitOptions.RemoveEmptyEntries).ToList() : null; }
         }
 
-        public List<String> RelatedTitles
-        {
-            get { return _RelatedTitles; }
-            set { _RelatedTitles = value; }
-        }
-        private List<String> _RelatedTitles { get; set; }
-        public virtual String RelatedTitlesCompact
-        {
-            get { return _RelatedTitles != null ? String.Join(";#!", _RelatedTitles) : null; }
-            set { _RelatedTitles = value != null ? value.Split(new[] { ";#!" }, StringSplitOptions.RemoveEmptyEntries).ToList() : null; }
-        }
+        //public List<String> RelatedTitles
+        //{
+        //    get { return _RelatedTitles; }
+        //    set { _RelatedTitles = value; }
+        //}
+        //private List<String> _RelatedTitles { get; set; }
+        //public String RelatedTitlesCompact
+        //{
+        //    get { return _RelatedTitles != null ? String.Join(";#!", _RelatedTitles) : null; }
+        //    set { _RelatedTitles = value != null ? value.Split(new[] { ";#!" }, StringSplitOptions.RemoveEmptyEntries).ToList() : null; }
+        //}
 
         public List<String> Awards
         {
@@ -57,7 +57,7 @@ namespace FilmTrove.Models
             set { _Awards = value; }
         }
         private List<String> _Awards { get; set; }
-        public virtual String AwardsCompact
+        public String AwardsCompact
         {
             get { return _Awards != null ? String.Join(";#!", _Awards) : null; }
             set { _Awards = value != null ? value.Split(new[] { ";#!" }, StringSplitOptions.RemoveEmptyEntries).ToList() : null; }
@@ -66,6 +66,8 @@ namespace FilmTrove.Models
         //public List<ScreenFormats> Formats { get; set; }
         //public ScreenFormat ScreenFormat { get; set; }
         public Format Format { get; set; }
+
+        public String OfficialWebsiteUrl { get; set; }
     }
     [ComplexType]
     public class ImdbInfo : ProviderInfo

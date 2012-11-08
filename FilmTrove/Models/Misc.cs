@@ -138,17 +138,32 @@ namespace FilmTrove.Models
     [ComplexType]
     public class NetflixPersonInfo : ProviderInfo
     {
+        public NetflixPersonInfo()
+        {
+            Id = "";
+            Url = "";
+            NeedsUpdate = true;
+        }
     }
     [ComplexType]
     public class ImdbPersonInfo : ProviderInfo
     {
+        public ImdbPersonInfo()
+        {
+            Id = "";
+            Url = "";
+            NeedsUpdate = true;
+        }
     }
-    //public class AmazonPersonInfo : ProviderInfo
-    //{
-    //}
     [ComplexType]
     public class RottenTomatoesPersonInfo : ProviderInfo
     {
+        public RottenTomatoesPersonInfo()
+        {
+            Id = "";
+            Url = "";
+            NeedsUpdate = true;
+        }
     }
 
 

@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
+using FilmTrove.Code;
 
 namespace FilmTrove.Models
 {
@@ -22,7 +24,11 @@ namespace FilmTrove.Models
 
         public virtual ICollection<Role> Roles { get; set; }
 
-        public override string ToString()
+        public String GetDetailsUrl()
+        {
+            return "/People/Details/" + PersonId + "/" + Name.UrlFriendly();
+        }
+        public override String ToString()
         {
             return Name;
         }

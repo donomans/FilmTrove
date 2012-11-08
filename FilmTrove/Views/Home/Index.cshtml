@@ -13,7 +13,7 @@
 			<div class="item-description alt">
 				<h5><a href="/Movies/Details/@m.MovieId/@friendlytitle">@m.Title</a></h5>
 				<p>
-				@m.Description
+				@Html.Raw(m.Description)
 				</p>
                 @*need actors, directors, writers here*@
 			</div>

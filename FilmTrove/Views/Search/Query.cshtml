@@ -35,7 +35,7 @@
         <div class="person">
            <a href="/People/Details/@p.PersonId/@friendlyname" title="@p.Name">@p.Name</a>
             <div class="item-description alt">
-                @p.Bio
+                @Html.Raw(p.Bio)
             </div>
         </div>
     </div>

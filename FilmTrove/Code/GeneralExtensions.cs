@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 
@@ -28,5 +29,21 @@ namespace FilmTrove.Code
             return (source + " (" + year + ")").UrlFriendly();
         }
 
+        public static TSource WhereFirstOrCreate<TSource>(this IQueryable<TSource> source, Func<TSource,Boolean> predicate) where TSource : new()
+        {
+            TSource ts = source.Where(predicate).FirstOrDefault();
+            if (ts == null)
+                return new TSource();
+            else
+                return ts;
+        }
+        public static TSource WhereFirstOrCreate<TSource>(this ICollection<TSource> source, Func<TSource, Boolean> predicate) where TSource : new()
+        {
+            TSource ts = source.Where(predicate).FirstOrDefault();
+            if (ts == null)
+                return new TSource();
+            else
+                return ts;
+        }
     }
 }

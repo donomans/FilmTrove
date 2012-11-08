@@ -1,5 +1,21 @@
 ﻿@{
     ViewBag.Title = "Details";
+    FilmTrove.Models.Movie m = ViewBag.Movie;
 }
-
-<h2>Details</h2>
+<div id="portfolio-wrapper">
+    <div class="eight columns portfolio-item" id="poster">
+        <img src="@m.BestPosterUrl" alt="@m.Title" />
+    </div>
+    <div class="one-fourth column portfolio-item" id="basicinfo">
+        <h2>@m.Title</h2>
+        <
+    </div>
+    <div class="one-fourth column portfolio-item" id="supplierdata">
+    </div>
+    <div class="sixteen columns portfolio-item" id="synopsis">
+    </div>
+    <div class="eight columns portfolio-item" id="cast">
+    </div>
+    <div class="eight columns portfolio-item" id="creators">
+    </div>
+</div>

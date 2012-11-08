@@ -107,13 +107,20 @@ namespace FilmTrove.Controllers
                     foreach (FlixSharp.Holders.Person p in actorsfordatabase)
                     {
                         ///1) find the cast and loop through and add the people to the database in a similar manner as AsyncHelpers.GetDatabasePeople
-                        FilmTrove.Models.Person ftperson = ftc.People.Create();
-                        ftperson.Netflix.Id = p.Id;
-                        ftperson.Netflix.NeedsUpdate = true;
-                        ftperson.Netflix.Url = p.IdUrl;
-                        ftperson.Bio = p.Bio;
-                        ftperson.Name = p.Name;
-                        ftc.People.Add(ftperson);
+                        FilmTrove.Models.Person ftperson = ftc.People.Local.WhereFirstOrCreate(t => t.Netflix.Id == p.Id);
+                        if (ftperson.Name == null || ftperson.Name == "")
+                        {
+                            ftperson = ftc.People.WhereFirstOrCreate(t => t.Netflix.Id == p.Id);
+                            if (ftperson.Name == null || ftperson.Name == "")
+                            {
+                                ftperson.Netflix.Id = p.Id;
+                                ftperson.Netflix.NeedsUpdate = true;
+                                ftperson.Netflix.Url = p.IdUrl;
+                                ftperson.Bio = p.Bio;
+                                ftperson.Name = p.Name;
+                                ftc.People.Add(ftperson);
+                            }
+                        }
                         ///2) add this movie as a new role on the movie
                         Role r = ftc.Roles.Create();
                         r.InRole = RoleType.Actor;
@@ -147,14 +154,20 @@ namespace FilmTrove.Controllers
                     foreach (FlixSharp.Holders.Person p in directorsfordatabase)
                     {
                         ///1) find the cast and loop through and add the people to the database in a similar manner as AsyncHelpers.GetDatabasePeople
-                        FilmTrove.Models.Person ftperson = ftc.People.Create();
-                        ftperson.Netflix.Id = p.Id;
-                        ftperson.Netflix.NeedsUpdate = true;
-                        ftperson.Netflix.Url = p.IdUrl;
-                        ftperson.Bio = p.Bio;
-                        ftperson.Name = p.Name;
-                        ftc.People.Add(ftperson);
-
+                        FilmTrove.Models.Person ftperson = ftc.People.Local.WhereFirstOrCreate(t => t.Netflix.Id == p.Id);
+                        if (ftperson.Name == null || ftperson.Name == "")
+                        {
+                            ftperson = ftc.People.WhereFirstOrCreate(t => t.Netflix.Id == p.Id);
+                            if (ftperson.Name == null || ftperson.Name == "")
+                            {
+                                ftperson.Netflix.Id = p.Id;
+                                ftperson.Netflix.NeedsUpdate = true;
+                                ftperson.Netflix.Url = p.IdUrl;
+                                ftperson.Bio = p.Bio;
+                                ftperson.Name = p.Name;
+                                ftc.People.Add(ftperson);
+                            }
+                        }
                         ///2) add this movie as a new role on the movie
                         Role r = ftc.Roles.Create();
                         r.InRole = RoleType.Director;

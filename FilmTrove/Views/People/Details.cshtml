@@ -1,5 +1,49 @@
 ﻿@{
-    ViewBag.Title = "Details";
+    FilmTrove.Models.Person person = ViewBag.Person;
+    ViewBag.Title = person.Name + " details";
 }
 
-<h2>Details</h2>
+<h2>@person.Name</h2>
+<p>@Html.Raw(person.Bio)</p>
+@if (ViewBag.NeedFilmography)
+{
+    <script>
+        $.ajax("/People/Filmography/@person.PersonId").done(
+            function (films) {
+                $("#filmography").html("got some filmography: " + films);
+            });
+    </script>
+}
+<div id="filmography">
+    @if (!ViewBag.NeedFilmography)
+    {
+    <ul>
+        @foreach (FilmTrove.Models.Role r in person.Roles.Where(t=> t.InRole == FilmTrove.Models.RoleType.Actor))
+        {
+        <li>Actor</li>
+        <li><a href="@r.Movie.GetDetailsUrl()">@r.Movie.Title</a></li>   
+        }
+    </ul>
+        <ul>
+        @foreach (FilmTrove.Models.Role r in person.Roles.Where(t=> t.InRole == FilmTrove.Models.RoleType.Director))
+        {
+        <li>Director</li>
+        <li><a href="@r.Movie.GetDetailsUrl()">@r.Movie.Title</a></li>   
+        }
+    </ul>
+    <ul>
+        @foreach (FilmTrove.Models.Role r in person.Roles.Where(t=> t.InRole == FilmTrove.Models.RoleType.Writer))
+        {
+        <li>Writer</li>
+        <li><a href="@r.Movie.GetDetailsUrl()">@r.Movie.Title</a></li>   
+        }
+    </ul>
+    <ul>
+        @foreach (FilmTrove.Models.Role r in person.Roles.Where(t=> t.InRole == FilmTrove.Models.RoleType.Producer))
+        {
+        <li>Producer</li>
+        <li><a href="@r.Movie.GetDetailsUrl()">@r.Movie.Title</a></li>   
+        }
+    </ul>
+    }
+</div>

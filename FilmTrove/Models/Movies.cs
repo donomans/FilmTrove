@@ -9,6 +9,7 @@ using System.Web;
 using System.Data.Objects;
 using System.Data;
 using FlixSharp.Holders;
+using FilmTrove.Code;
 
 namespace FilmTrove.Models
 {
@@ -53,7 +54,11 @@ namespace FilmTrove.Models
         public Int64 ViewCount { get; set; } ///eventual shard
         public Int64 SearchCount { get; set; } ///eventual shard
 
-        public override string ToString()
+        public String GetDetailsUrl()
+        {
+            return "/Movies/Details/" + MovieId + "/" + Title.UrlFriendly();
+        }
+        public override String ToString()
         {
             return Title;
         }

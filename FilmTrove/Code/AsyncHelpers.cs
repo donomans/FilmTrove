@@ -30,7 +30,8 @@ namespace FilmTrove.Code
                     FlixSharp.Holders.Title netflixmovie = results.Find(nid);
                     newmovie.Netflix = new NetflixInfo();
                     newmovie.Netflix.Id = nid;
-                    newmovie.Netflix.Url = netflixmovie.IdUrl;
+                    newmovie.Netflix.IdUrl = netflixmovie.IdUrl;
+                    newmovie.Netflix.Url = netflixmovie.NetflixSiteUrl;
                     newmovie.Netflix.AvgRating = netflixmovie.AverageRating;
                     newmovie.Netflix.PosterUrlLarge = netflixmovie.BoxArtUrlLarge;
                     newmovie.Netflix.OfficialWebsiteUrl = netflixmovie.OfficialWebsite;
@@ -86,7 +87,8 @@ namespace FilmTrove.Code
                     newperson.Bio = netflixperson.Bio;
                     newperson.Netflix = new NetflixPersonInfo();
                     newperson.Netflix.Id = netflixperson.Id;
-                    newperson.Netflix.Url = netflixperson.IdUrl;
+                    newperson.Netflix.IdUrl = netflixperson.IdUrl;
+                    newperson.Netflix.Url = netflixperson.NetflixSiteUrl;
 
                     ftc.People.Add(newperson);
                     count++;

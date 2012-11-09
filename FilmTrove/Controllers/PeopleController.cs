@@ -50,7 +50,7 @@ namespace FilmTrove.Controllers
 
                 if (p.Netflix.NeedsUpdate) ///how can i make sure it checks filmography occasionally?
                 {
-                    nfp = Netflix.Fill.People.GetCompletePerson(p.Netflix.Url, true);
+                    nfp = Netflix.Fill.People.GetCompletePerson(p.Netflix.IdUrl, true);
                 }
                 if (p.RottenTomatoes.NeedsUpdate)
                 {
@@ -77,8 +77,8 @@ namespace FilmTrove.Controllers
                         {
                             ///7) make call to actors/directors api 
                             
-                            directors.Add(ftm, Netflix.Fill.Titles.GetDirectors(ftm.Netflix.Url));
-                            actors.Add(ftm, Netflix.Fill.Titles.GetActors(ftm.Netflix.Url));
+                            directors.Add(ftm, Netflix.Fill.Titles.GetDirectors(ftm.Netflix.IdUrl));
+                            actors.Add(ftm, Netflix.Fill.Titles.GetActors(ftm.Netflix.IdUrl));
                         }
                     }
                     ///5) find the netflix ids that aren't in the database
@@ -89,7 +89,8 @@ namespace FilmTrove.Controllers
                     {
                         var m = ftc.Movies.Create();
                         m.Netflix.Id = title.Id;
-                        m.Netflix.Url = title.IdUrl;
+                        m.Netflix.IdUrl = title.IdUrl;
+                        m.Netflix.Url = title.NetflixSiteUrl;
                         m.Netflix.AvgRating = title.AverageRating;
                         m.Netflix.OfficialWebsiteUrl = title.OfficialWebsite;
                         m.Netflix.PosterUrlLarge = title.BoxArtUrlLarge;
@@ -104,8 +105,8 @@ namespace FilmTrove.Controllers
                         m.Genres = title.Genres;
                         ftc.Movies.Add(m);
                         ///7) make call to actors/directors api on each filmography title
-                        directors.Add(m, Netflix.Fill.Titles.GetDirectors(m.Netflix.Url));
-                        actors.Add(m, Netflix.Fill.Titles.GetActors(m.Netflix.Url));
+                        directors.Add(m, Netflix.Fill.Titles.GetDirectors(m.Netflix.IdUrl));
+                        actors.Add(m, Netflix.Fill.Titles.GetActors(m.Netflix.IdUrl));
                     }
 
                     ///8) add the people that don't exist to the ftdatabase
@@ -139,7 +140,8 @@ namespace FilmTrove.Controllers
                                     newperson.Name = nperson.Name;
                                     newperson.Bio = nperson.Bio;
                                     newperson.Netflix.Id = nperson.Id;
-                                    newperson.Netflix.Url = nperson.IdUrl;
+                                    newperson.Netflix.IdUrl = nperson.IdUrl;
+                                    newperson.Netflix.Url = nperson.NetflixSiteUrl;
 
                                     ftc.People.Add(newperson);
                                 }
@@ -174,7 +176,8 @@ namespace FilmTrove.Controllers
                                     newperson.Name = nperson.Name;
                                     newperson.Bio = nperson.Bio;
                                     newperson.Netflix.Id = nperson.Id;
-                                    newperson.Netflix.Url = nperson.IdUrl;
+                                    newperson.Netflix.Url = nperson.NetflixSiteUrl;
+                                    newperson.Netflix.IdUrl = nperson.IdUrl;
 
                                     ftc.People.Add(newperson);
                                 }

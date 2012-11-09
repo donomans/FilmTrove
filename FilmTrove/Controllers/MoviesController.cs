@@ -26,7 +26,7 @@ namespace FilmTrove.Controllers
 
                 if (m.Netflix.NeedsUpdate)
                 {
-                    nfm = Netflix.Fill.Titles.GetCompleteTitle(m.Netflix.Url, true);
+                    nfm = Netflix.Fill.Titles.GetCompleteTitle(m.Netflix.IdUrl, true);
                 }
                 if (m.Amazon.NeedsUpdate || (m.Amazon.LastPriceUpdate.HasValue && ((m.Amazon.LastPriceUpdate.Value - DateTime.Now) > new TimeSpan(1, 0, 0, 0))))
                 {
@@ -98,7 +98,8 @@ namespace FilmTrove.Controllers
                     }
                     //m.Netflix.RelatedTitles = netflixmovie.RelatedTitles.Select(t => t.Id).ToList();
                     m.Netflix.Synopsis = netflixtitle.Synopsis;
-                    m.Netflix.Url = netflixtitle.IdUrl;
+                    m.Netflix.IdUrl = netflixtitle.IdUrl;
+                    m.Netflix.Url = netflixtitle.NetflixSiteUrl;
                     m.Netflix.OfficialWebsiteUrl = netflixtitle.NetflixSiteUrl;
                     var nfactorids = netflixtitle.Actors.Select(t => t.Id);
                     var matchedactors = ftc.People.Where(t => nfactorids.Contains(t.Netflix.Id));
@@ -115,7 +116,8 @@ namespace FilmTrove.Controllers
                             {
                                 ftperson.Netflix.Id = p.Id;
                                 ftperson.Netflix.NeedsUpdate = true;
-                                ftperson.Netflix.Url = p.IdUrl;
+                                ftperson.Netflix.IdUrl = p.IdUrl;
+                                ftperson.Netflix.Url = p.NetflixSiteUrl;
                                 ftperson.Bio = p.Bio;
                                 ftperson.Name = p.Name;
                                 ftc.People.Add(ftperson);
@@ -162,7 +164,8 @@ namespace FilmTrove.Controllers
                             {
                                 ftperson.Netflix.Id = p.Id;
                                 ftperson.Netflix.NeedsUpdate = true;
-                                ftperson.Netflix.Url = p.IdUrl;
+                                ftperson.Netflix.IdUrl = p.IdUrl;
+                                ftperson.Netflix.Url = p.NetflixSiteUrl;
                                 ftperson.Bio = p.Bio;
                                 ftperson.Name = p.Name;
                                 ftc.People.Add(ftperson);
@@ -201,7 +204,8 @@ namespace FilmTrove.Controllers
                     {
                         FilmTrove.Models.Movie ftmovie = ftc.Movies.Create();
                         ftmovie.Netflix.Id = t.Id;
-                        ftmovie.Netflix.Url = t.IdUrl;
+                        ftmovie.Netflix.IdUrl = t.IdUrl;
+                        ftmovie.Netflix.Url = t.NetflixSiteUrl;
                         ftmovie.Netflix.AvgRating = t.AverageRating;
                         ftmovie.Netflix.OfficialWebsiteUrl = t.OfficialWebsite;
                         ftmovie.Netflix.PosterUrlLarge = t.BoxArtUrlLarge;

@@ -18,30 +18,30 @@
     @if (!ViewBag.NeedFilmography)
     {
     <ul>
+        <li>Actor</li>
         @foreach (FilmTrove.Models.Role r in person.Roles.Where(t=> t.InRole == FilmTrove.Models.RoleType.Actor))
         {
-        <li>Actor</li>
         <li><a href="@r.Movie.GetDetailsUrl()">@r.Movie.Title</a></li>   
         }
     </ul>
-        <ul>
+    <ul>
+        <li>Director</li>
         @foreach (FilmTrove.Models.Role r in person.Roles.Where(t=> t.InRole == FilmTrove.Models.RoleType.Director))
         {
-        <li>Director</li>
         <li><a href="@r.Movie.GetDetailsUrl()">@r.Movie.Title</a></li>   
         }
     </ul>
     <ul>
+        <li>Writer</li>
         @foreach (FilmTrove.Models.Role r in person.Roles.Where(t=> t.InRole == FilmTrove.Models.RoleType.Writer))
         {
-        <li>Writer</li>
         <li><a href="@r.Movie.GetDetailsUrl()">@r.Movie.Title</a></li>   
         }
     </ul>
     <ul>
+        <li>Producer</li>
         @foreach (FilmTrove.Models.Role r in person.Roles.Where(t=> t.InRole == FilmTrove.Models.RoleType.Producer))
         {
-        <li>Producer</li>
         <li><a href="@r.Movie.GetDetailsUrl()">@r.Movie.Title</a></li>   
         }
     </ul>

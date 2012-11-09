@@ -16,11 +16,14 @@ namespace FilmTrove.Models
         {
             Id = "";
             Url = "";
+            IdUrl = "";
             AvgRating = null;
             NeedsUpdate = true;
         }
         public Single? AvgRating { get; set; }
         public String Synopsis { get; set; }
+        public String IdUrl { get; set; }
+
 
         //public String PosterUrlMedium { get; set; }
         public String PosterUrlLarge { get; set; }
@@ -143,7 +146,9 @@ namespace FilmTrove.Models
             Id = "";
             Url = "";
             NeedsUpdate = true;
+            IdUrl = "";
         }
+        public String IdUrl { get; set; }
     }
     [ComplexType]
     public class ImdbPersonInfo : ProviderInfo

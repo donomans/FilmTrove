@@ -20,7 +20,7 @@ namespace FilmTrove.Code
             if (source == null)
                 return null;
             else
-                return source.Replace(" ", "_").Replace(":", "-")
+                return source.Replace(" ", "-").Replace(":", "-")
                 .Replace("'", "").Replace("?", "").Replace(",", "")
                 .Replace("&", "and").Replace("/", "-"); ;
         }

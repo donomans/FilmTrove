@@ -167,6 +167,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Code\AsyncHelpers.cs" />
+    <Compile Include="Code\ContextHelpers.cs" />
     <Compile Include="Code\GeneralExtensions.cs" />
     <Compile Include="Code\SeedHelpers.cs" />
     <Compile Include="Code\OAuthHelpers.cs" />
@@ -211,6 +212,10 @@
     <Compile Include="Migrations\201211021948112_m3.cs" />
     <Compile Include="Migrations\201211021948112_m3.Designer.cs">
       <DependentUpon>201211021948112_m3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201211121828189_m4.cs" />
+    <Compile Include="Migrations\201211121828189_m4.Designer.cs">
+      <DependentUpon>201211121828189_m4.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\FilmTroveContext.cs" />
@@ -379,6 +384,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201211021948112_m3.resx">
       <DependentUpon>201211021948112_m3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201211121828189_m4.resx">
+      <DependentUpon>201211121828189_m4.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

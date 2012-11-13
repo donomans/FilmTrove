@@ -14,13 +14,11 @@
             <img src="@m.BestPosterUrl" alt="@m.Title"/>@*<div class="image-overlay-link"></div>*@</a>
 			<div class="item-description alt">
 				<h5><a href="/Movies/Details/@m.MovieId/@friendlytitle">@m.Title</a></h5>
-				@*<p>@m.ShortTitle</p>*@
 			</div>
 			<div class="post-meta center">
                 <span>
                     <span>@m.Year</span>
-                    @*<span>@(m.Rating.RatingType == FlixSharp.Holders.RatingType.Mpaa ? 
-                    m.Rating.MpaaRating.ToString() : m.Rating.TvRating.ToString())</span>*@
+                    <span>@m.Rating</span>
                     <span><a href="/Lists/Links/@m.MovieId/@friendlytitle" class="button color addtocollection">Add To...</a></span>
                 </span>
             </div>	

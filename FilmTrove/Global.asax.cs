@@ -1,4 +1,6 @@
-﻿using FlixSharp;
+﻿using FilmTrove.Code;
+using FilmTrove.Models;
+using FlixSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +14,7 @@ namespace FilmTrove
 {
     public class MvcApplication : System.Web.HttpApplication
     {
+        
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
@@ -28,6 +31,16 @@ namespace FilmTrove
                 "FilmTrove");
             
             Netflix.SetMethodForGettingCurrentUserAccount(FilmTrove.Models.NetflixAccount.GetCurrentUserNetflixUserInfo);
+        }
+
+        protected void Application_BeginRequest(object sender, EventArgs e)
+        {
+            HttpContext.Current.Items["ftcontext"] = new FilmTroveContext();
+        }
+        protected void Application_EndRequest(object sender, EventArgs e)
+        {
+            FilmTroveContext ftc = (FilmTroveContext)HttpContext.Current.Items["ftcontext"];
+            ftc.Dispose();
         }
     }
 }

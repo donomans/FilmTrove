@@ -58,6 +58,26 @@ namespace FilmTrove.Models
         {
             return "/Movies/Details/" + MovieId + "/" + Title.UrlFriendly();
         }
+        public String GetAwards()
+        {
+            if (Netflix.AwardsCompact != "")
+            {
+                String s = "<ul>";
+                foreach (String award in Netflix.Awards)
+                {
+                    String[] awards = award.Split(new[] { ";#" }, StringSplitOptions.None);
+                    String AwardName = awards[0];
+                    String PersonNetflixId = awards[1];
+                    String AwardType = awards[2];
+                    Boolean Winner = Boolean.Parse(awards[3]);
+                    String Year = awards[4];
+                    s += "<li>" + Year + " " + AwardName + " " + AwardType + "</li>";
+                }
+                s += "</ul>";
+                return s;
+            }
+            return "";
+        }
         public override String ToString()
         {
             return Title;

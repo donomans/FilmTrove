@@ -24,15 +24,14 @@ namespace FilmTrove.Controllers
         {
             if (WebSecurity.IsAuthenticated)
             {
-                using (FilmTroveContext ftc = new FilmTroveContext())
-                {
-                    UserProfile up = ftc.UserProfiles.Find(WebSecurity.CurrentUserId);
-                    if (up.NetflixAccount.UserId != null && up.NetflixAccount.UserId != "")
-                        ViewBag.NetflixLinked = true;
-                    UserUpdate userupdate = new UserUpdate(up);
-                    
-                    return View(userupdate);
-                }
+                FilmTroveContext ftc = (FilmTroveContext)HttpContext.Items["ftcontext"];
+                UserProfile up = ftc.UserProfiles.Find(WebSecurity.CurrentUserId);
+                if (up.NetflixAccount.UserId != null && up.NetflixAccount.UserId != "")
+                    ViewBag.NetflixLinked = true;
+                UserUpdate userupdate = new UserUpdate(up);
+
+                return View(userupdate);
+
             }
             return View();
         }
@@ -119,22 +118,22 @@ namespace FilmTrove.Controllers
                 {
                     oauthstuff = web.DownloadString(accessUrl);
                 }
-                String[] oauthsplits = oauthstuff.Split(new []{"&", "="}, StringSplitOptions.None);
-                    
+                String[] oauthsplits = oauthstuff.Split(new[] { "&", "=" }, StringSplitOptions.None);
+
                 String new_oauth_token = "";
                 String new_oauth_token_secret = "";
                 String user_id = "";
-                
+
                 Int32 counter = 0;
                 String stash = "";
-                
-                foreach(String s in oauthsplits)
+
+                foreach (String s in oauthsplits)
                 {
-                    if(counter % 2 == 0)
+                    if (counter % 2 == 0)
                         stash = s;
                     else
                     {
-                        switch(stash)
+                        switch (stash)
                         {
                             case "oauth_token":
                                 new_oauth_token = s;
@@ -151,19 +150,18 @@ namespace FilmTrove.Controllers
                     }
                     counter++;
                 }
-                using(FilmTroveContext ftc = new FilmTroveContext())
-                {
-                    UserProfile up = ftc.UserProfiles.Find(WebSecurity.CurrentUserId);
-                    up.NetflixAccount.Token = new_oauth_token;
-                    up.NetflixAccount.TokenSecret = new_oauth_token_secret;
-                    up.NetflixAccount.UserId = user_id;
+                FilmTroveContext ftc = (FilmTroveContext)HttpContext.Items["ftcontext"];
+                UserProfile up = ftc.UserProfiles.Find(WebSecurity.CurrentUserId);
+                up.NetflixAccount.Token = new_oauth_token;
+                up.NetflixAccount.TokenSecret = new_oauth_token_secret;
+                up.NetflixAccount.UserId = user_id;
 
-                    ftc.SaveChanges();
-                    ViewBag.NetflixLinked = true;
-                    ViewBag.Success = true;
-                    ViewBag.Message = "Successfully linked your Netflix account";
-                    return View("Me");
-                }
+                ftc.SaveChanges();
+                ViewBag.NetflixLinked = true;
+                ViewBag.Success = true;
+                ViewBag.Message = "Successfully linked your Netflix account";
+                return View("Me");
+
             }
             else
             {
@@ -177,19 +175,19 @@ namespace FilmTrove.Controllers
         [HttpGet]
         public ActionResult NetflixUnlink()
         {
-            using (FilmTroveContext ftc = new FilmTroveContext())
-            {
-                UserProfile up = ftc.UserProfiles.Find(WebSecurity.CurrentUserId);
-                up.NetflixAccount.Token = "";
-                up.NetflixAccount.TokenSecret = "";
-                up.NetflixAccount.UserId = "";
-                Int32 changed = ftc.SaveChanges();
+            FilmTroveContext ftc = (FilmTroveContext)HttpContext.Items["ftcontext"];
 
-                UserUpdate userupdate = new UserUpdate(up);
+            UserProfile up = ftc.UserProfiles.Find(WebSecurity.CurrentUserId);
+            up.NetflixAccount.Token = "";
+            up.NetflixAccount.TokenSecret = "";
+            up.NetflixAccount.UserId = "";
+            Int32 changed = ftc.SaveChanges();
 
-                ViewBag.NetflixLinked = null;
-                return View("Me", userupdate);
-            }
+            UserUpdate userupdate = new UserUpdate(up);
+
+            ViewBag.NetflixLinked = null;
+            return View("Me", userupdate);
+
         }
 
         [HttpPost]
@@ -197,14 +195,13 @@ namespace FilmTrove.Controllers
         public ActionResult Me(UserUpdate changes)
         {
             ///update the data and return to previous url or something?
-            using (FilmTroveContext ftc = new FilmTroveContext())
-            {
-                UserProfile up = ftc.UserProfiles.Find(WebSecurity.CurrentUserId);
-                up.Name = changes.Name;
-                up.Email = changes.Email;
+            FilmTroveContext ftc = (FilmTroveContext)HttpContext.Items["ftcontext"];
+            UserProfile up = ftc.UserProfiles.Find(WebSecurity.CurrentUserId);
+            up.Name = changes.Name;
+            up.Email = changes.Email;
 
-                ftc.SaveChanges();
-            }
+            ftc.SaveChanges();
+
             return View("Me", changes);
         }
 
@@ -260,36 +257,35 @@ namespace FilmTrove.Controllers
                     string loginData = OAuthWebSecurity.SerializeProviderUserId(result.Provider, result.ProviderUserId);
                     ViewBag.ProviderDisplayName = OAuthWebSecurity.GetOAuthClientData(result.Provider).DisplayName;
 
-                    using (FilmTroveContext db = new FilmTroveContext())
+                    FilmTroveContext ftc = (FilmTroveContext)HttpContext.Items["ftcontext"];
+                    UserProfile user = ftc.UserProfiles.FirstOrDefault(u => u.UserName.ToLower() == result.UserName.ToLower());
+                    // Check if user already exists
+                    if (user == null)
                     {
-                        UserProfile user = db.UserProfiles.FirstOrDefault(u => u.UserName.ToLower() == result.UserName.ToLower());
-                        // Check if user already exists
-                        if (user == null)
-                        {
-                            // Insert name into the profile table
-                            UserProfile prof = new UserProfile() { UserName = result.UserName, Provider = result.Provider, NetflixAccount = new NetflixAccount() };
-                            //UserList l = new UserList();
-                            //l.Owner = prof;
-                            //l.Movies
-                            //prof.Collection = l;
-                            db.UserProfiles.Add(prof);
-                            //db.Lists.Add(l);
-                            db.SaveChanges();
+                        // Insert name into the profile table
+                        UserProfile prof = new UserProfile() { UserName = result.UserName, Provider = result.Provider, NetflixAccount = new NetflixAccount() };
+                        //UserList l = new UserList();
+                        //l.Owner = prof;
+                        //l.Movies
+                        //prof.Collection = l;
+                        ftc.UserProfiles.Add(prof);
+                        //db.Lists.Add(l);
+                        ftc.SaveChanges();
 
-                            String provider;
-                            String providerUserId;
+                        String provider;
+                        String providerUserId;
 
-                            OAuthWebSecurity.TryDeserializeProviderUserId(loginData, out provider, out providerUserId);
+                        OAuthWebSecurity.TryDeserializeProviderUserId(loginData, out provider, out providerUserId);
 
-                            OAuthWebSecurity.CreateOrUpdateAccount(provider, providerUserId, result.UserName);
-                            OAuthWebSecurity.Login(provider, providerUserId, createPersistentCookie: false);
-                        }
-                        else
-                        {
-                            //need to handle some error
-                            ModelState.AddModelError("UserName", "User name already exists. Please enter a different user name.");
-                        }
+                        OAuthWebSecurity.CreateOrUpdateAccount(provider, providerUserId, result.UserName);
+                        OAuthWebSecurity.Login(provider, providerUserId, createPersistentCookie: false);
                     }
+                    else
+                    {
+                        //need to handle some error
+                        ModelState.AddModelError("UserName", "User name already exists. Please enter a different user name.");
+                    }
+
                 }
             }
 

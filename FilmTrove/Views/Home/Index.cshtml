@@ -19,13 +19,18 @@
 			</div>
 			<div class="post-meta center">
                 <span>
-                @*<span>@m.Actors.Count</span>
+                    <span>@m.Year</span>
+                    <span>@m.Rating</span>
+                    <span><a href="/Lists/Links/@m.MovieId/@friendlytitle" class="button color addtocollection">Add To...</a></span>
+                </span>
+                @*<span>
+                <span>@m.Actors.Count</span>
                 <span>@m.Director.Count</span>
                 <span>@m.SimilarTitles.Count</span>
                 <span><i class="mini-ico-calendar"></i>@m.Year</span>
                 <span>@m.Rating</span> 
-                <span><i class="mini-ico-comment"></i>@(m.RunTime/60) m</span>*@
-                </span>
+                <span><i class="mini-ico-comment"></i>@(m.RunTime/60) m</span>
+                </span>*@
             </div>	
 		</div>
     </div>

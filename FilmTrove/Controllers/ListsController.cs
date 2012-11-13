@@ -9,7 +9,6 @@ using WebMatrix.WebData;
 
 namespace FilmTrove.Controllers
 {
-    [Authorize]
     [InitializeSimpleMembership]
     public class ListsController : Controller
     {
@@ -20,20 +19,19 @@ namespace FilmTrove.Controllers
         {
             if (WebSecurity.IsAuthenticated)
             {
-                using (FilmTroveContext ftc = new FilmTroveContext())
+                FilmTroveContext ftc = (FilmTroveContext)HttpContext.Items["ftcontext"];
+                UserProfile prof = ftc.UserProfiles.Find(WebSecurity.CurrentUserId);
+                if (prof.UserLists == null || prof.UserLists.Count < 1)//.Collection == null)
                 {
-                    UserProfile prof = ftc.UserProfiles.Find(WebSecurity.CurrentUserId);
-                    if (prof.UserLists == null || prof.UserLists.Count < 1)//.Collection == null)
-                    {
-                        UserList collection = new UserList();
-                        collection.ListName = "My Collection";
-                        collection.Owner = prof;
-                        collection.Movies = new HashSet<Movie>();
-                        prof.UserLists = new List<UserList>() { collection };
-                        ftc.Lists.Add(collection);
-                    }
-                    ftc.SaveChanges();
+                    UserList collection = new UserList();
+                    collection.ListName = "My Collection";
+                    collection.Owner = prof;
+                    collection.Movies = new HashSet<Movie>();
+                    prof.UserLists = new List<UserList>() { collection };
+                    ftc.Lists.Add(collection);
                 }
+                ftc.SaveChanges();
+
             }
             return View();
         }
@@ -42,8 +40,16 @@ namespace FilmTrove.Controllers
         [HttpGet]
         public ActionResult Links(String id, String title)
         {
-            ViewBag.Id = id;
-            ViewBag.FriendlyTitle = title;
+            if (WebSecurity.IsAuthenticated)
+            {
+                ViewBag.Id = id;
+                ViewBag.FriendlyTitle = title;
+            }
+            else
+            {
+                ViewBag.Id = id;
+                ViewBag.FriendlyTitle = "Please log in to add titles to your lists.";
+            }
             return View();
         }
 

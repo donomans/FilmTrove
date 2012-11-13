@@ -10,12 +10,11 @@ using System.Web.Mvc;
 namespace FilmTrove.Controllers
 {
     public class HomeController : Controller
-    {
-        private FilmTroveContext db = new FilmTroveContext();
-        
+    {   
         public ActionResult Index()
         {
-            ViewBag.Movies = (from m in db.Movies
+            FilmTroveContext ftc = (FilmTroveContext)HttpContext.Items["ftcontext"];
+            ViewBag.Movies = (from m in ftc.Movies
                               select m).Take(50);
             return View();
         }

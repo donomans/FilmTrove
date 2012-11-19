@@ -227,8 +227,6 @@
     <Content Include="Public\themes\base\minified\jquery.ui.autocomplete.min.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
-    <None Include="Properties\PublishProfiles\filmtrove - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\filmtrove - Web Deploy.pubxml" />
     <Content Include="Public\Css\base.css" />
     <Content Include="Public\Css\color.css" />
     <Content Include="Public\Css\fancybox.css" />
@@ -304,6 +302,8 @@
     <Content Include="Public\Fonts\Roboto-ThinItalic-webfont.eot" />
     <Content Include="Public\Fonts\Roboto-ThinItalic-webfont.ttf" />
     <Content Include="Public\Fonts\Roboto-ThinItalic-webfont.woff" />
+    <None Include="Properties\PublishProfiles\filmtrove - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\filmtrove - Web Deploy.pubxml" />
     <None Include="Public\Js\jquery\jquery-1.8.2.intellisense.js" />
     <Content Include="Public\Js\jquery\jquery-1.8.2.js" />
     <Content Include="Public\Js\jquery\jquery-1.8.2.min.js" />

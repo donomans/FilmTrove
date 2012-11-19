@@ -153,6 +153,9 @@
             <img src="@similars.BestPosterUrl" alt="@similars.Title"/>@*<div class="image-overlay-link"></div>*@</a>
 			<div class="item-description alt">
 				<h5><a href="/Movies/Details/@similars.MovieId/@friendlytitle">@similars.Title</a></h5>
+                <p>
+				@Html.Raw(m.Description)
+				</p>
 			</div>
 			<div class="post-meta center">
                 <span>

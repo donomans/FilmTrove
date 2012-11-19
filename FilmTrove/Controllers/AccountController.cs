@@ -191,7 +191,6 @@ namespace FilmTrove.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult Me(UserUpdate changes)
         {
             ///update the data and return to previous url or something?
@@ -264,12 +263,13 @@ namespace FilmTrove.Controllers
                     {
                         // Insert name into the profile table
                         UserProfile prof = new UserProfile() { UserName = result.UserName, Provider = result.Provider, NetflixAccount = new NetflixAccount() };
-                        //UserList l = new UserList();
-                        //l.Owner = prof;
-                        //l.Movies
-                        //prof.Collection = l;
+                        if (prof.UserName.Contains("@"))
+                            prof.Email = prof.UserName;
+                        else
+                            prof.Name = prof.UserName;
+                        
                         ftc.UserProfiles.Add(prof);
-                        //db.Lists.Add(l);
+                        
                         ftc.SaveChanges();
 
                         String provider;

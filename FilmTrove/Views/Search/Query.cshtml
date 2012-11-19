@@ -19,6 +19,9 @@
             <img src="@m.BestPosterUrl" alt="@m.Title"/></a>
 			<div class="item-description alt">
 				<h5><a href="/Movies/Details/@m.MovieId/@friendlytitle">@m.Title</a></h5>
+                <p>
+				@Html.Raw(m.Description)
+				</p>
 			</div>
 			<div class="post-meta center">
                 <span>

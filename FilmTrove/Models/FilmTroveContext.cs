@@ -24,6 +24,8 @@ namespace FilmTrove.Models
         public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<UserList> Lists { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<Genre> Genres { get; set; }
+        public DbSet<MovieGenre> GenreItems { get; set; }
         public DbSet<UserListItem> ListItems { get; set; }
 
         public override Int32 SaveChanges()
@@ -116,19 +118,31 @@ namespace FilmTrove.Models
                 HasMany(u => u.UserLists).
                 WithRequired(l => l.Owner);
 
+            modelBuilder.Entity<Movie>().
+                HasMany(m => m.OnLists).
+                WithRequired(m=>m.Movie);
 
+            //modelBuilder.Entity<UserList>().
+            //    HasMany(m => m.Movies).
+            //    WithRequired(m => m.OnList).
+            //    Map(
+            //    m =>
+            //    {
+            //        m.MapLeftKey("ListId");
+            //        m.MapRightKey("MovieId");
+            //        m.ToTable("MoviesLists");
+            //    });
 
-            modelBuilder.Entity<UserList>().
-                HasMany(m => m.Movies).
-                WithMany(m => m.OnLists).
-                Map(
-                m =>
-                {
-                    m.MapLeftKey("ListId");
-                    m.MapRightKey("MovieId");
-                    m.ToTable("MoviesLists");
-                });
-
+            modelBuilder.Entity<Movie>().
+                HasMany(m => m.Genres).
+                WithRequired(g => g.Movie);
+            //.
+            //    Map(m =>
+            //    {
+            //        m.MapLeftKey("MovieId");
+            //        m.MapRightKey("GenreId");
+            //        m.ToTable("Genres");
+            //    });
         }
     }
 

@@ -63,7 +63,7 @@ namespace FilmTrove.Controllers
                 ///1) get filmography
                 var netflixperson = await nfp;
                 ///2) get the netflixids of all the films
-                var netflixfilmographyids = netflixperson.Filmography.Select(t => t.Id);
+                var netflixfilmographyids = netflixperson.Filmography.Select(t => t.Id + (t.SeasonId != "" ? ";" + t.SeasonId : ""));
                 ///3) look up the movies in ft database by netflixids
                 var ftmoviesfound = ftc.Movies.Include("Roles").Where(t => netflixfilmographyids.Contains(t.Netflix.Id));
                 ///4) check each of those to see they have roles defined (if so then ignore it)
@@ -75,7 +75,7 @@ namespace FilmTrove.Controllers
                     if (ftm.Roles.Count < 1)
                     {
                         ///7) make call to actors/directors api 
-
+                        //http://api-public.netflix.com/catalog/titles/series/60030701/seasons/60035075
                         directors.Add(ftm, Netflix.Fill.Titles.GetDirectors(ftm.Netflix.IdUrl));
                         actors.Add(ftm, Netflix.Fill.Titles.GetActors(ftm.Netflix.IdUrl));
                     }
@@ -87,21 +87,28 @@ namespace FilmTrove.Controllers
                 foreach (FlixSharp.Holders.Title title in netflixmoviestoadd)
                 {
                     var m = ftc.Movies.Create();
-                    m.Netflix.Id = title.Id;
-                    m.Netflix.IdUrl = title.IdUrl;
-                    m.Netflix.Url = title.NetflixSiteUrl;
-                    m.Netflix.AvgRating = title.AverageRating;
-                    m.Netflix.OfficialWebsiteUrl = title.OfficialWebsite;
-                    m.Netflix.PosterUrlLarge = title.BoxArtUrlLarge;
-                    m.Netflix.NeedsUpdate = true;
-                    m.Rating = title.Rating.RatingType == RatingType.Mpaa ?
-                        title.Rating.MpaaRating.ToString() : title.Rating.TvRating.ToString();
-                    m.RatingType = title.Rating.RatingType;
-                    m.AltTitle = title.ShortTitle;
-                    m.Title = title.FullTitle;
-                    m.BestPosterUrl = title.BoxArtUrlLarge;
-                    m.Year = title.Year;
-                    m.Genres = title.Genres;
+                    GeneralHelpers.FillBasicTitle(m, title);
+
+                    var dbgenreslocal = ftc.Genres.Local.Where(g => title.Genres.Contains(g.Name));
+                    var dbgenres = ftc.Genres.Where(g => title.Genres.Contains(g.Name));
+                    HashSet<Genre> genres = new HashSet<Genre>();
+                    genres.AddRange(dbgenres);
+                    genres.AddRange(dbgenreslocal);
+
+                    var genrenames = genres.Select(g => g.Name);
+                    var missinggenres = title.Genres.Where(g => !genrenames.Contains(g));
+                    foreach (String genre in missinggenres)
+                    {
+                        ftc.Genres.Add(new Genre() { Name = genre });
+                    }
+                    //newmovie.Genres = netflixmovie.Genres;
+                    foreach (Genre g in genres)
+                    {
+                        MovieGenre gi = ftc.GenreItems.Create();
+                        gi.Genre = g;
+                        gi.Movie = m;
+                        ftc.GenreItems.Add(gi);
+                    }
                     ftc.Movies.Add(m);
                     ///7) make call to actors/directors api on each filmography title
                     directors.Add(m, Netflix.Fill.Titles.GetDirectors(m.Netflix.IdUrl));
@@ -111,6 +118,7 @@ namespace FilmTrove.Controllers
                 ///8) add the people that don't exist to the ftdatabase
                 var actorslist = actors.Select(a => a);
                 var directorslist = directors.Select(d => d);
+                Int32 s = ftc.SaveChanges();
                 foreach (KeyValuePair<Movie, Task<People>> peeps in actorslist)
                 {
                     People people = await peeps.Value;
@@ -136,17 +144,15 @@ namespace FilmTrove.Controllers
                             if (newperson.Name == null || newperson.Name == "")
                             {
                                 FlixSharp.Holders.Person nperson = people.Find(nid);
-                                newperson.Name = nperson.Name;
-                                newperson.Bio = nperson.Bio;
-                                newperson.Netflix.Id = nperson.Id;
-                                newperson.Netflix.IdUrl = nperson.IdUrl;
-                                newperson.Netflix.Url = nperson.NetflixSiteUrl;
+                                GeneralHelpers.FillBasicPerson(newperson, nperson);
 
                                 ftc.People.Add(newperson);
                             }
                         }
                     }
                 }
+                //Int32 c = ftc.SaveChanges();
+
                 foreach (KeyValuePair<Movie, Task<People>> peeps in directorslist)
                 {
                     People people = await peeps.Value;
@@ -172,11 +178,7 @@ namespace FilmTrove.Controllers
                             if (newperson.Name == null || newperson.Name == "")
                             {
                                 FlixSharp.Holders.Person nperson = people.Find(nid);
-                                newperson.Name = nperson.Name;
-                                newperson.Bio = nperson.Bio;
-                                newperson.Netflix.Id = nperson.Id;
-                                newperson.Netflix.Url = nperson.NetflixSiteUrl;
-                                newperson.Netflix.IdUrl = nperson.IdUrl;
+                                GeneralHelpers.FillBasicPerson(newperson, nperson);
 
                                 ftc.People.Add(newperson);
                             }
@@ -191,5 +193,7 @@ namespace FilmTrove.Controllers
 
             return new ContentResult() { Content = "yay" };
         }
+
+        
     }
 }

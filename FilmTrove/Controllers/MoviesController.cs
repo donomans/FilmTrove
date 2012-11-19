@@ -9,6 +9,7 @@ using FlixSharp.Holders;
 using FilmTrove.Filters;
 using System.Threading.Tasks;
 using FilmTrove.Models;
+using System.Text.RegularExpressions;
 
 namespace FilmTrove.Controllers
 {
@@ -75,7 +76,7 @@ namespace FilmTrove.Controllers
                 m.Netflix.AvgRating = netflixtitle.AverageRating;
                 m.Netflix.Awards = netflixtitle.Awards.Select(a =>
                     a.AwardName + ";#" + a.PersonIdUrl + ";#" +
-                    a.Type + ";#" + a.Winner + ";#" + a.Year).ToList();
+                    a.Type + ";#" + a.Winner + ";#" + a.Year).DefaultIfEmpty().ToList();
                 m.AltTitle = netflixtitle.ShortTitle;
                 m.Rating = netflixtitle.Rating.RatingType == RatingType.Mpaa ?
                         netflixtitle.Rating.MpaaRating.ToString() : netflixtitle.Rating.TvRating.ToString();
@@ -114,12 +115,7 @@ namespace FilmTrove.Controllers
                         ftperson = ftc.People.WhereFirstOrCreate(t => t.Netflix.Id == p.Id);
                         if (ftperson.Name == null || ftperson.Name == "")
                         {
-                            ftperson.Netflix.Id = p.Id;
-                            ftperson.Netflix.NeedsUpdate = true;
-                            ftperson.Netflix.IdUrl = p.IdUrl;
-                            ftperson.Netflix.Url = p.NetflixSiteUrl;
-                            ftperson.Bio = p.Bio;
-                            ftperson.Name = p.Name;
+                            GeneralHelpers.FillBasicPerson(ftperson, p);
                             ftc.People.Add(ftperson);
                         }
                     }
@@ -129,15 +125,13 @@ namespace FilmTrove.Controllers
                     r.Movie = m;
                     r.Person = ftperson;
                     ftc.Roles.Add(r);
-
-                    ///are these necessary?
-                    //ftperson.Roles.Add(r);
-                    //m.Roles.Add(r);
                 }
-                if (m.Roles.Count < 1)
+                if (m.Roles.Count(c => c.InRole == RoleType.Actor) < nfactorids.Count())
                 {
                     ///need to find which roles haven't already been added.
-                    foreach (Models.Person p in matchedactors)
+                    var currentroles = m.Roles.Where(r => r.InRole == RoleType.Actor).Select(r => r.Person.PersonId);
+                    var actorsfordb = matchedactors.Where(r => !currentroles.Contains(r.PersonId));
+                    foreach (Models.Person p in actorsfordb)
                     {
                         ///2) add this movie as a new role on the movie
                         Role r = ftc.Roles.Create();
@@ -162,12 +156,7 @@ namespace FilmTrove.Controllers
                         ftperson = ftc.People.WhereFirstOrCreate(t => t.Netflix.Id == p.Id);
                         if (ftperson.Name == null || ftperson.Name == "")
                         {
-                            ftperson.Netflix.Id = p.Id;
-                            ftperson.Netflix.NeedsUpdate = true;
-                            ftperson.Netflix.IdUrl = p.IdUrl;
-                            ftperson.Netflix.Url = p.NetflixSiteUrl;
-                            ftperson.Bio = p.Bio;
-                            ftperson.Name = p.Name;
+                            GeneralHelpers.FillBasicPerson(ftperson, p);
                             ftc.People.Add(ftperson);
                         }
                     }
@@ -177,18 +166,17 @@ namespace FilmTrove.Controllers
                     r.Movie = m;
                     r.Person = ftperson;
                     ftc.Roles.Add(r);
-
-                    ///are these necessary?
-                    //ftperson.Roles.Add(r);
-                    //m.Roles.Add(r);
                 }
-                if (m.Roles.Count < 1)
+                if (m.Roles.Count(c => c.InRole == RoleType.Director) < nfdirectorids.Count())
                 {
-                    foreach (Models.Person p in matcheddirectors)
+                    ///need to find which roles haven't already been added.
+                    var currentroles = m.Roles.Where(r => r.InRole == RoleType.Director).Select(r => r.Person.PersonId);
+                    var directorsfordb = matcheddirectors.Where(r => !currentroles.Contains(r.PersonId));
+                    foreach (Models.Person p in directorsfordb)
                     {
                         ///2) add this movie as a new role on the movie
                         Role r = ftc.Roles.Create();
-                        r.InRole = RoleType.Actor;
+                        r.InRole = RoleType.Director;
                         r.Movie = m;
                         r.Person = p;
                         ftc.Roles.Add(r);
@@ -196,34 +184,74 @@ namespace FilmTrove.Controllers
                 }
 
                 ///3) add all similar titles to the database similar to step 1 for people
-                var nftitleids = netflixtitle.SimilarTitles.Select(t => t.Id);
+                var nftitleids = netflixtitle.SimilarTitles.Select(t => t.Id + (t.SeasonId != "" ? ";" + t.SeasonId : ""));
                 var matchedtitleids = ftc.Movies.Where(t => nftitleids.Contains(t.Netflix.Id)).Select(t => t.Netflix.Id);
                 var titleidsfordatabase = nftitleids.Where(t => !matchedtitleids.Contains(t));
-                var titlesfordatabase = netflixtitle.SimilarTitles.Where(t => titleidsfordatabase.Contains(t.Id));
+                var titlesfordatabase = netflixtitle.SimilarTitles.Where(t => 
+                    {
+                        var fullid = t.Id + (t.SeasonId != "" ? ";" + t.SeasonId : "");
+                        return titleidsfordatabase.Contains(fullid);
+                    });
                 foreach (FlixSharp.Holders.Title t in titlesfordatabase)
                 {
                     FilmTrove.Models.Movie ftmovie = ftc.Movies.Create();
-                    ftmovie.Netflix.Id = t.Id;
-                    ftmovie.Netflix.IdUrl = t.IdUrl;
-                    ftmovie.Netflix.Url = t.NetflixSiteUrl;
-                    ftmovie.Netflix.AvgRating = t.AverageRating;
-                    ftmovie.Netflix.OfficialWebsiteUrl = t.OfficialWebsite;
-                    ftmovie.Netflix.PosterUrlLarge = t.BoxArtUrlLarge;
-                    ftmovie.Netflix.NeedsUpdate = true;
-                    ftmovie.Rating = t.Rating.RatingType == RatingType.Mpaa ?
-                        t.Rating.MpaaRating.ToString() : t.Rating.TvRating.ToString();
-                    ftmovie.RatingType = t.Rating.RatingType;
-                    ftmovie.AltTitle = t.ShortTitle;
-                    ftmovie.Title = t.FullTitle;
-                    ftmovie.BestPosterUrl = t.BoxArtUrlLarge;
-                    ftmovie.Year = t.Year;
-                    ftmovie.Genres = t.Genres;
+                    GeneralHelpers.FillBasicTitle(ftmovie, t);
+                    
+                    ///get the genres that exist in the database (local cache and db)
+                    var dbgenreslocal = ftc.Genres.Local.Where(g => t.Genres.Contains(g.Name));
+                    var dbgenres = ftc.Genres.Where(g => t.Genres.Contains(g.Name));
+                    ///add them together into one non duplicated list
+                    HashSet<Genre> genres = new HashSet<Genre>();
+                    genres.AddRange(dbgenres);
+                    genres.AddRange(dbgenreslocal);
+                    ///get the names of the database genres
+                    var genrenames = genres.Select(g => g.Name);
+                    ///find the genres on the movie that aren't in the database
+                    var missinggenres = t.Genres.Where(g => !genrenames.Contains(g));
+                    foreach (String genre in missinggenres)
+                    {
+                        Genre g = new Genre() { Name = genre };
+                        ///add the genre to the list
+                        genres.Add(g);
+                        ftc.Genres.Add(g);
+                    }
+                    ///create all the genre-movie records
+                    foreach (Genre g in genres)
+                    {
+                        MovieGenre gi = ftc.GenreItems.Create();
+                        gi.Genre = g;
+                        gi.Movie = ftmovie;
+                        ftc.GenreItems.Add(gi);
+                    }
                     ftc.Movies.Add(ftmovie);
                 }
 
                 m.Netflix.SimilarTitles = netflixtitle.SimilarTitles.Select(t => t.IdUrl).ToList();
                 m.Netflix.NeedsUpdate = false;
-                m.Genres = netflixtitle.Genres;
+
+                var dbgl = ftc.Genres.Local.Where(g => netflixtitle.Genres.Contains(g.Name));
+                var dbg = ftc.Genres.Where(g => netflixtitle.Genres.Contains(g.Name));
+                HashSet<Genre> gs = new HashSet<Genre>();
+                gs.AddRange(dbg);
+                gs.AddRange(dbgl);
+
+                var gn = gs.Select(g => g.Name);
+                var mgs = netflixtitle.Genres.Where(g => !gn.Contains(g));
+                foreach (String genre in mgs)
+                {
+                    Genre g = new Genre() { Name = genre };
+                    gs.Add(g);
+                    ftc.Genres.Add(g);
+                }
+                //newmovie.Genres = netflixmovie.Genres;
+                foreach (Genre g in gs)
+                {
+                    MovieGenre gi = ftc.GenreItems.Create();
+                    gi.Genre = g;
+                    gi.Movie = m;
+                    ftc.GenreItems.Add(gi);
+                }
+
                 m.Netflix.Synopsis = netflixtitle.Synopsis;
                 m.Description = netflixtitle.Synopsis;
                 m.ViewCount++;
@@ -233,7 +261,12 @@ namespace FilmTrove.Controllers
 
             if (m.Netflix.SimilarTitles.Count > 0)
             {
-                var similars = m.Netflix.SimilarTitles.Take(12).Select(f => System.Text.RegularExpressions.Regex.Match(f, "[0-9]{4,10}").Value);
+                var similars = m.Netflix.SimilarTitles.Take(20).Select(f => 
+                    {
+                        MatchCollection match = Regex.Matches(f, "[0-9]{3,10}");
+                        var r = match.Cast<Match>().Select(t => t.Value).Take(2);
+                        return r.First() + (r.Count() > 1 ? ";" + r.LastOrDefault() : "");
+                    });
                 ViewBag.Similars = ftc.Movies.Where(t => similars.Contains(t.Netflix.Id)).ToArray();
             }
             ViewBag.Roles = m.Roles;
@@ -242,6 +275,5 @@ namespace FilmTrove.Controllers
             ViewBag.Id = id;
             return View();
         }
-
     }
 }

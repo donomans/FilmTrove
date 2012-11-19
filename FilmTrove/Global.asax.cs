@@ -41,6 +41,7 @@ namespace FilmTrove
         {
             FilmTroveContext ftc = (FilmTroveContext)HttpContext.Current.Items["ftcontext"];
             ftc.Dispose();
+            //throw new Exception();
         }
     }
 }

@@ -166,7 +166,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Code\AsyncHelpers.cs" />
+    <Compile Include="Code\GeneralHelpers.cs" />
     <Compile Include="Code\ContextHelpers.cs" />
     <Compile Include="Code\GeneralExtensions.cs" />
     <Compile Include="Code\SeedHelpers.cs" />
@@ -189,33 +189,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201210240101445_i.cs" />
-    <Compile Include="Migrations\201210240101445_i.Designer.cs">
-      <DependentUpon>201210240101445_i.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201210242233467_u.cs" />
-    <Compile Include="Migrations\201210242233467_u.Designer.cs">
-      <DependentUpon>201210242233467_u.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201210251938065_m.cs" />
-    <Compile Include="Migrations\201210251938065_m.Designer.cs">
-      <DependentUpon>201210251938065_m.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201210251938493_m1.cs" />
-    <Compile Include="Migrations\201210251938493_m1.Designer.cs">
-      <DependentUpon>201210251938493_m1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201210272206044_m2.cs" />
-    <Compile Include="Migrations\201210272206044_m2.Designer.cs">
-      <DependentUpon>201210272206044_m2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201211021948112_m3.cs" />
-    <Compile Include="Migrations\201211021948112_m3.Designer.cs">
-      <DependentUpon>201211021948112_m3.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201211121828189_m4.cs" />
-    <Compile Include="Migrations\201211121828189_m4.Designer.cs">
-      <DependentUpon>201211121828189_m4.cs</DependentUpon>
+    <Compile Include="Migrations\201211151515529_Initial.cs" />
+    <Compile Include="Migrations\201211151515529_Initial.Designer.cs">
+      <DependentUpon>201211151515529_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\FilmTroveContext.cs" />
@@ -367,26 +343,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201210240101445_i.resx">
-      <DependentUpon>201210240101445_i.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201210242233467_u.resx">
-      <DependentUpon>201210242233467_u.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201210251938065_m.resx">
-      <DependentUpon>201210251938065_m.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201210251938493_m1.resx">
-      <DependentUpon>201210251938493_m1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201210272206044_m2.resx">
-      <DependentUpon>201210272206044_m2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201211021948112_m3.resx">
-      <DependentUpon>201211021948112_m3.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201211121828189_m4.resx">
-      <DependentUpon>201211121828189_m4.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201211151515529_Initial.resx">
+      <DependentUpon>201211151515529_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

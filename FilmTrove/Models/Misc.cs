@@ -19,11 +19,38 @@ namespace FilmTrove.Models
             IdUrl = "";
             AvgRating = null;
             NeedsUpdate = true;
+            SeasonId = "";
+            TitleId = "";
         }
         public Single? AvgRating { get; set; }
         public String Synopsis { get; set; }
+        
         public String IdUrl { get; set; }
-
+        [NotMapped]
+        public String SeasonId { get; set; }
+        [NotMapped]
+        public String TitleId { get; set; }
+        public new String Id
+        {
+            get
+            {
+                return TitleId + (SeasonId != "" ? ";" + SeasonId : "");
+            }
+            set
+            {
+                if (value != "")
+                {
+                    String[] val = value.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+                    if (val.Length > 1)
+                    {
+                        TitleId = val[0];
+                        SeasonId = val[1];
+                    }
+                    else
+                        TitleId = val[0];
+                }
+            }
+        }
 
         //public String PosterUrlMedium { get; set; }
         public String PosterUrlLarge { get; set; }
@@ -42,18 +69,6 @@ namespace FilmTrove.Models
             set { _SimilarTitles = value != null ? value.Split(new[] { ";#!" }, StringSplitOptions.RemoveEmptyEntries).ToList() : null; }
         }
 
-        //public List<String> RelatedTitles
-        //{
-        //    get { return _RelatedTitles; }
-        //    set { _RelatedTitles = value; }
-        //}
-        //private List<String> _RelatedTitles { get; set; }
-        //public String RelatedTitlesCompact
-        //{
-        //    get { return _RelatedTitles != null ? String.Join(";#!", _RelatedTitles) : null; }
-        //    set { _RelatedTitles = value != null ? value.Split(new[] { ";#!" }, StringSplitOptions.RemoveEmptyEntries).ToList() : null; }
-        //}
-
         public List<String> Awards
         {
             get { return _Awards; }
@@ -66,8 +81,6 @@ namespace FilmTrove.Models
             set { _Awards = value != null ? value.Split(new[] { ";#!" }, StringSplitOptions.RemoveEmptyEntries).ToList() : null; }
         }
 
-        //public List<ScreenFormats> Formats { get; set; }
-        //public ScreenFormat ScreenFormat { get; set; }
         public Format Format { get; set; }
 
         public String OfficialWebsiteUrl { get; set; }
@@ -85,6 +98,18 @@ namespace FilmTrove.Models
         public Int32? AvgRating { get; set; }
         public String Synopsis { get; set; }
         public String Studio { get; set; }
+    }
+    [ComplexType]
+    public class RedBoxInfo : ProviderInfo
+    {
+        public RedBoxInfo()
+        {
+            Id = "";
+            Url = "";
+            NeedsUpdate = true;
+        }
+        [MaxLength(36)]
+        public new String Id { get; set; }
     }
     [ComplexType]
     public class AmazonInfo : ProviderInfo

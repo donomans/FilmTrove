@@ -30,6 +30,7 @@ namespace FilmTrove.Models
         public virtual ICollection<UserList> UserLists { get; set; }
 
         public NetflixAccount NetflixAccount { get; set; }
+
     }
 
 
@@ -41,7 +42,7 @@ namespace FilmTrove.Models
         public String ListName { get; set; }
         public UserProfile Owner { get; set; }
 
-        public virtual ICollection<Movie> Movies { get; set; }
+        public virtual ICollection<UserListItem> Items { get; set; }
     }
 
     public class UserListItem : Dateable

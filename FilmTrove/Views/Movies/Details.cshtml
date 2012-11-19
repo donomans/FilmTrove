@@ -1,8 +1,8 @@
 ﻿@using FilmTrove.Code
 @{
-    ViewBag.Title = "Details";
     FilmTrove.Models.Movie m = ViewBag.Movie;
     ViewBag.SimilarsExist = ViewBag.Similars != null;
+    ViewBag.Title = m.Title + " Details";    
 }
 <div id="portfolio-wrapper">
     <div class="container">
@@ -26,15 +26,15 @@
             7) Awards
             8) Genres
          *@
-        <p>Netflix User Rating: @m.Netflix.AvgRating Stars</p>
-        <p>Rotten Tomatoes User Rating: @m.RottenTomatoes.AvgRating</p>
-        <p>Rotten Tomatoes Critic Rating: @m.RottenTomatoes.CriticScore</p>
-        @*<span>@m.Amazon.AvgRating</span>*@
-        <p>Theatrical Release: @m.RottenTomatoes.TheatricalRelase</p>
-        <p>DVD/BR Release: @m.RottenTomatoes.DvdRelease</p>
-        <p>Studio: @m.RottenTomatoes.Studio</p>
-        Awards: @Html.Raw(m.GetAwards()) <br />
-        <p>Genres: @String.Join(", ", m.Genres)</p>
+            <p>Netflix User Rating: @m.Netflix.AvgRating Stars</p>
+            <p>Rotten Tomatoes User Rating: @m.RottenTomatoes.AvgRating</p>
+            <p>Rotten Tomatoes Critic Rating: @m.RottenTomatoes.CriticScore</p>
+            @*<span>@m.Amazon.AvgRating</span>*@
+            <p>Theatrical Release: @m.RottenTomatoes.TheatricalRelase</p>
+            <p>DVD/BR Release: @m.RottenTomatoes.DvdRelease</p>
+            <p>Studio: @m.RottenTomatoes.Studio</p>
+            Awards: @Html.Raw(m.GetAwards()) <br />
+            <p>Genres: @String.Join(", ", m.Genres)</p>
         </div>
     </div>
     <div class="one-fourth column portfolio-item" id="supplierdata">
@@ -48,6 +48,7 @@
             --6) Imdb link
             7) Formats
          *@
+            <p><a href="@m.Netflix.Url">@m.Title on Netflix</a></p>
         </div>
     </div>
     
@@ -171,6 +172,7 @@
     </div>
     <div class="sixteen columns protfolio-item" id="trailers">
         <div class="movie">
+            <p>Sorry, we're missing them.</p>
         </div>
     </div>
 </div>

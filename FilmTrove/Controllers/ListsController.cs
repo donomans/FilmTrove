@@ -26,12 +26,11 @@ namespace FilmTrove.Controllers
                     UserList collection = new UserList();
                     collection.ListName = "My Collection";
                     collection.Owner = prof;
-                    collection.Movies = new HashSet<Movie>();
-                    prof.UserLists = new List<UserList>() { collection };
+                    //collection.Items = new HashSet<UserListItem>();
+                    //prof.UserLists = new List<UserList>() { collection };
                     ftc.Lists.Add(collection);
                 }
                 ftc.SaveChanges();
-
             }
             return View();
         }

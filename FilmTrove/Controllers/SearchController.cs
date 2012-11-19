@@ -19,13 +19,13 @@ namespace FilmTrove.Controllers
         {
             //String term = form["searchterm"].ToString();
             //Netflix n = new Netflix();
-            SearchResults results = await Netflix.Search.Search(searchterm);
+            SearchResults results = await Netflix.Search.Search(searchterm, Limit: 40);
             ///need to check if the results are in the database and populate it if not
-            ViewBag.MovieResults = await AsyncHelpers.GetDatabaseMovies(results.MovieResults);
-            ViewBag.PeopleResults = await AsyncHelpers.GetDatabasePeople(results.PeopleResults);
+            ViewBag.MovieResults = GeneralHelpers.GetDatabaseMovies(results.MovieResults);
+            ViewBag.PeopleResults = GeneralHelpers.GetDatabasePeople(results.PeopleResults);
 
             //ViewBag.SearchResults = results;
-
+            ViewBag.Term = searchterm;
             return View();
         }
         

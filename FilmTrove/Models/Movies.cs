@@ -32,24 +32,13 @@ namespace FilmTrove.Models
         public ImdbInfo Imdb { get; set; }
         public AmazonInfo Amazon { get; set; }
         public RottenTomatoesInfo RottenTomatoes { get; set; }
+        public RedBoxInfo RedBox { get; set; }
 
-        public List<String> Genres
-        {
-            get { return _Genres; }
-            set { _Genres = value; }
-        }
-        private List<String> _Genres { get; set; }
-        public String GenresCompact
-        {
-            get { return _Genres != null ? String.Join(";#!", _Genres) : null; }
-            set { _Genres = value != null ? value.Split(new[] { ";#!" }, StringSplitOptions.RemoveEmptyEntries).ToList() : null; }
-        }
+        public virtual ICollection<MovieGenre> Genres { get; set; }
 
-        public virtual ICollection<UserList> OnLists { get; set; }
+        public virtual ICollection<UserListItem> OnLists { get; set; }
 
         public virtual ICollection<Role> Roles { get; set; }
-
-        //public FlixSharp.Holders.NetflixType Type { get; set; }
 
         public Int64 ViewCount { get; set; } ///eventual shard
         public Int64 SearchCount { get; set; } ///eventual shard
@@ -89,13 +78,36 @@ namespace FilmTrove.Models
             Imdb = new ImdbInfo();
             Amazon = new AmazonInfo();
             RottenTomatoes = new RottenTomatoesInfo();
-            
+            RedBox = new RedBoxInfo();
+
             ViewCount = 0;
 
-            OnLists = new List<UserList>();
+            OnLists = new List<UserListItem>();
             Roles = new List<Role>();
         }
     }
 
+    public class Genre
+    {
+        public Int32 GenreId { get; set; }
+        public String Name { get; set; }
+        public Genre()
+        {
+            Name = "";
+        }
+    }
 
+    public class MovieGenre
+    {
+        public Int32 MovieGenreId { get; set; }
+        public virtual Genre Genre { get; set; }
+        public virtual Movie Movie { get; set; }
+        public override String ToString()
+        {
+            //if (Genre != null)
+                return Genre.Name;
+            //else
+            //    return base.ToString();
+        }
+    }
 }

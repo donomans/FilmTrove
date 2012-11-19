@@ -22,7 +22,7 @@ namespace FilmTrove.Code
             else
                 return source.Replace(" ", "-").Replace(":", "-")
                 .Replace("'", "").Replace("?", "").Replace(",", "")
-                .Replace("&", "and").Replace("/", "-"); ;
+                .Replace("&", "and").Replace("/", "-").Replace(".", "");
         }
         public static String UrlFriendly(this String source, Int32 year)
         {

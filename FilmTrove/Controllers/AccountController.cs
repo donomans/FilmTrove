@@ -257,27 +257,25 @@ namespace FilmTrove.Controllers
                     ViewBag.ProviderDisplayName = OAuthWebSecurity.GetOAuthClientData(result.Provider).DisplayName;
 
                     FilmTroveContext ftc = (FilmTroveContext)HttpContext.Items["ftcontext"];
-                    UserProfile user = ftc.UserProfiles.FirstOrDefault(u => u.UserName.ToLower() == result.UserName.ToLower());
+                    UserProfile user = ftc.UserProfiles.FirstOrDefault(u => u.UserName.ToLower() == result.ProviderUserId.ToLower());
                     // Check if user already exists
                     if (user == null)
                     {
                         // Insert name into the profile table
-                        UserProfile prof = new UserProfile() { UserName = result.UserName, Provider = result.Provider, NetflixAccount = new NetflixAccount() };
-                        if (prof.UserName.Contains("@"))
-                            prof.Email = prof.UserName;
+                        UserProfile prof = new UserProfile() { UserName = result.ProviderUserId, Provider = result.Provider, NetflixAccount = new NetflixAccount() };
+                        if (result.UserName.Contains("@"))
+                            prof.Email = result.UserName;
                         else
-                            prof.Name = prof.UserName;
-                        
+                            prof.Name = result.UserName;
+
                         ftc.UserProfiles.Add(prof);
-                        
                         ftc.SaveChanges();
 
                         String provider;
                         String providerUserId;
 
                         OAuthWebSecurity.TryDeserializeProviderUserId(loginData, out provider, out providerUserId);
-
-                        OAuthWebSecurity.CreateOrUpdateAccount(provider, providerUserId, result.UserName);
+                        OAuthWebSecurity.CreateOrUpdateAccount(provider, providerUserId, result.ProviderUserId);
                         OAuthWebSecurity.Login(provider, providerUserId, createPersistentCookie: false);
                     }
                     else

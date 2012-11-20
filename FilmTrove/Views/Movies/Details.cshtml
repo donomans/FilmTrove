@@ -2,7 +2,9 @@
 @{
     FilmTrove.Models.Movie m = ViewBag.Movie;
     ViewBag.SimilarsExist = ViewBag.Similars != null;
-    ViewBag.Title = m.Title + " Details";    
+    ViewBag.Title = m.Title + " (" + m.Year + ") Details";
+    ViewBag.Description = ViewBag.Title + " - Add it to your collection.";
+    ViewBag.Keywords = m.Title + " (" + m.Year + "), " + m.Title + ", Lists, Ratings, Information, Details, Synopsis, Collection";
 }
 <div id="portfolio-wrapper">
     <div class="container">

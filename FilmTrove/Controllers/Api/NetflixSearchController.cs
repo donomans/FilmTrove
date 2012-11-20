@@ -22,7 +22,7 @@ namespace FilmTrove.Controllers.Api
         // Get api/netflixsearch
         public async Task<IEnumerable<String>> Get([FromUri] String term)
         {
-            IEnumerable<String> titles = await Netflix.Search.AutoCompleteTitle(term, 50);
+            IEnumerable<String> titles = await Netflix.Search.Randomized().AutoCompleteTitle(term, 50);
 
             return titles.Take(10);
         }

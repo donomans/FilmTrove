@@ -27,7 +27,7 @@ namespace FilmTrove.Controllers
 
             if (m.Netflix.NeedsUpdate)
             {
-                nfm = Netflix.Fill.Titles.GetCompleteTitle(m.Netflix.IdUrl, true);
+                nfm = Netflix.Fill.Randomized().Titles.GetCompleteTitle(m.Netflix.IdUrl, true);
             }
             if (m.Amazon.NeedsUpdate || (m.Amazon.LastPriceUpdate.HasValue && ((m.Amazon.LastPriceUpdate.Value - DateTime.Now) > new TimeSpan(1, 0, 0, 0))))
             {

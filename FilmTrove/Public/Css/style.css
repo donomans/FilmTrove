@@ -1,12 +1,3 @@
-
-/* Import Section
-=================================================================== */
-@import url("base.css");				/* Default Reset, Typography, Forms, etc. */ 
-@import url("skeleton.css");			/* 960 Grid + Media Query Layouts */ 
-@import url("fancybox.css");			/* FancyBox Styles */
-@import url("icons.css");				/* Icons */  
-@import url("social_icons.css");		/* Social Icons */ 
-
 body {
 	background: #eee url(../images/texture.jpg) repeat;
 	background-attachment: fixed;

@@ -41,7 +41,10 @@ namespace FilmTrove.Controllers
         {
             if (WebSecurity.IsAuthenticated)
             {
-                String url = Netflix.Login.GetRequestUrl();
+                String url = Netflix.Login.SetCredentials(///because of my Randomized() function, i need to reset this to be sure.
+                "7qf3845qydavuucmhj96b6hd",
+                "5jYe5FVhhF",
+                "FilmTrove").GetRequestUrl();
                 String oauthstuff = "";
                 using (WebClient web = new WebClient())
                 {
@@ -83,8 +86,13 @@ namespace FilmTrove.Controllers
                 //String loginurl = CustomOAuthHelpers.GetOAuthLoginUrl(Netflix.ConsumerKey, oauth_token,
                 //    Url.Action("NetflixLoginCallback","Account", null, Request.Url.Scheme),
                 //    Netflix.LoginUrl, extraParams);
-                String loginurl = Netflix.Login.GetLoginUrl(oauth_token,
-                    Url.Action("NetflixLoginCallback", "Account", null, Request.Url.Scheme));
+
+                String loginurl = Netflix.Login.SetCredentials(
+                "7qf3845qydavuucmhj96b6hd",
+                "5jYe5FVhhF",
+                "FilmTrove").GetLoginUrl(oauth_token,
+                    Url.Action("NetflixLoginCallback", 
+                    "Account", null, Request.Url.Scheme));
 
                 return new RedirectResult(loginurl);
 
@@ -111,7 +119,10 @@ namespace FilmTrove.Controllers
                     return View();
                 }
                 //Netflix.Login n = new Netflix();
-                String accessUrl = Netflix.Login.GetAccessUrl(oauth_token, oauth_token_secret.ToString());
+                String accessUrl = Netflix.Login.SetCredentials(
+                "7qf3845qydavuucmhj96b6hd",
+                "5jYe5FVhhF",
+                "FilmTrove").GetAccessUrl(oauth_token, oauth_token_secret.ToString());
 
                 String oauthstuff = "";
                 using (WebClient web = new WebClient())

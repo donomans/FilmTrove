@@ -39,7 +39,10 @@ namespace FilmTrove.Code
         }
         public static String UrlFriendly(this String source, Int32 year)
         {
-            return (source + " (" + year + ")").UrlFriendly();
+            if (year == 0)
+                return source.UrlFriendly();
+            else
+                return (source + " (" + year + ")").UrlFriendly();
         }
 
         public static TSource WhereFirstOrCreate<TSource>(this IQueryable<TSource> source, Func<TSource,Boolean> predicate) where TSource : new()

@@ -49,7 +49,7 @@ namespace FilmTrove.Controllers
 
             if (p.Netflix.NeedsUpdate) ///how can i make sure it checks filmography occasionally?
             {
-                nfp = Netflix.Fill.Randomized().People.GetCompletePerson(p.Netflix.IdUrl, true);
+                nfp = Netflix.Fill.People.GetCompletePerson(p.Netflix.IdUrl, true);//Randomized().
             }
             if (p.RottenTomatoes.NeedsUpdate)
             {
@@ -76,8 +76,8 @@ namespace FilmTrove.Controllers
                     {
                         ///7) make call to actors/directors api 
                         //http://api-public.netflix.com/catalog/titles/series/60030701/seasons/60035075
-                        directors.Add(ftm, Netflix.Fill.Randomized().Titles.GetDirectors(ftm.Netflix.IdUrl));
-                        actors.Add(ftm, Netflix.Fill.Randomized().Titles.GetActors(ftm.Netflix.IdUrl));
+                        directors.Add(ftm, Netflix.Fill.Titles.GetDirectors(ftm.Netflix.IdUrl));//.Randomized()
+                        actors.Add(ftm, Netflix.Fill.Titles.GetActors(ftm.Netflix.IdUrl));//Randomized().
                     }
                 }
                 ///5) find the netflix ids that aren't in the database
@@ -111,8 +111,8 @@ namespace FilmTrove.Controllers
                     }
                     ftc.Movies.Add(m);
                     ///7) make call to actors/directors api on each filmography title
-                    directors.Add(m, Netflix.Fill.Randomized().Titles.GetDirectors(m.Netflix.IdUrl));
-                    actors.Add(m, Netflix.Fill.Randomized().Titles.GetActors(m.Netflix.IdUrl));
+                    directors.Add(m, Netflix.Fill.Titles.GetDirectors(m.Netflix.IdUrl));//Randomized().
+                    actors.Add(m, Netflix.Fill.Titles.GetActors(m.Netflix.IdUrl));//.Randomized()
                 }
 
                 ///8) add the people that don't exist to the ftdatabase

@@ -224,13 +224,14 @@
     <Content Include="Public\Fonts\Roboto-Regular-webfont.svg" />
     <Content Include="Public\Fonts\Roboto-Thin-webfont.svg" />
     <Content Include="Public\Fonts\Roboto-ThinItalic-webfont.svg" />
+    <Content Include="Public\Images\filmtrove.gif" />
     <Content Include="Public\Images\nav-bg.png" />
     <Content Include="Public\Js\libs.js" />
     <Content Include="Public\themes\base\minified\images\ui-bg_flat_75_ffffff_40x100.png" />
     <Content Include="Public\themes\base\minified\images\ui-bg_glass_75_dadada_1x400.png" />
     <Content Include="Public\themes\base\minified\jquery-ui.min.css" />
     <Content Include="Public\themes\base\minified\jquery.ui.autocomplete.min.css" />
-    <Content Include="favicon.ico" />
+    <Content Include="Public\favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Public\Css\base.css" />
     <Content Include="Public\Css\color.css" />

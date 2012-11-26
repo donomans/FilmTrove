@@ -1,2 +1,4 @@
 ﻿User-agent: *
-Disallow:
+Disallow: /lists/
+Disallow: /search/
+Disallow: /posts/

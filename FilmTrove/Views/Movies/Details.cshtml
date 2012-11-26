@@ -151,10 +151,10 @@
             String friendlytitle = similars.Title.UrlFriendly(similars.Year);
     <div class="one-fourth column portfolio-item">
         <div class="movie">
-            <a href="/Movies/Details/@similars.MovieId/@friendlytitle" title="@similars.Title">
+            <a href="/movies/details/@similars.MovieId/@friendlytitle" title="@similars.Title">
             <img src="@similars.BestPosterUrl" alt="@similars.Title"/>@*<div class="image-overlay-link"></div>*@</a>
 			<div class="item-description alt">
-				<h5><a href="/Movies/Details/@similars.MovieId/@friendlytitle">@similars.Title</a></h5>
+				<h5><a href="/movies/details/@similars.MovieId/@friendlytitle">@similars.Title</a></h5>
                 <p>
 				@Html.Raw(similars.Description)
 				</p>
@@ -163,7 +163,7 @@
                 <span>
                     <span>@similars.Year</span>
                     <span>@similars.Rating</span>
-                    <span><a href="/Lists/Links/@similars.MovieId/@friendlytitle" class="button color addtocollection">Add To...</a></span>
+                    <span><a href="/lists/links/@similars.MovieId/@friendlytitle" class="button color addtocollection">Add To...</a></span>
                 </span>
             </div>	
 		</div>

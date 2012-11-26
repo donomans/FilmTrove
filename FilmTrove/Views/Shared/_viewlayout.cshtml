@@ -15,7 +15,7 @@
     <meta property="og:url" content="@ViewBag.OgUrl"/>
     <meta property="og:image" content="@ViewBag.OgImage"/>*@
     @*// /FB Open Graph*@
-
+    <link rel="shortcut icon" href="/public/favicon.ico" />
     <link rel="stylesheet" type="text/css" href="/public/css/roboto.css" />
     <link rel="stylesheet" type="text/css" href="/public/css/fancybox.css" />
     <link rel="stylesheet" type="text/css" href="/public/css/base.css" />
@@ -44,7 +44,7 @@
 	    <div class="container">
 		    <div class="one-third column">
 			    <div id="logo">
-				    <a href="/"><img src="/public/images/filmtrove.png" alt="FilmTrove" /></a>
+				    <a href="/"><img src="/public/images/filmtrove.gif" alt="FilmTrove" /></a>
 			    </div>
 		    </div>
 		    <div class="two-thirds column">
@@ -73,12 +73,12 @@
 		    @*<div id="logo-small"></div>*@
 		    <div id="navigation">
 			    <ul id="nav">
-				    <li><a href="/Search/Picker">Find me a movie</a></li>
-				    <li><a href="/Me">Me</a>
+				    <li><a href="/search/picker">Find me a movie</a></li>
+				    <li><a href="/me">Me</a>
 					    <ul>
-					        <li><a href="/Lists/Collection/">Collection</a></li>
-					        <li><a href="/Lists/View">Lists</a></li>
-					        <li><a href="/Me/#Friends">Friends</a></li>
+					        <li><a href="/lists/collection/">Collection</a></li>
+					        <li><a href="/lists/view">Lists</a></li>
+					        <li><a href="/me/#Friends">Friends</a></li>
 					    </ul>
 				    </li>
 				    <li><a href="#">Movies</a>
@@ -96,14 +96,14 @@
                         <a>Login</a>
                         <ul>
                             <li>
-                                @using (Html.BeginForm("GoogleLogin", "Account", FormMethod.Post, new { id = "googleform" }))
+                                @using (Html.BeginForm("googlelogin", "account", FormMethod.Post, new { id = "googleform" }))
                                 {
                                 @Html.AntiForgeryToken()
                                 <a href="javascript: document.forms['googleform'].submit();">Google</a>
                                 }
                             </li>
                             <li>
-                                @using (Html.BeginForm("FacebookLogin", "Account", FormMethod.Post, new { id = "fbform" }))
+                                @using (Html.BeginForm("facebooklogin", "account", FormMethod.Post, new { id = "fbform" }))
                                 {
                                 @Html.AntiForgeryToken()
                                 <a href="javascript: document.forms['fbform'].submit();">Facebook</a>
@@ -113,7 +113,7 @@
                         }
                         else
                         {
-                            using (Html.BeginForm("Logout", "Account", FormMethod.Post, new { id = "logoutform" }))
+                            using (Html.BeginForm("logout", "account", FormMethod.Post, new { id = "logoutform" }))
                             {
                             @Html.AntiForgeryToken()
                         <a href="javascript: document.forms['logoutform'].submit();">Logout</a>

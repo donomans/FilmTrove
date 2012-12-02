@@ -254,9 +254,10 @@ namespace FilmTrove.Controllers
 
                 m.Netflix.Synopsis = netflixtitle.Synopsis;
                 m.Description = netflixtitle.Synopsis;
-                m.ViewCount++;
-                ftc.SaveChanges();
+                
             }
+            m.ViewCount++;
+            ftc.SaveChanges();
             #endregion
 
             if (m.Netflix.SimilarTitles.Count > 0)

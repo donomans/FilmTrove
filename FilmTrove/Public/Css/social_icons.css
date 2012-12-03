@@ -50,10 +50,10 @@
 	border: none;
 }
 
-.facebook {background: url(../images/icons/facebook-sm.png) no-repeat;}
-.github {background: url(../images/icons/github-sm.png) no-repeat;}
-.googleplus {background: url(../images/icons/googleplus-sm.png) no-repeat;}
-.twitter {background: url(../images/icons/twitter-sm.png) no-repeat;}
+.facebook {background: url(http://cdn.filmtrove.com/img/facebook-sm.png) no-repeat;}
+.github {background: url(http://cdn.filmtrove.com/img/github-sm.png) no-repeat;}
+.googleplus {background: url(http://cdn.filmtrove.com/img/googleplus-sm.png) no-repeat;}
+.twitter {background: url(http://cdn.filmtrove.com/img/twitter-sm.png) no-repeat;}
 
 /* Social Icons - big
 =================================================================== */
@@ -105,25 +105,25 @@
 	background-color:transparent;
 }
 .social-bookmarks li.facebook a {
-	background: url(../images/icons/facebook.png) no-repeat 0 0;
+	background: url(http://cdn.filmtrove.com/img/facebook.png) no-repeat 0 0;
 }
 .social-bookmarks li.facebook a:hover {
 	background-color: #3b5998;
 }
 .social-bookmarks li.github a {
-	background: url(../images/icons/github.png) no-repeat 0 0;
+	background: url(http://cdn.filmtrove.com/img/github.png) no-repeat 0 0;
 }
 .social-bookmarks li.github a:hover {
 	background-color: #7292a2;
 }
 .social-bookmarks li.googleplus a {
-	background: url(../images/icons/googleplus.png) no-repeat 0 0;
+	background: url(http://cdn.filmtrove.com/img/googleplus.png) no-repeat 0 0;
 }
 .social-bookmarks li.googleplus a:hover {
 	background-color: #d94a39;
 }
 .social-bookmarks li.twitter a {
-	background: url(../images/icons/twitter.png) no-repeat 0 0;
+	background: url(http://cdn.filmtrove.com/img/twitter.png) no-repeat 0 0;
 }
 .social-bookmarks li.twitter a:hover {
 	background-color: #48c4d2;

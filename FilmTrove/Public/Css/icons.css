@@ -12,7 +12,7 @@
 }
 
 
-[class^="ico-"],
+/*[class^="ico-"],
 [class*="ico-"] {
 	display: inline-block;
 	width: 48px;
@@ -23,12 +23,12 @@
 	background-image: url("../images/icons/glyphicons.png");
 	background-position: 48px 48px;
 	background-repeat: no-repeat;
-}
+}*/
 
-[class^="ico-"]:last-child,
+/*[class^="ico-"]:last-child,
 [class*="ico-"]:last-child {
 	*margin-left: 0;
-}
+}*/
 
 .ico-white {
 	background-image: url("../images/icons/glyphicons-white.png");

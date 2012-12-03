@@ -72,9 +72,9 @@
 	max-height: 100%;
 }
 
-#fancybox-loading, .fancybox-close, .fancybox-prev span, .fancybox-next span {
+/*#fancybox-loading, .fancybox-close, .fancybox-prev span, .fancybox-next span {
 	background-image: url('../images/fancybox_sprite.png');
-}
+}*/
 
 #fancybox-loading {
 	position: fixed;
@@ -88,11 +88,11 @@
 	z-index: 98060;
 }
 
-#fancybox-loading div {
+/*#fancybox-loading div {
 	width: 44px;
 	height: 44px;
 	background: url('../images/fancybox_loading.gif') center center no-repeat;
-}
+}*/
 
 .fancybox-close {
 	position: absolute;
@@ -189,7 +189,7 @@
 
 .fancybox-title {
 	visibility: hidden;
-	font: normal 13px/20px "Helvetica Neue",Helvetica,Arial,sans-serif;
+	font: normal 13px/20px "Helvetica Neue",Helvetica,RobotoThin,Arial,sans-serif;
 	position: relative;
 	text-shadow: none;
 	z-index: 98050;
@@ -288,7 +288,7 @@
 	padding: 0;
 }
 
-#fancybox-buttons a {
+/*#fancybox-buttons a {
 	display: block;
 	width: 30px;
 	height: 30px;
@@ -297,7 +297,7 @@
 	background-repeat: no-repeat;
 	outline: none;
 	opacity: 0.8;
-}
+}*/
 
 #fancybox-buttons a:hover {
 	opacity: 1;

@@ -49,7 +49,7 @@ a, a:visited {
 
 #navigation ul li a.active, 
 #navigation ul li.active > a {
-	background: #fff url(/public/images/nav-bg.png) repeat-x;
+	background: #fff url(http://cdn.filmtrove.com/img/nav-bg.png) repeat-x;
 	color: #555;
 }
 
@@ -164,13 +164,13 @@ a.post-entry {
 	background-position: 50%;
 }
 
-.image-overlay-link {
+/*.image-overlay-link {
 	background-image: url(/public/images/overlay-icon-01.png);
 }
 
 .image-overlay-zoom {
 	background-image: url(/public/images/overlay-icon-02.png);
-}
+}*/
 
 /* Notice
 =================================================================== */
@@ -186,14 +186,14 @@ a.post-entry {
 /* List styles
 =================================================================== */	
 
-.check_list li {background: url(/public/images/icons/list/yellow/list_check.png) no-repeat 0% 50%; padding: 0 0 0 18px;}
+/*.check_list li {background: url(/public/images/icons/list/yellow/list_check.png) no-repeat 0% 50%; padding: 0 0 0 18px;}
 .plus_list  li {background: url(/public/images/icons/list/yellow/list_plus.png) no-repeat 0% 50%; padding: 0 0 0 18px;}
 .minus_list  li {background: url(/public/images/icons/list/yellow/list_minus.png) no-repeat 0% 50%; padding: 0 0 0 18px;}
 .star_list  li {background: url(/public/images/icons/list/yellow/list_star.png) no-repeat 0% 50%; padding: 0 0 0 16px;}
 .arrow_list  li {background: url(/public/images/icons/list/yellow/list_arrow.png) no-repeat 0% 50%; padding: 0 0 0 16px;}
 .square_list  li {background: url(/public/images/icons/list/yellow/list_square.png) no-repeat 0% 50%; padding: 0 0 0 16px;}
 .circle_list  li {background: url(/public/images/icons/list/yellow/list_circle.png) no-repeat 0% 50%; padding: 0 0 0 16px;}
-.cross_list  li {background: url(/public/images/icons/list/yellow/list_cross.png) no-repeat 0% 50%; padding: 0 0 0 16px;}
+.cross_list  li {background: url(/public/images/icons/list/yellow/list_cross.png) no-repeat 0% 50%; padding: 0 0 0 16px;}*/
 
 .project-info strong {
 	color: #499ff0;
@@ -221,7 +221,7 @@ input[type="button"] {
 /* Icons
 =================================================================== */
 
-.ico-color {
+/*.ico-color {
 	background-image: url("/public/images/icons/yellow/glyphicons.png");
 	opacity: 1;
 }
@@ -229,7 +229,7 @@ input[type="button"] {
 .mini-color {
   background-image: url("/public/images/icons/yellow/glyphicons-mini.png");
   opacity: 1;
-}
+}*/
 
 /* Footer
 =================================================================== */

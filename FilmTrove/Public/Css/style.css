@@ -1,5 +1,5 @@
 body {
-	background: #eee url(../images/texture.jpg) repeat;
+	background: #eee url(http://cdn.filmtrove.com/img/texture.jpg) repeat;
 	background-attachment: fixed;
 	font-family: 'HelveticaNeue-Light', 'Helvetica Neue Light','RobotoLight';
     /*text-shadow: 0px 0px 1px #888;*/
@@ -56,7 +56,7 @@ body {
 	}
 	
 	body {
-		background: #eee url(../images/texture.jpg) repeat;
+		background: #eee url(http://cdn.filmtrove.com/img/texture.jpg) repeat;
 	}
 	
 	#footer {
@@ -94,7 +94,7 @@ body {
 	}
 	
 	body {
-		background: #eee url(../images/texture.jpg) repeat;
+		background: #eee url(http://cdn.filmtrove.com/img/texture.jpg) repeat;
 	}
 	
 	#footer {
@@ -153,7 +153,7 @@ p, blockquote {
 	margin: 10px auto 10px auto;
 }
 
-#logo-small {
+/*#logo-small {
 	background: url(../images/logo-small.png);
 	width: 48px;
 	height: 36px;
@@ -162,7 +162,7 @@ p, blockquote {
 	z-index: 1000;
 	margin-right: -48px;
 	display: none;
-}
+}*/
 
 /* Social Header
 =================================================================== */
@@ -190,7 +190,7 @@ p, blockquote {
 }
 
 #search input {
-	background: url(/public/images/icons/search.png) no-repeat -1px -1px;
+	background: url(http://cdn.filmtrove.com/img/search.png) no-repeat -1px -1px;
 	height: 36px;
 	width: 160px;
 	margin: 0px;
@@ -215,7 +215,7 @@ p, blockquote {
 }*/
 
 #search input.active-search {
-	background: url(/public/images/icons/loading.gif) no-repeat 7px 7px;
+	background: url(http://cdn.filmtrove.com/img/loading.gif) no-repeat 7px 7px;
 }
 
 /* Contact
@@ -488,7 +488,7 @@ html[xmlns] .slides {display: block;}
 /* Direction Nav
 =================================================================== */
 
-.flex-direction-nav a {
+/*.flex-direction-nav a {
 	width: 35px;
 	height: 35px;
 	display: block;
@@ -528,12 +528,12 @@ html[xmlns] .slides {display: block;}
 	opacity: 1;
 }
 
-.subpage .flex-direction-nav a {bottom: 0px; right: 0px; *bottom: 30px;}
+.subpage .flex-direction-nav a {bottom: 0px; right: 0px; *bottom: 30px;}*/
 
 
 /* Control Nav
 =================================================================== */
-.flex-control-nav {
+/*.flex-control-nav {
 	width: 100%;
 	position: absolute;
 	bottom: -30px;
@@ -567,7 +567,7 @@ html[xmlns] .slides {display: block;}
 	
 .flex-control-paging li a.flex-active {
 	cursor: default;
-}
+}*/
 
 
 /* Caption
@@ -695,13 +695,13 @@ html[xmlns] .slides {display: block;}
 	cursor: pointer;
 }
 
-.image-overlay-link {
+/*.image-overlay-link {
 	background-image: url(../images/overlay-icon-01.png);
 }
 
 .image-overlay-zoom {
 	background-image: url(../images/overlay-icon-02.png);
-}
+}*/
 
 /*.video {
 	border: 10px solid #fff;
@@ -1049,7 +1049,7 @@ iframe {
 	display: block;
 	padding: 3px 0;
 	padding-left: 12px;
-	background: url(../images/links-list-arrow-01.png) no-repeat left 47%;
+	/*background: url(../images/links-list-arrow-01.png) no-repeat left 47%;*/
 }
 
 .links-list-alt li a {
@@ -1057,7 +1057,7 @@ iframe {
 	display: block;
 	padding: 3px 0;
 	padding-left: 12px;
-	background: url(../images/links-list-arrow-02.png) no-repeat left 47%;
+	/*background: url(../images/links-list-arrow-02.png) no-repeat left 47%;*/
 }
 
 .links-list li a:hover {color: #fff}
@@ -1101,7 +1101,7 @@ iframe {
 
 #twitter b a, #twitter b a:hover {color: #666; font-weight:bold}
 #twitter li {
-	background: url(../images/icons/twittergrey.png) no-repeat 0% 50%;
+	background: url(http://cdn.filmtrove.com/img/twittergrey.png) no-repeat 0% 50%;
 	padding-left: 36px;
 	line-height: 18px; margin: 2px 0 12px 0;
 	}
@@ -1206,14 +1206,14 @@ iframe {
 	background: #ffeceb;
 }
 
-.loading {
+/*.loading {
 	background:url(../images/loader.gif) no-repeat 1px; 
 	height:28px; 
 	width:28px; 
 	float: left;
 	margin: 5px 0 0 10px;
 	display: none;
-}
+}*/
 
 .success-message .notification {margin-bottom: 20px;}
 .success-message {display:none;}
@@ -1656,7 +1656,7 @@ input[type="button"]:hover {background:#aaa}
 
 /* Accordion
 =================================================================== */
-.acc-trigger {
+/*.acc-trigger {
 	cursor: pointer;
 	border: 1px solid #eee;
 	outline: none;
@@ -1690,7 +1690,7 @@ input[type="button"]:hover {background:#aaa}
 }
 
 .acc-container .content {padding: 2px 15px 5px 15px;}
-.content p {margin-bottom: 0;}
+.content p {margin-bottom: 0;}*/
 
 
 /* Tabs
@@ -1807,10 +1807,10 @@ input[type="button"]:hover {background:#aaa}
 	weight: 8px;
 }
 
-.notification.success .close {background: url(../images/alert_boxes_close_ico.png) 0 -8px no-repeat;}
+/*.notification.success .close {background: url(../images/alert_boxes_close_ico.png) 0 -8px no-repeat;}
 .notification.error .close {background: url(../images/alert_boxes_close_ico.png) 0 0 no-repeat;}
 .notification.warning .close {background: url(../images/alert_boxes_close_ico.png) 0 -16px no-repeat;}
-.notification.notice .close {background: url(../images/alert_boxes_close_ico.png) 0 -24px no-repeat;}
+.notification.notice .close {background: url(../images/alert_boxes_close_ico.png) 0 -24px no-repeat;}*/
 
 
 /* Tooltip
@@ -1957,7 +1957,7 @@ input[type="button"]:hover {background:#aaa}
 }*/
 
 /* Carousel */
-.carousel-disabled,
+/*.carousel-disabled,
 .mr-rotato-disabled,
 .mr-rotato-next, 
 .mr-rotato-prev {
@@ -2006,11 +2006,11 @@ input[type="button"]:hover {background:#aaa}
 .mr-rotato-next:hover {
 	background-color: #72b626;
 	border-color: #72b626;
-}
+}*/
 
 /* Baner
 =================================================================== */
-.baner {
+/*.baner {
 	border: 10px solid #eee;
 	background: #fff;
 	padding: 10px;
@@ -2033,18 +2033,18 @@ input[type="button"]:hover {background:#aaa}
 	
 	.bcolor {
 		font-size: 58px;
-	}
+	}*/
 
 /* Blockquote
 =================================================================== */
-blockquote {
+/*blockquote {
 	border: 1px solid #eee;
 	padding: 20px 20px 20px 40px;
 	color: #666;
 	line-height: 20px;
 	margin: 5px 0 20px 0;
 	background: #fcfcfc url(../images/quote.png) no-repeat 10px 20px;
-}
+}*/
 
 /* Quotes
 =================================================================== */

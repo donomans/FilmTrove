@@ -68,9 +68,13 @@ namespace FilmTrove.Code
                 //}
                 //if (count > 0)
                 if (matchedmovies.Count() < results.Count())
-                    return ftc.Movies.Where(m => netflixids.Contains(m.Netflix.Id)).ToList();
-                else
-                    return matchedmovies.ToList();
+                    matchedmovies = ftc.Movies.Where(m => netflixids.Contains(m.Netflix.Id));
+                //else
+                //    return matchedmovies.ToList();
+
+                return results.Select(m => 
+                    matchedmovies.First(f => 
+                        f.Netflix.Id == (m.Id + (m.SeasonId != "" ? ";" + m.SeasonId : "")))).ToList();
             }
         }
 
@@ -114,9 +118,13 @@ namespace FilmTrove.Code
                 }
                 //if (count > 0)
                 if (matchedpeople.Count() < results.Count())
-                    return ftc.People.Where(m => netflixids.Contains(m.Netflix.Id)).ToList();
-                else
-                    return matchedpeople.ToList();
+                    matchedpeople = ftc.People.Where(m => netflixids.Contains(m.Netflix.Id));
+                //else
+                //    return matchedpeople.ToList();
+
+                return results.Select(p =>
+                    matchedpeople.First(f =>
+                        f.Netflix.Id == p.Id)).ToList();
             }
         }
 

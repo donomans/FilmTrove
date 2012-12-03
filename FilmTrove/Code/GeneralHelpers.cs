@@ -12,7 +12,7 @@ namespace FilmTrove.Code
     {
         public static List<Models.Movie> GetDatabaseMovies(Titles results)
         {
-            var netflixids = results.Select((m) => m.Id);
+            var netflixids = results.Select((m) => m.Id + (m.SeasonId != "" ? ";" + m.SeasonId : ""));
             using (FilmTroveContext ftc = new FilmTroveContext())
             {
 
@@ -22,7 +22,7 @@ namespace FilmTrove.Code
                 ///select the ids and get the netflix Ids that aren't in the FT database
                 var ftnfids = matchedmovies.Select(m => m.Netflix.Id);
                 var netflixidsunmatched = netflixids.Where(m => !ftnfids.Contains(m));
-                Int32 count = 0;
+                //Int32 count = 0;
                 foreach (String nid in netflixidsunmatched)
                 {
                     ///create FT database records for each of these with the movies basic information for now
@@ -56,18 +56,21 @@ namespace FilmTrove.Code
                     ftc.Movies.Add(newmovie);
                 }
 
-                try
-                {
-                    count = ftc.SaveChanges();
-                }
-                catch (Exception)
-                {
-                    ///need to add some sort of logging?
+                //try
+                //{
+                    //count = 
+                ftc.SaveChanges();
+                //}
+                //catch (Exception ex)
+                //{
+                //    ///need to add some sort of logging?
 
-                }
-                if (count > 0)
-                    matchedmovies = ftc.Movies.Where(m => netflixids.Contains(m.Netflix.Id));
-                return matchedmovies.ToList();
+                //}
+                //if (count > 0)
+                if (matchedmovies.Count() < results.Count())
+                    return ftc.Movies.Where(m => netflixids.Contains(m.Netflix.Id)).ToList();
+                else
+                    return matchedmovies.ToList();
             }
         }
 
@@ -82,34 +85,38 @@ namespace FilmTrove.Code
                 ///select the ids and get the netflix Ids that aren't in the FT database
                 var ftnfids = matchedpeople.Select(m => m.Netflix.Id);
                 var netflixidsunmatched = netflixids.Where(m => !ftnfids.Contains(m));
-                Int32 count = 0;
+                //Int32 count = 0;
                 foreach (String nid in netflixidsunmatched)
                 {
                     ///create FT database records for each of these with the movies basic information for now
                     FilmTrove.Models.Person newperson = ftc.People.Create();
                     FlixSharp.Holders.Person netflixperson = results.Find(nid);
-                    newperson.Name = netflixperson.Name;
-                    newperson.Bio = netflixperson.Bio;
-                    newperson.Netflix = new NetflixPersonInfo();
-                    newperson.Netflix.Id = netflixperson.Id;
-                    newperson.Netflix.IdUrl = netflixperson.IdUrl;
-                    newperson.Netflix.Url = netflixperson.NetflixSiteUrl;
+                    FillBasicPerson(newperson, netflixperson);
+                    //newperson.Name = netflixperson.Name;
+                    //newperson.Bio = netflixperson.Bio;
+                    //newperson.Netflix = new NetflixPersonInfo();
+                    //newperson.Netflix.Id = netflixperson.Id;
+                    //newperson.Netflix.IdUrl = netflixperson.IdUrl;
+                    //newperson.Netflix.Url = netflixperson.NetflixSiteUrl;
 
                     ftc.People.Add(newperson);
                 }
 
                 try
                 {
-                    count = ftc.SaveChanges();
+                    //count = 
+                    ftc.SaveChanges();
                 }
                 catch (Exception)
                 {
                     throw;
                     ///need to add some sort of logging?
                 }
-                if (count > 0)
-                    matchedpeople = ftc.People.Where(m => netflixids.Contains(m.Netflix.Id));
-                return matchedpeople.ToList();
+                //if (count > 0)
+                if (matchedpeople.Count() < results.Count())
+                    return ftc.People.Where(m => netflixids.Contains(m.Netflix.Id)).ToList();
+                else
+                    return matchedpeople.ToList();
             }
         }
 

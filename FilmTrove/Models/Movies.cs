@@ -45,7 +45,7 @@ namespace FilmTrove.Models
 
         public String GetDetailsUrl()
         {
-            return "/Movies/Details/" + MovieId + "/" + Title.UrlFriendly();
+            return "/Movies/Details/" + MovieId + "/" + Title.UrlFriendly(Year);
         }
         public String GetAwards()
         {

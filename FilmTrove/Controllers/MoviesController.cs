@@ -20,8 +20,8 @@ namespace FilmTrove.Controllers
         public async Task<ActionResult> Details(String id, String title)
         {
             FilmTroveContext ftc = (FilmTroveContext)HttpContext.Items["ftcontext"];
-
-            FilmTrove.Models.Movie m = ftc.Movies.Find(Int32.Parse(id));
+            Int32 movieid = Int32.Parse(id);
+            FilmTrove.Models.Movie m = ftc.Movies.Include("Roles.Person").Where(movie=>movie.MovieId == movieid).Single();
 
             Task<FlixSharp.Holders.Title> nfm = null;
 

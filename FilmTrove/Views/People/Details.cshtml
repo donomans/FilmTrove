@@ -1,4 +1,5 @@
-﻿@{
+﻿@using FilmTrove.Code
+@{
     FilmTrove.Models.Person person = ViewBag.Person;
     ViewBag.Title = person.Name + " details";
 }
@@ -8,7 +9,7 @@
 @if (ViewBag.NeedFilmography)
 {
     <script>
-        $.ajax("/People/Filmography/@person.PersonId").done(
+        $.ajax("/people/filmography/@person.PersonId").done(
             function (films) {
                 $("#filmography").html("got some filmography: " + films);
             });
@@ -19,31 +20,34 @@
     {
     <ul>
         <li>Actor</li>
-        @foreach (FilmTrove.Models.Role r in person.Roles.Where(t=> t.InRole == FilmTrove.Models.RoleType.Actor))
+        @foreach (FilmTrove.Models.Role r in person.Roles.Where(t => t.InRole == FilmTrove.Models.RoleType.Actor).OrderByDescending(t => t.Movie.Year))
         {
-        <li><a href="@r.Movie.GetDetailsUrl()">@r.Movie.Title</a></li>   
+            String optionalyear = r.Movie.Year > 0 ? " (" + r.Movie.Year + ")" : "";
+        <li><a href="@r.Movie.GetDetailsUrl()">@r.Movie.Title@optionalyear</a></li>   
         }
     </ul>
     <ul>
         <li>Director</li>
-        @foreach (FilmTrove.Models.Role r in person.Roles.Where(t=> t.InRole == FilmTrove.Models.RoleType.Director))
+        @foreach (FilmTrove.Models.Role r in person.Roles.Where(t => t.InRole == FilmTrove.Models.RoleType.Director).OrderByDescending(t => t.Movie.Year))
         {
-        <li><a href="@r.Movie.GetDetailsUrl()">@r.Movie.Title</a></li>   
+            String optionalyear = r.Movie.Year > 0 ? " (" + r.Movie.Year + ")" : "";
+        <li><a href="@r.Movie.GetDetailsUrl()">@r.Movie.Title@optionalyear</a></li>
         }
     </ul>
     <ul>
         <li>Writer</li>
-        @foreach (FilmTrove.Models.Role r in person.Roles.Where(t=> t.InRole == FilmTrove.Models.RoleType.Writer))
+        @foreach (FilmTrove.Models.Role r in person.Roles.Where(t => t.InRole == FilmTrove.Models.RoleType.Writer).OrderByDescending(t => t.Movie.Year))
         {
-        <li><a href="@r.Movie.GetDetailsUrl()">@r.Movie.Title</a></li>   
+            String optionalyear = r.Movie.Year > 0 ? " (" + r.Movie.Year + ")" : "";
+        <li><a href="@r.Movie.GetDetailsUrl()">@r.Movie.Title@optionalyear</a></li>
         }
     </ul>
     <ul>
         <li>Producer</li>
-        @foreach (FilmTrove.Models.Role r in person.Roles.Where(t=> t.InRole == FilmTrove.Models.RoleType.Producer))
+        @foreach (FilmTrove.Models.Role r in person.Roles.Where(t => t.InRole == FilmTrove.Models.RoleType.Producer).OrderByDescending(t => t.Movie.Year))
         {
-        <li><a href="@r.Movie.GetDetailsUrl()">@r.Movie.Title</a></li>   
-        }
+            String optionalyear = r.Movie.Year > 0 ? " (" + r.Movie.Year + ")" : "";
+        <li><a href="@r.Movie.GetDetailsUrl()">@r.Movie.Title@optionalyear</a></li>        }
     </ul>
     }
 </div>

@@ -358,11 +358,11 @@ $('#wrapper').imagesLoaded(function() {
 	        headers:
             { 'Accept': 'application/json' }
 	    },
-	    maxWidth: 300,
+	    maxWidth: 400,
 	    maxHeight: 800,
 	    fitToView: true,
-	    width: '30%',
-	    height: '30%',
+	    width: '50%',
+	    height: '50%',
 	    autoSize: true,
 	    closeClick: false,
 	    openEffect: 'none',

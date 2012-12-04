@@ -10,15 +10,30 @@
     <title>Your lists</title>
 </head>
 <body>
-    <h2>Select a list:</h2>
     <div>
         @if(WebSecurity.IsAuthenticated){
-        <p>it worked:@ViewBag.Id<br />@ViewBag.FriendlyTitle </p>
-        }
-        else
-        {
-            <p>Please log in to add movies to your lists</p>
+        <h3>Select a format:</h3>
+        <h3>Select a list:</h3>
+        <ul id="thelists">
+            @foreach(FilmTrove.Models.ListInfo li in ViewBag.Lists) {
+            <li><a href="/lists/add/@ViewBag.Id/@li.ListId">@li.ListName</a></li>    
+            }
+        </ul>
+        <p><a class="addnewlink" href="/lists/new/">Add new list</a></p>
+            @* need to have a text box or something? *@ 
+        } else {
+        <p>Please log in to add movies to your lists</p>
         }
     </div>
+    <script>
+        var addnewlink = $('.addnewlink');
+        addnewlink.click(function () {
+            $.ajax({
+                url: addnewlink.attr('href')
+            }).done(function (list) {
+                $('#thelists').html(list);
+            })
+        });
+    </script>
 </body>
 </html>

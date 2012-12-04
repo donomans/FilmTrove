@@ -17,9 +17,9 @@ namespace FilmTrove.Controllers
         public ActionResult Details(String id, String name)
         {
             FilmTroveContext ftc = (FilmTroveContext)HttpContext.Items["ftcontext"];
-            
-            FilmTrove.Models.Person p = ftc.People.Find(Int32.Parse(id));
- 
+            Int32 personid = Int32.Parse(id);
+            FilmTrove.Models.Person p = ftc.People.Include("Roles.Movie").Where(person => person.PersonId == personid).Single();
+            //PersonDisplay p = ftc.Database.SqlQuery<PersonDisplay>("");
             if (p.DateLastModified > DateTime.Now.AddDays(14))
             {
                 p.Netflix.NeedsUpdate = true;

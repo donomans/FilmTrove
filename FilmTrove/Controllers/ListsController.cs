@@ -42,7 +42,10 @@ namespace FilmTrove.Controllers
             if (WebSecurity.IsAuthenticated)
             {
                 ViewBag.Id = id;
-                ViewBag.FriendlyTitle = title;
+                FilmTroveContext ftc = (FilmTroveContext)HttpContext.Items["ftcontext"];
+                UserProfile up = ftc.UserProfiles.Find(WebSecurity.CurrentUserId);
+                ViewBag.Lists = up.UserLists.Select(l => new ListInfo { ListId = l.ListId, ListName = l.ListName }).ToList();
+
             }
             else
             {
@@ -52,8 +55,9 @@ namespace FilmTrove.Controllers
             return View();
         }
 
-        public ActionResult Add(String movieid, String movietitle, String listid, String listtitle)
+        public ActionResult Add(String movieid, String listid)
         {
+            
             return View();
         }
 
@@ -67,10 +71,26 @@ namespace FilmTrove.Controllers
             return View("Lists");
         }
 
-        public ActionResult New(String list, String id, String title)
+        public JsonResult New(String list)
         {
-            
-            return View("Lists");
+            Int32 listid = -1;
+            if (WebSecurity.IsAuthenticated)
+            {
+                FilmTroveContext ftc = (FilmTroveContext)HttpContext.Items["ftcontext"];
+                UserProfile up = ftc.UserProfiles.Find(WebSecurity.CurrentUserId);
+                ftc.Lists.Add(new UserList()
+                {
+                    ListName = list,
+                    Owner = up
+                });
+                ftc.SaveChanges();
+                UserList ul = ftc.Lists.Where(l => l.ListName == list).Single();
+                listid = ul.ListId;
+            }
+            else
+            {
+            }
+            return new JsonResult() { Data = new { ListId = listid, ListName = list } };
         }
     }
 }

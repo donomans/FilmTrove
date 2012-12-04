@@ -44,6 +44,11 @@ namespace FilmTrove.Models
 
         public virtual ICollection<UserListItem> Items { get; set; }
     }
+    public struct ListInfo
+    {
+        public Int32 ListId { get; set; }
+        public String ListName { get; set; }
+    }
 
     public class UserListItem : Dateable
     {

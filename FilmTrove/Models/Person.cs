@@ -54,4 +54,25 @@ namespace FilmTrove.Models
 
     }
 
+
+    //public class PersonDisplay : Dateable
+    //{
+    //    public Int32 PersonId { get; set; }
+    //    public String Name { get; set; }
+
+    //    public Int32 RoleId { get; set; }
+    //    public String RoleName { get; set; }
+    //    public RoleType InRole { get; set; }
+
+    //    public Int32 MovieYear { get; set; }
+
+    //    public Boolean NetflixNeedsUpdate { get; set; }
+    //    public Boolean RottenTomatoesNeedsUpdate { get; set; }
+    //    public Boolean ImdbNeedsUpdate { get; set; }
+
+    //    public String GetDetailsUrl()
+    //    {
+    //        return "/People/Details/" + PersonId + "/" + Name.UrlFriendly();
+    //    }
+    //}
 }

@@ -280,6 +280,7 @@ namespace FilmTrove.Controllers
                             prof.Name = result.UserName;
 
                         ftc.UserProfiles.Add(prof);
+                        ftc.Lists.Add(new UserList() { ListName = "My Collection", Owner = prof }); 
                         ftc.SaveChanges();
 
                         String provider;

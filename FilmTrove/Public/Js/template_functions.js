@@ -398,5 +398,4 @@ jQuery(document).ready(function($){
 	        .children('a') //The childrens are <a> and <ul>
 	        .addClass('active'); //add class active to the a    
 	}
-
 });

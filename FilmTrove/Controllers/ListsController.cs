@@ -21,7 +21,7 @@ namespace FilmTrove.Controllers
             {
                 FilmTroveContext ftc = (FilmTroveContext)HttpContext.Items["ftcontext"];
                 UserProfile prof = ftc.UserProfiles.Find(WebSecurity.CurrentUserId);
-                if (prof.UserLists == null || prof.UserLists.Count < 1)//.Collection == null)
+                if (prof.UserLists.Count < 1)//.Collection == null)
                 {
                     UserList collection = new UserList();
                     collection.ListName = "My Collection";
@@ -44,6 +44,12 @@ namespace FilmTrove.Controllers
                 ViewBag.Id = id;
                 FilmTroveContext ftc = (FilmTroveContext)HttpContext.Items["ftcontext"];
                 UserProfile up = ftc.UserProfiles.Find(WebSecurity.CurrentUserId);
+                if (up.UserLists.Count < 1)
+                {
+                    ///this is only temporary
+                    ftc.Lists.Add(new UserList() { Owner = up, ListName = "My Collection" });
+                    ftc.SaveChanges();
+                }
                 ViewBag.Lists = up.UserLists.Select(l => new ListInfo { ListId = l.ListId, ListName = l.ListName }).ToList();
 
             }
@@ -55,10 +61,18 @@ namespace FilmTrove.Controllers
             return View();
         }
 
-        public ActionResult Add(String movieid, String listid)
+        public JsonResult Add(String movieid, String listid, String formats)
         {
-            
-            return View();
+            FilmTroveContext ftc = (FilmTroveContext)HttpContext.Items["ftcontext"];
+            UserList list = ftc.Lists.Find(Convert.ToInt32(listid));
+            Movie movie = ftc.Movies.Find(Convert.ToInt32(movieid));
+            UserListItem uli = ftc.ListItems.Create();
+            uli.List = list;
+            uli.Movie = movie;
+            uli.MovieTitle = movie.Title;
+            uli.OwnedFormats = (Format)Enum.Parse(typeof(Format), formats);
+
+            return Json(new { Success = true});
         }
 
         public ActionResult Delete(String list, String id, String title)
@@ -71,26 +85,27 @@ namespace FilmTrove.Controllers
             return View("Lists");
         }
 
-        public JsonResult New(String list)
+        [HttpPost]
+        public JsonResult New(String listname, String movieid)
         {
             Int32 listid = -1;
             if (WebSecurity.IsAuthenticated)
             {
                 FilmTroveContext ftc = (FilmTroveContext)HttpContext.Items["ftcontext"];
                 UserProfile up = ftc.UserProfiles.Find(WebSecurity.CurrentUserId);
-                ftc.Lists.Add(new UserList()
+                UserList ul = ftc.Lists.Add(new UserList()
                 {
-                    ListName = list,
+                    ListName = listname,
                     Owner = up
                 });
                 ftc.SaveChanges();
-                UserList ul = ftc.Lists.Where(l => l.ListName == list).Single();
+                //UserList ul = ftc.Lists.Where(l => l.ListName == listname).Single();
                 listid = ul.ListId;
             }
             else
             {
             }
-            return new JsonResult() { Data = new { ListId = listid, ListName = list } };
+            return this.Json(data: new { ListId = listid, ListName = listname, MovieId = movieid });
         }
     }
 }

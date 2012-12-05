@@ -2,38 +2,44 @@
     Layout = null;
 }
 
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Your lists</title>
-</head>
-<body>
-    <div>
-        @if(WebSecurity.IsAuthenticated){
-        <h3>Select a format:</h3>
-        <h3>Select a list:</h3>
-        <ul id="thelists">
-            @foreach(FilmTrove.Models.ListInfo li in ViewBag.Lists) {
-            <li><a href="/lists/add/@ViewBag.Id/@li.ListId">@li.ListName</a></li>    
-            }
-        </ul>
-        <p><a class="addnewlink" href="/lists/new/">Add new list</a></p>
-            @* need to have a text box or something? *@ 
-        } else {
-        <p>Please log in to add movies to your lists</p>
+<div id="thelists" movieid="@ViewBag.Id">
+    @if(WebSecurity.IsAuthenticated){
+    <h3>Select a format:</h3>
+        <a class="format button color">Blu-ray</a>
+        <a class="format button color">Digital</a>
+        <a class="format button color">DVD</a>
+    <h3>Select a list:</h3>
+    <ul>
+        @foreach (FilmTrove.Models.ListInfo li in ViewBag.Lists)
+        {
+        <li class="lists"><a class="button color" href="/lists/add/@ViewBag.Id/@li.ListId">@li.ListName</a></li>    
         }
+    </ul>
+    <div class="field">
+        <input type="text" id="newlistname" placeholder="New List Name..." />
+        <a class="addnewlink button color" style="float:right;" href="#">Create</a>
     </div>
-    <script>
-        var addnewlink = $('.addnewlink');
-        addnewlink.click(function () {
-            $.ajax({
-                url: addnewlink.attr('href')
-            }).done(function (list) {
-                $('#thelists').html(list);
-            })
-        });
-    </script>
-</body>
-</html>
+    }
+    else
+    {
+    <p>Please log in to add movies to your lists</p>
+    }
+</div>
+<script type="text/javascript">
+    $('#thelists ul').isotope({
+        itemSelector: '.lists',
+        layoutMode: 'fitRows'
+    });
+
+    var addnewlink = $('.addnewlink');
+    addnewlink.click(function () {
+        $.ajax({
+            dataType: 'json',
+            type: 'POST',
+            url: '/lists/new/' + $('#newlistname').val() + '/' + $('#thelists').attr('movieid')
+        }).done(function (list) {
+            var newli = $('<li class="lists"><a class="button color addtocollection" href="/lists/add/' + list.MovieId + '/' + list.ListId + '">' + list.ListName + '</a></li>');
+            $('#thelists ul').append(newli).isotope('appended', newli);
+        })
+    });
+</script>

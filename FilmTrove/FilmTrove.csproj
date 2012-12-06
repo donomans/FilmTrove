@@ -214,6 +214,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Public\Css\jquery.fancybox.css" />
     <Content Include="Public\Css\roboto.css" />
     <Content Include="Public\Fonts\Google Android License.txt" />
     <Content Include="Public\Fonts\Roboto-Black-webfont.svg" />
@@ -232,8 +233,13 @@
     <Content Include="Public\Fonts\Roboto-Regular-webfont.svg" />
     <Content Include="Public\Fonts\Roboto-Thin-webfont.svg" />
     <Content Include="Public\Fonts\Roboto-ThinItalic-webfont.svg" />
+    <Content Include="Public\Images\blank.gif" />
+    <Content Include="Public\Images\fancybox_loading.gif" />
+    <Content Include="Public\Images\fancybox_overlay.png" />
+    <Content Include="Public\Images\fancybox_sprite.png" />
     <Content Include="Public\Images\filmtrove.gif" />
     <Content Include="Public\Images\nav-bg.png" />
+    <Content Include="Public\Js\jquery.fancybox.pack.js" />
     <Content Include="Public\Js\libs.js" />
     <Content Include="Public\themes\base\minified\images\ui-bg_flat_75_ffffff_40x100.png" />
     <Content Include="Public\themes\base\minified\images\ui-bg_glass_75_dadada_1x400.png" />

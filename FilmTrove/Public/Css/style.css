@@ -431,7 +431,7 @@ p, blockquote {
 #navigation ul ul ul li:last-child a {border-bottom: 1px solid transparent !important}
 #navigation ul li:hover>ul {opacity: 1; position:absolute; top:99%; left:0;}
 #navigation ul ul li:hover>ul {position:absolute; top:0; left:100%; opacity: 1; z-index:497;}
-#navigation ul li:hover > a {background: #72b626;}
+#navigation ul li:hover > a {background: #aaa;}
 #navigation ul ul li:hover > a {color: #fff;}
 
 /* Flexslider
@@ -883,10 +883,9 @@ iframe {
 	transition: all 0.1s ease-in-out;
 }
 
-#filters a:hover,
-.selected {
-	background-color: #72b626 !important;
-	border: 1px solid #72b626 !important;
+#filters a:hover {
+	background-color: #aaa !important;
+	border: 1px solid #aaa !important;
 	color: #fff !important;
 }
 
@@ -1240,7 +1239,7 @@ iframe {
 	width: 46px;
 	height: 46px;
 	display: inline-block;
-	background-color: #72b626;
+	background-color: #aaa;
 	background-repeat: no-repeat;
 	background-position: 50%;
 	margin-top: 30px;
@@ -1331,8 +1330,8 @@ a.post-entry:hover {
 .ie7 .pagination li {margin-right: 5px;}
 
 li.current {
-	background: #72b626;
-	border: 1px solid #72b626;
+	background: #aaa;
+	border: 1px solid #aaa;
 	color: #fff;
 }
 
@@ -1363,8 +1362,8 @@ li.current {
 .tags a:last-child {margin-right:0;}
 
 .tags a:hover {
-	background: #72b626;
-	border: 1px solid #72b626;
+	background: #aaa;
+	border: 1px solid #aaa;
 	color: #fff;
 }
 
@@ -1635,17 +1634,13 @@ input[type="button"] {float: left;}
 
 .button.medium {padding: 11px 17px; font-size: 14px;}
 
-.button.gray {color: #fff;background: #444;}
-.button.gray:hover {background:#72b626;}
+.button.gray {color: #fff;background: #aaa !important;}
+.button.gray:hover {background:#555 !important;}
 
-.button.light {color:#fff; background:#aaa;}
-.button.light:hover {background:#72b626;}
-
-.button.color {color:#fff; background:#72b626;}
-.button.color:hover {background:#aaa;}
+.button.selected {background:#aaa !important;}
 
 /* Input Button */
-input[type="button"] {color:#fff; background:#72b626;}
+input[type="button"] {color:#fff; background:#aaa;}
 input[type="button"]:hover {background:#aaa}
 
 .button.gray:hover, 

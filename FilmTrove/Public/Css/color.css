@@ -108,7 +108,6 @@ li.current,
 }
 
 #filters a:hover, 
-.selected, 
 #portfolio-navi a:hover {
 	background-color: #499ff0 !important;
 	border: 1px solid #499ff0 !important;
@@ -204,6 +203,7 @@ a.post-entry {
 
 .button.color {color:#fff; background:#499ff0;}
 .button.color:hover {background:#aaa;}
+
 
 input[type="button"] {
 	background: #499ff0;

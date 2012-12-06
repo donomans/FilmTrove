@@ -279,8 +279,8 @@ namespace FilmTrove.Controllers
                         else
                             prof.Name = result.UserName;
 
-                        ftc.UserProfiles.Add(prof);
-                        ftc.Lists.Add(new UserList() { ListName = "My Collection", Owner = prof }); 
+                        UserProfile up = ftc.UserProfiles.Add(prof);
+                        ftc.Lists.Add(new UserList() { ListName = "My Collection", Owner = up }); 
                         ftc.SaveChanges();
 
                         String provider;

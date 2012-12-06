@@ -41,16 +41,23 @@ namespace FilmTrove.Controllers
         {
             if (WebSecurity.IsAuthenticated)
             {
+                Int32 movieid = Convert.ToInt32(id);
                 ViewBag.Id = id;
                 FilmTroveContext ftc = (FilmTroveContext)HttpContext.Items["ftcontext"];
-                UserProfile up = ftc.UserProfiles.Find(WebSecurity.CurrentUserId);
+                Movie movie = ftc.Movies.Find(movieid);
+                UserProfile up = ftc.UserProfiles.Include("UserLists.Items").Where(u=> u.UserId == WebSecurity.CurrentUserId).Single();
                 if (up.UserLists.Count < 1)
                 {
                     ///this is only temporary
                     ftc.Lists.Add(new UserList() { Owner = up, ListName = "My Collection" });
                     ftc.SaveChanges();
                 }
-                ViewBag.Lists = up.UserLists.Select(l => new ListInfo { ListId = l.ListId, ListName = l.ListName }).ToList();
+                ViewBag.Lists = up.UserLists.Select(l => 
+                    new ListInfo { 
+                        ListId = l.ListId, 
+                        ListName = l.ListName, 
+                        InList = l.Items.Any(i => i.MovieId == movie.MovieId) 
+                    }).ToList();
 
             }
             else
@@ -61,16 +68,30 @@ namespace FilmTrove.Controllers
             return View();
         }
 
+        [HttpPost] ///add title to list
         public JsonResult Add(String movieid, String listid, String formats)
         {
+            formats = formats.Trim().Replace(" ", ", ").Replace("-","");
             FilmTroveContext ftc = (FilmTroveContext)HttpContext.Items["ftcontext"];
-            UserList list = ftc.Lists.Find(Convert.ToInt32(listid));
+            UserProfile up = ftc.UserProfiles.Include("UserLists.Items").Where(u => u.UserId == WebSecurity.CurrentUserId).Single();
+            Int32 lid = Convert.ToInt32(listid);
+            Int32 mid = Convert.ToInt32(movieid);
+            UserList list = up.UserLists.Where(l => l.ListId == lid).Single();
+            //UserList list = ftc.Lists.Where(l => l.ListId == lid && l.Owner == up).Single();
+            if (list.Items.Any(i => i.MovieId == mid))
+            {
+                return Json(new { Success = false, Message = "Err. The list already contains that title." });
+            }
             Movie movie = ftc.Movies.Find(Convert.ToInt32(movieid));
             UserListItem uli = ftc.ListItems.Create();
             uli.List = list;
             uli.Movie = movie;
+            uli.MovieId = movie.MovieId;
             uli.MovieTitle = movie.Title;
             uli.OwnedFormats = (Format)Enum.Parse(typeof(Format), formats);
+            
+            ftc.ListItems.Add(uli);
+            ftc.SaveChanges();
 
             return Json(new { Success = true});
         }
@@ -85,7 +106,7 @@ namespace FilmTrove.Controllers
             return View("Lists");
         }
 
-        [HttpPost]
+        [HttpPost]///new list
         public JsonResult New(String listname, String movieid)
         {
             Int32 listid = -1;
@@ -93,19 +114,24 @@ namespace FilmTrove.Controllers
             {
                 FilmTroveContext ftc = (FilmTroveContext)HttpContext.Items["ftcontext"];
                 UserProfile up = ftc.UserProfiles.Find(WebSecurity.CurrentUserId);
-                UserList ul = ftc.Lists.Add(new UserList()
+                if (up.UserLists.Where(l => l.ListName == listname).Count() < 1)
                 {
-                    ListName = listname,
-                    Owner = up
-                });
-                ftc.SaveChanges();
-                //UserList ul = ftc.Lists.Where(l => l.ListName == listname).Single();
-                listid = ul.ListId;
+                    UserList ul = ftc.Lists.Add(new UserList()
+                    {
+                        ListName = listname,
+                        Owner = up
+                    });
+                    ftc.SaveChanges();
+                    //UserList ul = ftc.Lists.Where(l => l.ListName == listname).Single();
+                    listid = ul.ListId;
+                }
+                else
+                    return this.Json(data: new { Success = false, Message = "You already have a list named \"" + listname + "\"" });
             }
             else
             {
             }
-            return this.Json(data: new { ListId = listid, ListName = listname, MovieId = movieid });
+            return this.Json(data: new { Success = true, ListId = listid, ListName = listname, MovieId = movieid });
         }
     }
 }

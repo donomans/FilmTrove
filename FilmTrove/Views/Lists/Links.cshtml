@@ -2,28 +2,33 @@
     Layout = null;
 }
 
-<div id="thelists" movieid="@ViewBag.Id">
+<div id="thelists" movieid="@ViewBag.Id" style="width:350px;">
     @if(WebSecurity.IsAuthenticated){
-    <h3>Select a format:</h3>
+    <h5>Select a format:</h5>
+    <div id="formats">
         <a class="format button color">Blu-ray</a>
         <a class="format button color">Digital</a>
         <a class="format button color">DVD</a>
-    <h3>Select a list:</h3>
+    </div>
+    <h5>Select a list:</h5>
     <ul>
         @foreach (FilmTrove.Models.ListInfo li in ViewBag.Lists)
         {
-        <li class="lists"><a class="button color" href="/lists/add/@ViewBag.Id/@li.ListId">@li.ListName</a></li>    
+            String classname = li.InList ? "gray" : "color addlink";
+        <li class="lists"><a class="button @classname" listid="@li.ListId" href="#">@li.ListName</a></li>    
         }
     </ul>
+    <h5>Add a new list:</h5>
     <div class="field">
-        <input type="text" id="newlistname" placeholder="New List Name..." />
-        <a class="addnewlink button color" style="float:right;" href="#">Create</a>
+        <input type="text" id="newlistname" style="height:20px;float:left;" placeholder="New List Name..." />
+        <a class="addnewlink button color" style="float:right;padding: 14px 15px 14px 15px;" href="#">Create</a>
     </div>
     }
     else
     {
-    <p>Please log in to add movies to your lists</p>
+    <p>Please log in to add titles to your lists</p>
     }
+    <br class="clear">
 </div>
 <script type="text/javascript">
     $('#thelists ul').isotope({
@@ -31,15 +36,51 @@
         layoutMode: 'fitRows'
     });
 
-    var addnewlink = $('.addnewlink');
-    addnewlink.click(function () {
+    $('#formats .format').click(function() {
+        $(this).toggleClass('selected');
+    });
+
+    //add a new list
+    $('.addnewlink').click(function () {
         $.ajax({
             dataType: 'json',
             type: 'POST',
             url: '/lists/new/' + $('#newlistname').val() + '/' + $('#thelists').attr('movieid')
         }).done(function (list) {
-            var newli = $('<li class="lists"><a class="button color addtocollection" href="/lists/add/' + list.MovieId + '/' + list.ListId + '">' + list.ListName + '</a></li>');
-            $('#thelists ul').append(newli).isotope('appended', newli);
+            $('#thelists .notification').remove();
+            if (list.Success) {
+                var newli = $('<li class="lists"><a class="button color addlink" listid="' + list.ListId + '" href="#">' + list.ListName + '</a></li>');
+                $('#thelists ul').append(newli).isotope('appended', newli);
+                newli.bind('click', { element: newli }, AddTitle);
+            }
+            else {
+                $('#thelists').append('<div class="notification error"><p><span>Error</span><br />' + list.Message + '</p></div>');
+            }
         })
+    });
+
+    //add title to a list
+    function AddTitle(event) {
+        var listformats = '';
+        $('#formats .selected').each(function(){
+            listformats += this.text + ' ';
+        });
+        alert(event.data.element.html());
+        alert(event.data.element.text());
+        $.ajax({
+            dataType: 'json',
+            type: 'POST',
+            url: '/lists/add/' + $('#thelists').attr('movieid') + '/' + $(event.data.element).attr('listid') + '/' + listformats
+        }).done(function (result) {
+            $('#thelists .notification').remove();
+            if(result.Success)
+                $('#thelists').append('<div class="notification success"><p><span>Success</span><br />Successfully added.</p></div>');
+            else
+                $('#thelists').append('<div class="notification error"><p><span>Error</span><br />Erp.  ' + result.Message + '  Sorry, it didn\'t quite work.  If the problem persists, please let me know through the feedback =></p></div>');
+        })
+    }
+
+    $('.addlink').each(function(){
+        $(this).bind('click', {element: $(this)}, AddTitle);
     });
 </script>

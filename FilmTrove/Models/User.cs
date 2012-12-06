@@ -48,6 +48,7 @@ namespace FilmTrove.Models
     {
         public Int32 ListId { get; set; }
         public String ListName { get; set; }
+        public Boolean InList { get; set; }
     }
 
     public class UserListItem : Dateable
@@ -59,13 +60,14 @@ namespace FilmTrove.Models
         public String MovieTitle { get; set; }
         public Int32? Rating { get; set; }
 
-        public DateTime LastWatched { get; set; }
+        public DateTime? LastWatched { get; set; }
         public Boolean LoanedOut { get; set; }
         public virtual UserProfile LoanedTo { get; set; }
         public Format OwnedFormats { get; set; }
 
 
         public virtual Movie Movie { get; set; }
+        public Int32 MovieId { get; set; }
         public UserList List { get; set; }
     }
 

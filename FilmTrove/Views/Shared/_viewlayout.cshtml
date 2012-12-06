@@ -21,8 +21,8 @@
     <link rel="stylesheet" type="text/css" href="http://cdn.filmtrove.com/css/base.css" />
     <link rel="stylesheet" type="text/css" href="http://cdn.filmtrove.com/css/skeleton.css" />
     @*<link rel="stylesheet" type="text/css" href="/public/css/icons.css" />*@
-    <link rel="stylesheet" type="text/css" href="http://cdn.filmtrove.com/css/style.css" />
-    <link rel="stylesheet" type="text/css" href="http://cdn.filmtrove.com/css/color.css" id="colors" />
+    <link rel="stylesheet" type="text/css" href="http://cdn.filmtrove.com/css/style.css/3" />
+    <link rel="stylesheet" type="text/css" href="http://cdn.filmtrove.com/css/color.css/3" id="colors" />
     <link rel="stylesheet" type="text/css" href="http://cdn.filmtrove.com/css/social_icons.css" />
     <link rel="stylesheet" type="text/css" href="http://cdn.filmtrove.com/css/jquery-ui.min.css" />
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
@@ -173,7 +173,8 @@
 		    </div>
 		    @*<div id="under-footer-logo">
 			    <div class="sixteen columns">
-				    <a href="#"><img src="images/logo-small.png" alt="logo" /></a>
+				    <a href="#"><img src="
+            logo-small.png" alt="logo" /></a>
 			    </div>
 		    </div>*@	
 	    </div>
@@ -192,5 +193,29 @@
             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
         })();
     </script>
+    <script type='text/javascript'>
+
+        var _ues = {
+            host: 'filmtrove.userecho.com',
+            forum: '675',
+            lang: 'en',
+            tab_corner_radius: 0,
+            tab_font_size: 20,
+            tab_image_hash: 'ZmVlZGJhY2s%3D',
+            tab_chat_hash: 'Y2hhdA%3D%3D',
+            tab_alignment: 'right',
+            tab_text_color: '#FFFFFF',
+            tab_text_shadow_color: '#00000055',
+            tab_bg_color: '#499FF0',
+            tab_hover_color: '#AAAAAA'
+        };
+
+        (function () {
+            var _ue = document.createElement('script'); _ue.type = 'text/javascript'; _ue.async = true;
+            _ue.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'cdn.userecho.com/js/widget-1.4.gz.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(_ue, s);
+        })();
+
+</script>
 </body>
 </html>

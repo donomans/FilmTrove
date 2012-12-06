@@ -52,7 +52,7 @@ namespace FilmTrove
                 defaults: new { controller = "Lists", action = "Links", id = UrlParameter.Optional, title = UrlParameter.Optional });
             routes.MapRoute(
                 name: "Add to list",
-                url: "Lists/add/{movieid}/{listid}",
+                url: "Lists/add/{movieid}/{listid}/{formats}",
                 defaults: new { controller = "Lists", action = "Add" });
             routes.MapRoute(
                 name: "New list",

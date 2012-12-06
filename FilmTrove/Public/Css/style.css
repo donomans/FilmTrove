@@ -1638,6 +1638,7 @@ input[type="button"] {float: left;}
 .button.gray:hover {background:#555 !important;}
 
 .button.selected {background:#aaa !important;}
+.button.selected:hover {background:#555 !important;}
 
 /* Input Button */
 input[type="button"] {color:#fff; background:#aaa;}

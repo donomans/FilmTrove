@@ -51,7 +51,7 @@
             if (list.Success) {
                 var newli = $('<li class="lists"><a class="button color addlink" listid="' + list.ListId + '" href="#">' + list.ListName + '</a></li>');
                 $('#thelists ul').append(newli).isotope('appended', newli);
-                newli.bind('click', { element: newli }, AddTitle);
+                newli.bind('click', { listid: list.ListId }, AddTitle);
             }
             else {
                 $('#thelists').append('<div class="notification error"><p><span>Error</span><br />' + list.Message + '</p></div>');
@@ -65,22 +65,22 @@
         $('#formats .selected').each(function(){
             listformats += this.text + ' ';
         });
-        alert(event.data.element.html());
-        alert(event.data.element.text());
         $.ajax({
             dataType: 'json',
             type: 'POST',
-            url: '/lists/add/' + $('#thelists').attr('movieid') + '/' + $(event.data.element).attr('listid') + '/' + listformats
+            url: '/lists/add/' + $('#thelists').attr('movieid') + '/' + event.data.listid + '/' + listformats
         }).done(function (result) {
             $('#thelists .notification').remove();
-            if(result.Success)
+            if (result.Success) {
+                $('#thelists .lists [listid="' + event.data.listid + '"]').removeClass('color addlink').addClass('gray');
                 $('#thelists').append('<div class="notification success"><p><span>Success</span><br />Successfully added.</p></div>');
+            }
             else
                 $('#thelists').append('<div class="notification error"><p><span>Error</span><br />Erp.  ' + result.Message + '  Sorry, it didn\'t quite work.  If the problem persists, please let me know through the feedback =></p></div>');
         })
     }
 
     $('.addlink').each(function(){
-        $(this).bind('click', {element: $(this)}, AddTitle);
+        $(this).bind('click', { listid: $(this).attr('listid') }, AddTitle);
     });
 </script>

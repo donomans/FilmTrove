@@ -13,12 +13,14 @@ using FilmTrove.Code;
 
 namespace FilmTrove.Models
 {
-    public class Movie : Dateable
+    public class Movie : Dateable//, IEquatable<Movie>
     {
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public Int32 MovieId { get; set; }
+        [MaxLength(250)]
         public String Title { get; set; }
+        [MaxLength(100)]
         public String AltTitle { get; set; }
 
         public String Description { get; set; }
@@ -85,9 +87,22 @@ namespace FilmTrove.Models
             OnLists = new List<UserListItem>();
             Roles = new List<Role>();
         }
+
+        //public override bool Equals(Object obj)
+        //{
+        //    return this.Equals((Movie)obj);
+        //}
+        //public bool Equals(Movie other)
+        //{
+        //    return GetHashCode() == other.GetHashCode();
+        //}
+        //public override int GetHashCode()
+        //{
+        //    return MovieId == 0 ? base.GetHashCode() : MovieId.GetHashCode();
+        //}
     }
 
-    public class Genre
+    public class Genre// : IEquatable<Genre>
     {
         public Int32 GenreId { get; set; }
         public String Name { get; set; }
@@ -95,9 +110,22 @@ namespace FilmTrove.Models
         {
             Name = "";
         }
+
+        //public override bool Equals(Object obj)
+        //{
+        //    return this.Equals((Genre)obj);
+        //}
+        //public bool Equals(Genre other)
+        //{
+        //    return GetHashCode() == other.GetHashCode();
+        //}
+        //public override int GetHashCode()
+        //{
+        //    return GenreId == 0 ? base.GetHashCode() : GenreId.GetHashCode();
+        //}
     }
 
-    public class MovieGenre
+    public class MovieGenre// : IEquatable<MovieGenre>
     {
         public Int32 MovieGenreId { get; set; }
         public virtual Genre Genre { get; set; }
@@ -109,5 +137,18 @@ namespace FilmTrove.Models
             //else
             //    return base.ToString();
         }
+
+        //public override bool Equals(Object obj)
+        //{
+        //    return this.Equals((MovieGenre)obj);
+        //}
+        //public bool Equals(MovieGenre other)
+        //{
+        //    return GetHashCode() == other.GetHashCode();
+        //}
+        //public override int GetHashCode()
+        //{
+        //    return MovieGenreId == 0 ? base.GetHashCode() : MovieGenreId.GetHashCode();
+        //}
     }
 }

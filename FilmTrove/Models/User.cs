@@ -15,7 +15,7 @@ using FlixSharp.Holders;
 namespace FilmTrove.Models
 {
     [Table("UserProfile")]
-    public class UserProfile
+    public class UserProfile// : IEquatable<UserProfile>
     {
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
@@ -31,10 +31,22 @@ namespace FilmTrove.Models
 
         public NetflixAccount NetflixAccount { get; set; }
 
+        //public override bool Equals(Object obj)
+        //{
+        //    return this.Equals((UserProfile)obj);
+        //}
+        //public bool Equals(UserProfile other)
+        //{
+        //    return GetHashCode() == other.GetHashCode();
+        //}
+        //public override int GetHashCode()
+        //{
+        //    return UserId == 0 ? base.GetHashCode() : UserId.GetHashCode();
+        //}
     }
 
 
-    public class UserList : Dateable
+    public class UserList : Dateable//, IEquatable<UserList>
     {
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
@@ -43,6 +55,19 @@ namespace FilmTrove.Models
         public UserProfile Owner { get; set; }
 
         public virtual ICollection<UserListItem> Items { get; set; }
+
+        //public override bool Equals(Object obj)
+        //{
+        //    return this.Equals((UserList)obj);
+        //}
+        //public bool Equals(UserList other)
+        //{
+        //    return GetHashCode() == other.GetHashCode();
+        //}
+        //public override int GetHashCode()
+        //{
+        //    return ListId == 0 ? base.GetHashCode() : ListId.GetHashCode();
+        //}
     }
     public struct ListInfo
     {
@@ -51,7 +76,7 @@ namespace FilmTrove.Models
         public Boolean InList { get; set; }
     }
 
-    public class UserListItem : Dateable
+    public class UserListItem : Dateable//, IEquatable<UserListItem>
     {
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
@@ -69,6 +94,19 @@ namespace FilmTrove.Models
         public virtual Movie Movie { get; set; }
         public Int32 MovieId { get; set; }
         public UserList List { get; set; }
+
+        //public override bool Equals(Object obj)
+        //{
+        //    return this.Equals((UserListItem)obj);
+        //}
+        //public bool Equals(UserListItem other)
+        //{
+        //    return GetHashCode() == other.GetHashCode();
+        //}
+        //public override int GetHashCode()
+        //{
+        //    return ListItemId == 0 ? base.GetHashCode() : ListItemId.GetHashCode();
+        //}
     }
 
     [Flags]

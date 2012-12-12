@@ -9,7 +9,7 @@ using FilmTrove.Code;
 
 namespace FilmTrove.Models
 {
-    public class Person : Dateable
+    public class Person : Dateable//, IEquatable<Person>
     {
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
@@ -39,9 +39,22 @@ namespace FilmTrove.Models
             Imdb = new ImdbPersonInfo();
             Netflix = new NetflixPersonInfo();
         }
+
+        //public override bool Equals(Object obj)
+        //{
+        //    return this.Equals((Person)obj);
+        //}
+        //public bool Equals(Person other)
+        //{
+        //    return GetHashCode() == other.GetHashCode();
+        //}
+        //public override int GetHashCode()
+        //{
+        //    return PersonId == 0 ? base.GetHashCode() : PersonId.GetHashCode();
+        //}
     }
 
-    public class Role
+    public class Role//: IEquatable<Role>
     {
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
@@ -52,6 +65,18 @@ namespace FilmTrove.Models
         public virtual Movie Movie { get; set; }
         public virtual Person Person { get; set; }
 
+        //public override bool Equals(Object obj)
+        //{
+        //    return this.Equals((Role)obj);
+        //}
+        //public bool Equals(Role other)
+        //{
+        //    return GetHashCode() == other.GetHashCode();
+        //}
+        //public override int GetHashCode()
+        //{
+        //    return RoleId == 0 ? base.GetHashCode() : RoleId.GetHashCode();
+        //}
     }
 
 

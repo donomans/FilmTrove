@@ -8,29 +8,182 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using FilmTrove.Code;
+using StackExchange.Profiling;
 
 namespace FilmTrove.Controllers
 {
     public class PeopleController : Controller
     {
         [HttpGet]
-        public ActionResult Details(String id, String name)
+        public async Task<ActionResult> Details(String id, String name)
         {
+            var profiler = MiniProfiler.Current; 
             FilmTroveContext ftc = (FilmTroveContext)HttpContext.Items["ftcontext"];
             Int32 personid = Int32.Parse(id);
             FilmTrove.Models.Person p = ftc.People.Include("Roles.Movie").Where(person => person.PersonId == personid).Single();
-            //PersonDisplay p = ftc.Database.SqlQuery<PersonDisplay>("");
-            if (p.DateLastModified > DateTime.Now.AddDays(14))
-            {
-                p.Netflix.NeedsUpdate = true;
-            }
 
+            Task<FlixSharp.Holders.Person> nfp = null;
+
+            if (p.Netflix.NeedsUpdate || p.DateLastModified > DateTime.Now.AddDays(28))
+            {
+                nfp = Netflix.Fill.People.GetCompletePerson(p.Netflix.IdUrl, true);//Randomized().
+            }
             if (p.RottenTomatoes.NeedsUpdate)
             {
             }
             if (p.Imdb.NeedsUpdate)
             {
             }
+
+            if (nfp != null)
+            {
+                FlixSharp.Holders.Person netflixperson = null;
+                List<Movie> ftmoviesfound = null;
+
+                Dictionary<Movie, People> actors = new Dictionary<Movie, People>();
+                Dictionary<Movie, People> directors = new Dictionary<Movie, People>();
+
+                using (profiler.Step("Get filmography"))
+                {
+                    ///1) get filmography
+                    netflixperson = await nfp;
+                    ///2) get the netflixids of all the films
+                    var netflixfilmographyids = netflixperson.Filmography.Select(t => t.Id + (t.SeasonId != "" ? ";" + t.SeasonId : "")).ToList();
+                    ///3) look up the movies in ft database by netflixids
+                    ftmoviesfound = ftc.Movies.Include("Roles").Where(t => netflixfilmographyids.Contains(t.Netflix.Id)).ToList();
+                    ///4) check each of those to see they have roles defined (if so then ignore it)
+                    foreach (FilmTrove.Models.Movie ftm in ftmoviesfound)
+                    {
+                        if (ftm.Roles.Count < 1)
+                        {
+                            using (profiler.Step("Start GetActors/Directors"))
+                            {
+                                ///7) make call to actors/directors api 
+                                //http://api-public.netflix.com/catalog/titles/series/60030701/seasons/60035075
+                                directors.Add(ftm, await Netflix.Fill.Titles.GetDirectors(ftm.Netflix.IdUrl));//.Randomized()
+                                actors.Add(ftm, await Netflix.Fill.Titles.GetActors(ftm.Netflix.IdUrl));//Randomized().
+                            }
+                        }
+                    }
+                }
+                using (profiler.Step("Get the Titles/Genres/Actors/Directors"))
+                {
+                    ///5) find the netflix ids that aren't in the database
+                    var ftmoviesfoundids = ftmoviesfound.Select(t => t.Netflix.Id).ToList();
+                    var netflixmoviestoadd = netflixperson.Filmography.Where(t => !ftmoviesfoundids.Contains(t.Id)).ToList();
+                    ///6) add those movies to the database
+                    foreach (FlixSharp.Holders.Title title in netflixmoviestoadd)
+                    {
+                        var m = ftc.Movies.Create();
+                        GeneralHelpers.FillBasicTitle(m, title);
+
+                        var dbgenreslocal = ftc.Genres.Local.Where(g => title.Genres.Contains(g.Name));
+                        var dbgenres = ftc.Genres.Where(g => title.Genres.Contains(g.Name));
+                        HashSet<Genre> genres = new HashSet<Genre>();
+                        genres.AddRange(dbgenres);
+                        genres.AddRange(dbgenreslocal);
+
+                        var genrenames = genres.Select(g => g.Name);
+                        var missinggenres = title.Genres.Where(g => !genrenames.Contains(g));
+                        foreach (String genre in missinggenres)
+                        {
+                            ftc.Genres.Add(new Genre() { Name = genre });
+                        }
+                        //newmovie.Genres = netflixmovie.Genres;
+                        foreach (Genre g in genres)
+                        {
+                            MovieGenre gi = ftc.GenreItems.Create();
+                            gi.Genre = g;
+                            gi.Movie = m;
+                            ftc.GenreItems.Add(gi);
+                        }
+                        ftc.Movies.Add(m);
+                        ///7) make call to actors/directors api on each filmography title
+                        directors.Add(m, await Netflix.Fill.Titles.GetDirectors(m.Netflix.IdUrl));//Randomized().
+                        actors.Add(m, await Netflix.Fill.Titles.GetActors(m.Netflix.IdUrl));//.Randomized()
+                    }
+                }
+                using (profiler.Step("Roles Actors"))
+                {
+                    ///8) add the people that don't exist to the ftdatabase
+                    var actorslist = actors.Select(a => a);
+                    
+                    foreach (KeyValuePair<Models.Movie, People> peeps in actorslist)
+                    {
+                        People people = peeps.Value;
+                        if (people.Find(p.Netflix.Id) != null)
+                        {
+                            ///9) add roles as needed for the original movie now that database has people
+                            Role r = ftc.Roles.Create();
+                            r.InRole = RoleType.Actor;
+                            r.Movie = peeps.Key;
+                            r.Person = p;
+                            ftc.Roles.Add(r);
+                        }
+                        var peopleids = people.Select(t => t.Id).ToList();
+                        var matchedpeople = ftc.People.Where(t => peopleids.Contains(t.Netflix.Id)).ToList();
+                        var matchedpeopleids = matchedpeople.Select(t => t.Netflix.Id).ToList();
+                        var unmatchedpeople = peopleids.Where(t => !matchedpeopleids.Contains(t)).ToList();
+                        foreach (String nid in unmatchedpeople)
+                        {
+                            FilmTrove.Models.Person newperson = ftc.People.Local.Where(t => t.Netflix.Id == nid).SingleOrDefault();
+                            if (newperson == null || newperson.Name == null || newperson.Name == "")
+                            {
+                                newperson = ftc.People.Where(t => t.Netflix.Id == nid).SingleOrDefault();
+                                if (newperson == null || newperson.Name == null || newperson.Name == "")
+                                {
+                                    FlixSharp.Holders.Person nperson = people.Find(nid);
+                                    newperson = ftc.People.Create();
+
+                                    GeneralHelpers.FillBasicPerson(newperson, nperson);
+
+                                    ftc.People.Add(newperson);
+                                }
+                            }
+                        }
+                    }
+                }
+                using (profiler.Step("Roles Directors"))
+                {
+                    var directorslist = directors.Select(d => d);
+
+                    foreach (KeyValuePair<Movie, People> peeps in directorslist)
+                    {
+                        People people = peeps.Value;
+                        if (people.Find(p.Netflix.Id) != null)
+                        {
+                            ///9) add roles as needed for the original movie now that database has people
+                            Role r = ftc.Roles.Create();
+                            r.InRole = RoleType.Director;
+                            r.Movie = peeps.Key;
+                            r.Person = p;
+                            ftc.Roles.Add(r);
+                        }
+                        var peopleids = people.Select(t => t.Id).ToList();
+                        var matchedpeople = ftc.People.Where(t => peopleids.Contains(t.Netflix.Id)).ToList();
+                        var matchedpeopleids = matchedpeople.Select(t => t.Netflix.Id).ToList();
+                        var unmatchedpeople = peopleids.Where(t => !matchedpeopleids.Contains(t)).ToList();
+                        foreach (String nid in unmatchedpeople)
+                        {
+                            FilmTrove.Models.Person newperson = ftc.People.Local.WhereFirstOrCreate(t => t.Netflix.Id == nid);
+                            if (newperson == null || newperson.Name == null || newperson.Name == "")
+                            {
+                                newperson = ftc.People.WhereFirstOrCreate(t => t.Netflix.Id == nid);
+                                if (newperson == null || newperson.Name == null || newperson.Name == "")
+                                {
+                                    newperson = ftc.People.Create();
+                                    FlixSharp.Holders.Person nperson = people.Find(nid);
+                                    GeneralHelpers.FillBasicPerson(newperson, nperson);
+
+                                    ftc.People.Add(newperson);
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+            p.Netflix.NeedsUpdate = false;
 
             ftc.SaveChanges();
             ViewBag.Person = p;
@@ -63,9 +216,9 @@ namespace FilmTrove.Controllers
                 ///1) get filmography
                 var netflixperson = await nfp;
                 ///2) get the netflixids of all the films
-                var netflixfilmographyids = netflixperson.Filmography.Select(t => t.Id + (t.SeasonId != "" ? ";" + t.SeasonId : ""));
+                var netflixfilmographyids = netflixperson.Filmography.Select(t => t.Id + (t.SeasonId != "" ? ";" + t.SeasonId : "")).ToList();
                 ///3) look up the movies in ft database by netflixids
-                var ftmoviesfound = ftc.Movies.Include("Roles").Where(t => netflixfilmographyids.Contains(t.Netflix.Id));
+                var ftmoviesfound = ftc.Movies.Include("Roles").Where(t => netflixfilmographyids.Contains(t.Netflix.Id)).ToList();
                 ///4) check each of those to see they have roles defined (if so then ignore it)
                 Dictionary<Movie, Task<People>> actors = new Dictionary<Movie, Task<People>>();
                 Dictionary<Movie, Task<People>> directors = new Dictionary<Movie, Task<People>>();
@@ -81,8 +234,8 @@ namespace FilmTrove.Controllers
                     }
                 }
                 ///5) find the netflix ids that aren't in the database
-                var ftmoviesfoundids = ftmoviesfound.Select(t => t.Netflix.Id);
-                var netflixmoviestoadd = netflixperson.Filmography.Where(t => !ftmoviesfoundids.Contains(t.Id));
+                var ftmoviesfoundids = ftmoviesfound.Select(t => t.Netflix.Id).ToList();
+                var netflixmoviestoadd = netflixperson.Filmography.Where(t => !ftmoviesfoundids.Contains(t.Id)).ToList();
                 ///6) add those movies to the database
                 foreach (FlixSharp.Holders.Title title in netflixmoviestoadd)
                 {
@@ -131,19 +284,21 @@ namespace FilmTrove.Controllers
                         r.Person = p;
                         ftc.Roles.Add(r);
                     }
-                    var peopleids = people.Select(t => t.Id);
-                    var matchedpeople = ftc.People.Where(t => peopleids.Contains(t.Netflix.Id));
-                    var matchedpeopleids = matchedpeople.Select(t => t.Netflix.Id);
-                    var unmatchedpeople = peopleids.Where(t => !matchedpeopleids.Contains(t));
+                    var peopleids = people.Select(t => t.Id).ToList();
+                    var matchedpeople = ftc.People.Where(t => peopleids.Contains(t.Netflix.Id)).ToList();
+                    var matchedpeopleids = matchedpeople.Select(t => t.Netflix.Id).ToList();
+                    var unmatchedpeople = peopleids.Where(t => !matchedpeopleids.Contains(t)).ToList();
                     foreach (String nid in unmatchedpeople)
                     {
-                        FilmTrove.Models.Person newperson = ftc.People.Local.WhereFirstOrCreate(t => t.Netflix.Id == nid);
-                        if (newperson.Name == null || newperson.Name == "")
+                        FilmTrove.Models.Person newperson = ftc.People.Local.Where(t => t.Netflix.Id == nid).SingleOrDefault();
+                        if (newperson == null || newperson.Name == null || newperson.Name == "")
                         {
-                            newperson = ftc.People.WhereFirstOrCreate(t => t.Netflix.Id == nid);
-                            if (newperson.Name == null || newperson.Name == "")
+                            newperson = ftc.People.Where(t => t.Netflix.Id == nid).SingleOrDefault();
+                            if (newperson == null || newperson.Name == null || newperson.Name == "")
                             {
                                 FlixSharp.Holders.Person nperson = people.Find(nid);
+                                newperson = ftc.People.Create();
+
                                 GeneralHelpers.FillBasicPerson(newperson, nperson);
 
                                 ftc.People.Add(newperson);
@@ -165,18 +320,19 @@ namespace FilmTrove.Controllers
                         r.Person = p;
                         ftc.Roles.Add(r);
                     }
-                    var peopleids = people.Select(t => t.Id);
-                    var matchedpeople = ftc.People.Where(t => peopleids.Contains(t.Netflix.Id));
-                    var matchedpeopleids = matchedpeople.Select(t => t.Netflix.Id);
-                    var unmatchedpeople = peopleids.Where(t => !matchedpeopleids.Contains(t));
+                    var peopleids = people.Select(t => t.Id).ToList();
+                    var matchedpeople = ftc.People.Where(t => peopleids.Contains(t.Netflix.Id)).ToList();
+                    var matchedpeopleids = matchedpeople.Select(t => t.Netflix.Id).ToList();
+                    var unmatchedpeople = peopleids.Where(t => !matchedpeopleids.Contains(t)).ToList();
                     foreach (String nid in unmatchedpeople)
                     {
                         FilmTrove.Models.Person newperson = ftc.People.Local.WhereFirstOrCreate(t => t.Netflix.Id == nid);
-                        if (newperson.Name == null || newperson.Name == "")
+                        if (newperson == null || newperson.Name == null || newperson.Name == "")
                         {
                             newperson = ftc.People.WhereFirstOrCreate(t => t.Netflix.Id == nid);
-                            if (newperson.Name == null || newperson.Name == "")
+                            if (newperson == null || newperson.Name == null || newperson.Name == "")
                             {
+                                newperson = ftc.People.Create();
                                 FlixSharp.Holders.Person nperson = people.Find(nid);
                                 GeneralHelpers.FillBasicPerson(newperson, nperson);
 

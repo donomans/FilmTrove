@@ -21,8 +21,11 @@ namespace FilmTrove.Code
             "ym68z674zmkpszk7mf7z9fuz;eVZYNummyZ",    
             "dfh77wfcv3afvugjrjvcgm8y;GjKHCbQrHR",    
             "vntdbbpcja5huvqfd6ypcmvx;enn4mwrAPm"};
+
         public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> values)
         {
+            if (values == null)
+                return;
             foreach (T v in values)
                 if (!collection.Contains(v))
                     collection.Add(v);

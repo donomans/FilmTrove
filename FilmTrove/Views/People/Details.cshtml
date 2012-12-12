@@ -6,7 +6,7 @@
 
 <h2>@person.Name</h2>
 <p>@Html.Raw(person.Bio)</p>
-@if (ViewBag.NeedFilmography)
+@*@if (ViewBag.NeedFilmography)
 {
     <script>
         $.ajax("/people/filmography/@person.PersonId").done(
@@ -14,7 +14,7 @@
                 $("#filmography").html("got some filmography: " + films);
             });
     </script>
-}
+}*@
 <div id="filmography">
     @if (!ViewBag.NeedFilmography)
     {
@@ -47,7 +47,8 @@
         @foreach (FilmTrove.Models.Role r in person.Roles.Where(t => t.InRole == FilmTrove.Models.RoleType.Producer).OrderByDescending(t => t.Movie.Year))
         {
             String optionalyear = r.Movie.Year > 0 ? " (" + r.Movie.Year + ")" : "";
-        <li><a href="@r.Movie.GetDetailsUrl()">@r.Movie.Title@optionalyear</a></li>        }
+        <li><a href="@r.Movie.GetDetailsUrl()">@r.Movie.Title@optionalyear</a></li>        
+        }
     </ul>
     }
 </div>

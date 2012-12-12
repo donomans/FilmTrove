@@ -17,6 +17,7 @@ namespace FilmTrove.Models
         public FilmTroveContext()
             : base("DefaultConnection")
         {
+            //this.Configuration.AutoDetectChangesEnabled = false;
         }
 
         public DbSet<Movie> Movies { get; set; }

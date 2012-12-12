@@ -20,8 +20,8 @@ namespace FilmTrove.Code
                 var matchedmovies = ftc.Movies.Where(m => netflixids.Contains(m.Netflix.Id));
                 ///2) find the records that don't have a match
                 ///select the ids and get the netflix Ids that aren't in the FT database
-                var ftnfids = matchedmovies.Select(m => m.Netflix.Id);
-                var netflixidsunmatched = netflixids.Where(m => !ftnfids.Contains(m));
+                var ftnfids = matchedmovies.Select(m => m.Netflix.Id).ToList();
+                var netflixidsunmatched = netflixids.Where(m => !ftnfids.Contains(m)).ToList();
                 //Int32 count = 0;
                 foreach (String nid in netflixidsunmatched)
                 {
@@ -87,8 +87,8 @@ namespace FilmTrove.Code
                 var matchedpeople = ftc.People.Where(m => netflixids.Contains(m.Netflix.Id));
                 ///2) find the records that don't have a match
                 ///select the ids and get the netflix Ids that aren't in the FT database
-                var ftnfids = matchedpeople.Select(m => m.Netflix.Id);
-                var netflixidsunmatched = netflixids.Where(m => !ftnfids.Contains(m));
+                var ftnfids = matchedpeople.Select(m => m.Netflix.Id).ToList();
+                var netflixidsunmatched = netflixids.Where(m => !ftnfids.Contains(m)).ToList();
                 //Int32 count = 0;
                 foreach (String nid in netflixidsunmatched)
                 {

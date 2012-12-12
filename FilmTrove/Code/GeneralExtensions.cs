@@ -11,16 +11,17 @@ namespace FilmTrove.Code
     public static class GeneralExtensions
     {
         private static String[] accounts = new[]{
-            "7qf3845qydavuucmhj96b6hd;5jYe5FVhhF",// original one
-            "hd5n8g4x8wz53ug34k65s8ag;QfhzFdfPt4",    
-            "vghqkpd86meujk5y3fajvafq;BNR5pvUnzs",  
-            "h6chq7dpqhw3pwsa9bvp5r9f;PCquKKNQJA",    
-            "9abckmw54a5hskru6knt3zkr;FgedX4SSHB",    
-            "nz2gyja59hq9ne22b7wfwpjb;wT2GmJ6xdZ",    
-            "y7xw6vrkxqxnmguyff6825k5;XX4FWeBVPg",    
-            "ym68z674zmkpszk7mf7z9fuz;eVZYNummyZ",    
-            "dfh77wfcv3afvugjrjvcgm8y;GjKHCbQrHR",    
-            "vntdbbpcja5huvqfd6ypcmvx;enn4mwrAPm"};
+            ///"7qf3845qydavuucmhj96b6hd;5jYe5FVhhF;FilmTrove",// original one
+            "hd5n8g4x8wz53ug34k65s8ag;QfhzFdfPt4;half+past+meow",    
+            "vghqkpd86meujk5y3fajvafq;BNR5pvUnzs;robutpanda",  
+            "h6chq7dpqhw3pwsa9bvp5r9f;PCquKKNQJA;Humdinger",    
+            "9abckmw54a5hskru6knt3zkr;FgedX4SSHB;ft",    
+            "nz2gyja59hq9ne22b7wfwpjb;wT2GmJ6xdZ;Signedmeup",    
+            "y7xw6vrkxqxnmguyff6825k5;XX4FWeBVPg;RobotPanda",    
+            "ym68z674zmkpszk7mf7z9fuz;eVZYNummyZ;ftrove",    
+            "dfh77wfcv3afvugjrjvcgm8y;GjKHCbQrHR;ft",    
+            "vntdbbpcja5huvqfd6ypcmvx;enn4mwrAPm;filmt"};
+        private static Random random = new Random();
 
         public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> values)
         {
@@ -67,18 +68,18 @@ namespace FilmTrove.Code
 
         public static NetflixFill Randomized(this NetflixFill source)
         {
-            Random r = new Random();
-            String details = accounts[r.Next(0, 9)];
+            String details = accounts[random.Next(0, accounts.Length - 1)];
             String[] account = details.Split(new[] { ';' });
-            Netflix.Login.SetCredentials(account[0], account[1], "FilmTrove");
+            Netflix.Login.SetCredentials(account[0], account[1], account[2]);
+            Netflix.OnUserBehalf = false;
             return Netflix.Fill;
         }
         public static NetflixSearch Randomized(this NetflixSearch source)
         {
-            Random r = new Random();
-            String details = accounts[r.Next(0, 9)];
+            String details = accounts[random.Next(0, accounts.Length - 1)];
             String[] account = details.Split(new[] { ';' });
-            Netflix.Login.SetCredentials(account[0], account[1], "FilmTrove");
+            Netflix.Login.SetCredentials(account[0], account[1], account[2]);
+            Netflix.OnUserBehalf = false;
             return Netflix.Search;
         }
     }

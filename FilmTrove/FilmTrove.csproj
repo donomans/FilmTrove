@@ -216,6 +216,10 @@
     <Compile Include="Migrations\201212122039288_m2.Designer.cs">
       <DependentUpon>201212122039288_m2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201212122049568_p1.cs" />
+    <Compile Include="Migrations\201212122049568_p1.Designer.cs">
+      <DependentUpon>201212122049568_p1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\FilmTroveContext.cs" />
     <Compile Include="Models\Misc.cs" />
@@ -394,6 +398,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201212122039288_m2.resx">
       <DependentUpon>201212122039288_m2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201212122049568_p1.resx">
+      <DependentUpon>201212122049568_p1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

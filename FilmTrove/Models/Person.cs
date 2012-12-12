@@ -14,6 +14,7 @@ namespace FilmTrove.Models
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public Int32 PersonId { get; set; }
+        [MaxLength(100)]
         public String Name { get; set; }
         public String Bio { get; set; }
 

@@ -120,6 +120,10 @@ namespace FilmTrove.Controllers
                         m.Netflix.Url = netflixtitle.NetflixSiteUrl;
                         m.Netflix.OfficialWebsiteUrl = netflixtitle.NetflixSiteUrl;
                     }
+
+                    ///need to find the roles that are already added (under the RoleType.None) so i can correct those
+                    var noneroles = m.Roles.Where(r => r.InRole == RoleType.None).ToList();
+
                     using (profiler.Step("Populate Actors"))
                     {
                         var nfactorids = netflixtitle.Actors.Select(t => t.Id).ToList();
@@ -149,13 +153,19 @@ namespace FilmTrove.Controllers
                             r.Movie = m;
                             r.Person = ftperson;
                             ftc.Roles.Add(r);
-
                         }
-                        if (m.Roles.Count(c => c.InRole == RoleType.Actor) < nfactorids.Count())
+                        ///need to find the noneroles that are actors now
+                        var noneroleactors = noneroles.Where(r => matchedactorids.Contains(r.Person.Netflix.Id.ToString())).ToList();
+                        foreach (Role r in noneroleactors)
+                        {
+                            r.InRole = RoleType.Actor;
+                        }
+                        ftc.SaveChanges();
+                        if (m.Roles.Count(c => c.InRole == RoleType.Actor) < nfactorids.Count)
                         {
                             ///need to find which roles haven't already been added.
-                            var currentroles = m.Roles.Where(r => r.InRole == RoleType.Actor).Select(r => r.Person.PersonId);
-                            var actorsfordb = matchedactors.Where(r => !currentroles.Contains(r.PersonId));
+                            var currentroles = m.Roles.Where(r => r.InRole == RoleType.Actor).Select(r => r.Person.PersonId).ToList();
+                            var actorsfordb = matchedactors.Where(r => !currentroles.Contains(r.PersonId)).ToList();
                             foreach (Models.Person p in actorsfordb)
                             {
                                 ///2) add this movie as a new role on the movie
@@ -166,7 +176,22 @@ namespace FilmTrove.Controllers
                                 ftc.Roles.Add(r);
                             }
                         }
-
+                        //if (m.Roles.Count(c => c.InRole == RoleType.Actor) < netflixtitle.Actors.Count())
+                        //{
+                        //    ///need to find which roles haven't already been added.
+                        //    var currentroles = m.Roles.Where(r => r.InRole == RoleType.Actor).Select(r => r.Person.Netflix.Id).ToList();
+                        //    var actorsfordb = netflixtitle.Actors.Where(r => !currentroles.Contains(r.Id)).Select(a => a.Id).ToList();
+                        //    var actorsft = ftc.People.Where(p => actorsfordb.Contains(p.Netflix.Id)).ToList();
+                        //    foreach (Models.Person p in actorsft)
+                        //    {
+                        //        ///2) add this movie as a new role on the movie
+                        //        Role r = ftc.Roles.Create();
+                        //        r.InRole = RoleType.Actor;
+                        //        r.Movie = m;
+                        //        r.Person = p;
+                        //        ftc.Roles.Add(r);
+                        //    }
+                        //}
                     }
                     using (profiler.Step("Populate Directors"))
                     {
@@ -195,11 +220,29 @@ namespace FilmTrove.Controllers
                             r.Person = ftperson;
                             ftc.Roles.Add(r);
                         }
-                        if (m.Roles.Count(c => c.InRole == RoleType.Director) < nfdirectorids.Count())
+                        ///need to find the noneroles that are directors now
+                        var noneroledirectors = noneroles.Where(r => matcheddirectorids.Contains(r.Person.Netflix.Id.ToString())).ToList();
+                        foreach (Role r in noneroledirectors)
+                        {
+                            if (r.InRole == RoleType.None)
+                            {
+                                r.InRole = RoleType.Director;
+                            }
+                            else ///have to make this check incase an actor is also the director (actors are checked first)
+                            {
+                                Role role = ftc.Roles.Create();
+                                role.InRole = RoleType.Director;
+                                role.Movie = r.Movie;
+                                role.Person = r.Person;
+                                ftc.Roles.Add(role);
+                            }
+                        }
+                        ftc.SaveChanges();
+                        if (m.Roles.Count(c => c.InRole == RoleType.Director) < nfdirectorids.Count)
                         {
                             ///need to find which roles haven't already been added.
-                            var currentroles = m.Roles.Where(r => r.InRole == RoleType.Director).Select(r => r.Person.PersonId);
-                            var directorsfordb = matcheddirectors.Where(r => !currentroles.Contains(r.PersonId));
+                            var currentroles = m.Roles.Where(r => r.InRole == RoleType.Director).Select(r => r.Person.PersonId).ToList();
+                            var directorsfordb = matcheddirectors.Where(r => !currentroles.Contains(r.PersonId)).ToList();
                             foreach (Models.Person p in directorsfordb)
                             {
                                 ///2) add this movie as a new role on the movie
@@ -210,7 +253,24 @@ namespace FilmTrove.Controllers
                                 ftc.Roles.Add(r);
                             }
                         }
+                        //if (m.Roles.Count(c => c.InRole == RoleType.Director) < netflixtitle.Directors.Count())
+                        //{
+                        //    ///need to find which roles haven't already been added.
+                        //    var currentroles = m.Roles.Where(r => r.InRole == RoleType.Director).Select(r => r.Person.Netflix.Id).ToList();
+                        //    var directorsfordb = netflixtitle.Directors.Where(r => !currentroles.Contains(r.Id)).Select(a => a.Id).ToList();
+                        //    var directorsft = ftc.People.Where(p => directorsfordb.Contains(p.Netflix.Id)).ToList();
+                        //    foreach (Models.Person p in directorsft)
+                        //    {
+                        //        ///2) add this movie as a new role on the movie
+                        //        Role r = ftc.Roles.Create();
+                        //        r.InRole = RoleType.Director;
+                        //        r.Movie = m;
+                        //        r.Person = p;
+                        //        ftc.Roles.Add(r);
+                        //    }
+                        //}
                     }
+                    #region Populate Similar Titles
                     using (profiler.Step("Populate Similar Titles"))
                     {
                         ///3) add all similar titles to the database similar to step 1 for people
@@ -259,6 +319,8 @@ namespace FilmTrove.Controllers
                         m.Netflix.SimilarTitles = netflixtitle.SimilarTitles.Select(t => t.IdUrl).ToList();
                         m.Netflix.NeedsUpdate = false;
                     }
+                    #endregion
+                    #region Populate Genres
                     using (profiler.Step("Populate Genres"))
                     {
                         var dbgl = ftc.Genres.Local.Where(g => netflixtitle.Genres.Contains(g.Name));
@@ -284,8 +346,48 @@ namespace FilmTrove.Controllers
                             ftc.GenreItems.Add(gi);
                         }
                     }
+                    #endregion
                     m.Netflix.Synopsis = netflixtitle.Synopsis;
                     m.Description = netflixtitle.Synopsis;
+                }
+            }
+            else
+            {
+                using (profiler.Step("Correct Role.Nones"))
+                {
+                    var noneroles = m.Roles.Where(r => r.InRole == RoleType.None).ToList();
+                    if (noneroles.Count > 0)
+                    {
+                        ///need to find the roles that are already added (under the RoleType.None) so i can correct those
+                        ///need to find the noneroles that are actors now
+                        Title netflixtitle = new Title();
+                        netflixtitle.Actors = await Netflix.Fill.Titles.GetActors(m.Netflix.IdUrl);
+                        netflixtitle.Directors = await Netflix.Fill.Titles.GetDirectors(m.Netflix.IdUrl);
+
+                        foreach (var nonerole in noneroles)
+                        {
+                            FlixSharp.Holders.Person nfactor = netflixtitle.Actors.Where(p => p.Id == nonerole.Person.Netflix.Id).SingleOrDefault();
+                            if (nfactor != null)
+                            {
+                                nonerole.InRole = RoleType.Actor;
+                            }
+                            FlixSharp.Holders.Person nfdirector = netflixtitle.Directors.Where(p => p.Id == nonerole.Person.Netflix.Id).SingleOrDefault();
+                            if (nfdirector != null)
+                            {
+                                if (nonerole.InRole != RoleType.None)
+                                {
+                                    ///if this was an actor also then duplicate it for a director role.
+                                    Role r = ftc.Roles.Create();
+                                    r.InRole = RoleType.Director;
+                                    r.Movie = nonerole.Movie;
+                                    r.Person = nonerole.Person;
+                                    ftc.Roles.Add(r);
+                                }
+                                else
+                                    nonerole.InRole = RoleType.Director;
+                            }
+                        }
+                    }
                 }
             }
             using (profiler.Step("Save Changes"))

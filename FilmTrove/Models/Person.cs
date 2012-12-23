@@ -27,7 +27,7 @@ namespace FilmTrove.Models
 
         public String GetDetailsUrl()
         {
-            return "/People/Details/" + PersonId + "/" + Name.UrlFriendly();
+            return "/people/details/" + PersonId + "/" + Name.UrlFriendly();
         }
         public override String ToString()
         {
@@ -66,6 +66,10 @@ namespace FilmTrove.Models
         public virtual Movie Movie { get; set; }
         public virtual Person Person { get; set; }
 
+        public Role()
+        {
+            InRole = RoleType.None;
+        }
         //public override bool Equals(Object obj)
         //{
         //    return this.Equals((Role)obj);
@@ -98,7 +102,7 @@ namespace FilmTrove.Models
 
     //    public String GetDetailsUrl()
     //    {
-    //        return "/People/Details/" + PersonId + "/" + Name.UrlFriendly();
+    //        return "/people/details/" + PersonId + "/" + Name.UrlFriendly();
     //    }
     //}
 }

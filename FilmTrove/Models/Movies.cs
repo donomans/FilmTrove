@@ -24,8 +24,10 @@ namespace FilmTrove.Models
         public String AltTitle { get; set; }
 
         public String Description { get; set; }
+        [MaxLength(10)]
         public String Rating { get; set; }
         public RatingType RatingType { get; set; }
+        [MaxLength(250)]
         public String BestPosterUrl { get; set; }
         public Int32 Year { get; set; }
         public Int32? RunTime { get; set; }
@@ -47,7 +49,7 @@ namespace FilmTrove.Models
 
         public String GetDetailsUrl()
         {
-            return "/Movies/Details/" + MovieId + "/" + Title.UrlFriendly(Year);
+            return "/movies/details/" + MovieId + "/" + Title.UrlFriendly(Year);
         }
         public String GetAwards()
         {
@@ -71,7 +73,7 @@ namespace FilmTrove.Models
         }
         public override String ToString()
         {
-            return Title;
+            return Title + (Year > 0 ? " (" + Year + ")" : "") ;
         }
 
         public Movie()
@@ -105,6 +107,7 @@ namespace FilmTrove.Models
     public class Genre// : IEquatable<Genre>
     {
         public Int32 GenreId { get; set; }
+        [MaxLength(150)]
         public String Name { get; set; }
         public Genre()
         {

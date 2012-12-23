@@ -64,6 +64,9 @@
     <Reference Include="DotNetOpenAuth.OpenId.RelyingParty">
       <HintPath>..\packages\DotNetOpenAuth.OpenId.RelyingParty.4.1.2.12274\lib\net45-full\DotNetOpenAuth.OpenId.RelyingParty.dll</HintPath>
     </Reference>
+    <Reference Include="Elmah">
+      <HintPath>..\packages\elmah.corelibrary.1.2.2\lib\Elmah.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -94,6 +97,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Data.Services.Client" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.4.0.20710.0\lib\net40\System.Net.Http.Formatting.dll</HintPath>
@@ -220,6 +224,10 @@
     <Compile Include="Migrations\201212122049568_p1.Designer.cs">
       <DependentUpon>201212122049568_p1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201212122327116_m3.cs" />
+    <Compile Include="Migrations\201212122327116_m3.Designer.cs">
+      <DependentUpon>201212122327116_m3.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\FilmTroveContext.cs" />
     <Compile Include="Models\Misc.cs" />
@@ -260,7 +268,7 @@
     <Content Include="Public\themes\base\minified\images\ui-bg_glass_75_dadada_1x400.png" />
     <Content Include="Public\themes\base\minified\jquery-ui.min.css" />
     <Content Include="Public\themes\base\minified\jquery.ui.autocomplete.min.css" />
-    <Content Include="Public\favicon.ico" />
+    <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Public\Css\base.css" />
     <Content Include="Public\Css\color.css" />
@@ -401,6 +409,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201212122049568_p1.resx">
       <DependentUpon>201212122049568_p1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201212122327116_m3.resx">
+      <DependentUpon>201212122327116_m3.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

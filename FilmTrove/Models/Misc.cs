@@ -24,12 +24,14 @@ namespace FilmTrove.Models
         }
         public Single? AvgRating { get; set; }
         public String Synopsis { get; set; }
-        
+        [MaxLength(150)]
         public String IdUrl { get; set; }
+
         [NotMapped]
         public String SeasonId { get; set; }
         [NotMapped]
         public String TitleId { get; set; }
+
         public new String Id
         {
             get
@@ -53,6 +55,7 @@ namespace FilmTrove.Models
         }
 
         //public String PosterUrlMedium { get; set; }
+        [MaxLength(250)]
         public String PosterUrlLarge { get; set; }
         /// <summary>
         /// Netflix Ids of similar titles
@@ -83,6 +86,7 @@ namespace FilmTrove.Models
 
         public Format Format { get; set; }
 
+        [MaxLength(250)]
         public String OfficialWebsiteUrl { get; set; }
     }
     [ComplexType]
@@ -97,6 +101,7 @@ namespace FilmTrove.Models
         }
         public Int32? AvgRating { get; set; }
         public String Synopsis { get; set; }
+        [MaxLength(100)]
         public String Studio { get; set; }
     }
     [ComplexType]
@@ -125,10 +130,13 @@ namespace FilmTrove.Models
         public Double? LastPrice { get; set; }
         public DateTime? LastPriceUpdate { get; set; }
         public DateTime? LastFullUpdate { get; set; }
+        [MaxLength(250)]
         public String PosterUrlMedium { get; set; }
+        [MaxLength(250)]
         public String PosterUrlLarge { get; set; }
         public Int32? AvgRating { get; set; }
         public String Synopsis { get; set; }
+        [MaxLength(100)]
         public String Studio { get; set; }
     }
     [ComplexType]
@@ -145,13 +153,17 @@ namespace FilmTrove.Models
         public DateTime? LastFullUpdate { get; set; }
         public Int32? CriticScore { get; set; }
         public String CriticConsensus { get; set; }
+        [MaxLength(250)]
         public String PosterUrlMedium { get; set; }
+        [MaxLength(250)]
         public String PosterUrlLarge { get; set; }
         public DateTime? TheatricalRelase { get; set; }
         public DateTime? DvdRelease { get; set; }
         public Int32? AvgRating { get; set; }
         public String Synopsis { get; set; }
+        [MaxLength(100)]
         public String Studio { get; set; }
+        [MaxLength(250)]
         public String TrailerUrl { get; set; }
     }
 
@@ -159,6 +171,7 @@ namespace FilmTrove.Models
     {
         [MaxLength(20)]
         public String Id { get; set; }
+        [MaxLength(250)]
         public String Url { get; set; }
         public Boolean NeedsUpdate { get; set; }
     }
@@ -202,7 +215,8 @@ namespace FilmTrove.Models
         Actor,
         Director,
         Writer,
-        Producer
+        Producer,
+        None = 99
     }
 
     public class Dateable

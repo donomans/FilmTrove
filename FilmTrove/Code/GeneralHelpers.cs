@@ -29,8 +29,7 @@ namespace FilmTrove.Code
                     FilmTrove.Models.Movie newmovie = ftc.Movies.Create();
                     FlixSharp.Holders.Title netflixmovie = results.Find(nid);
                     FillBasicTitle(newmovie, netflixmovie);
-
-
+                    
                     var dbgenreslocal = ftc.Genres.Local.Where(g => netflixmovie.Genres.Contains(g.Name));
                     var dbgenres = ftc.Genres.Where(g => netflixmovie.Genres.Contains(g.Name));
                     HashSet<Genre> genres = new HashSet<Genre>();

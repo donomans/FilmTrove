@@ -2,14 +2,19 @@
 @{
     FilmTrove.Models.Movie m = ViewBag.Movie;
     ViewBag.SimilarsExist = ViewBag.Similars != null;
-    ViewBag.Title = m.Title + " (" + m.Year + ") Details";
+    ViewBag.Title = m.ToString() + " Details";
     ViewBag.Description = ViewBag.Title + " - Add it to your collection.";
-    ViewBag.Keywords = m.Title + " (" + m.Year + "), " + m.Title + ", Lists, Ratings, Information, Details, Synopsis, Collection";
+    ViewBag.Keywords = m.ToString() + ", " + m.Title + ", Lists, Ratings, Information, Description, Details, Synopsis, Collection";
+    ICollection<FilmTrove.Models.Role> roles = ViewBag.Roles;
+    List<FilmTrove.Models.Role> directors = roles.Where(r => r.InRole == FilmTrove.Models.RoleType.Director).ToList();
+    List<FilmTrove.Models.Role> actors = roles.Where(r => r.InRole == FilmTrove.Models.RoleType.Actor).ToList();
+    List<FilmTrove.Models.Role> writers = roles.Where(r => r.InRole == FilmTrove.Models.RoleType.Writer).ToList();
+    List<FilmTrove.Models.Role> producers = roles.Where(r => r.InRole == FilmTrove.Models.RoleType.Producer).ToList();
 }
 <div id="portfolio-wrapper">
     <div class="container">
         <section id="page-title">
-            <h2>@m.Title</h2>
+            <h2>@m.ToString()</h2>
         </section>
     </div>
     <div class="eight columns portfolio-item">
@@ -28,14 +33,15 @@
             7) Awards
             8) Genres
          *@
-            <p>Netflix User Rating: @m.Netflix.AvgRating Stars</p>
-            <p>Rotten Tomatoes User Rating: @m.RottenTomatoes.AvgRating</p>
-            <p>Rotten Tomatoes Critic Rating: @m.RottenTomatoes.CriticScore</p>
+            @if(m.Netflix.AvgRating.HasValue){<p>Netflix User Rating: @m.Netflix.AvgRating Stars</p>}
+            @if(m.RottenTomatoes.AvgRating.HasValue){<p>Rotten Tomatoes User Rating: @m.RottenTomatoes.AvgRating</p>}
+            @if(m.RottenTomatoes.CriticScore.HasValue){<p>Rotten Tomatoes Critic Rating: @m.RottenTomatoes.CriticScore</p>}
             @*<span>@m.Amazon.AvgRating</span>*@
-            <p>Theatrical Release: @m.RottenTomatoes.TheatricalRelase</p>
-            <p>DVD/BR Release: @m.RottenTomatoes.DvdRelease</p>
-            <p>Studio: @m.RottenTomatoes.Studio</p>
-            Awards: @Html.Raw(m.GetAwards()) <br />
+            @if(m.RottenTomatoes.TheatricalRelase.HasValue){<p>Theatrical Release: @m.RottenTomatoes.TheatricalRelase</p>}
+            @if(m.RottenTomatoes.DvdRelease.HasValue){<p>DVD/BR Release: @m.RottenTomatoes.DvdRelease</p>}
+            @if(m.Year > 0){<p>Year: @m.Year</p>}
+            @if(m.RottenTomatoes.Studio != null && m.RottenTomatoes.Studio == ""){<p>Studio: @m.RottenTomatoes.Studio</p>}
+            @if(m.Netflix.AwardsCompact != ""){<span>Awards: @Html.Raw(m.GetAwards())</span><br />}
             <p>Genres: @String.Join(", ", m.Genres)</p>
         </div>
     </div>
@@ -69,12 +75,15 @@
          *@
             <h4>Netflix:</h4>
             <p>@Html.Raw(m.Netflix.Synopsis)</p>
-            <h4>Rotten Tomatoes Critic Consensus:</h4>
-            <p>@Html.Raw(m.RottenTomatoes.CriticConsensus)</p>
-            <h4>Rotten Tomatoes:</h4>
-            <p>@Html.Raw(m.RottenTomatoes.Synopsis)</p>
-            <h4>Amazon:</h4>
-            <p>@Html.Raw(m.Amazon.Synopsis)</p>
+            @if (m.RottenTomatoes.CriticConsensus != null && m.RottenTomatoes.CriticConsensus != "")
+            {<h4>Rotten Tomatoes Critic Consensus:</h4>
+            <p>@Html.Raw(m.RottenTomatoes.CriticConsensus)</p>}
+            @if (m.RottenTomatoes.Synopsis != null && m.RottenTomatoes.Synopsis != "")
+            {<h4>Rotten Tomatoes:</h4>
+            <p>@Html.Raw(m.RottenTomatoes.Synopsis)</p>}
+            @if(m.Amazon.Synopsis != null && m.Amazon.Synopsis != "")
+            {<h4>Amazon:</h4>
+            <p>@Html.Raw(m.Amazon.Synopsis)</p>}
         </div>
     </div>
     <div class="container">
@@ -90,13 +99,10 @@
          *@
             <h4>Cast:</h4>
             <ul>
-        @foreach (FilmTrove.Models.Role r in ViewBag.Roles)
-        {
-            if (r.InRole == FilmTrove.Models.RoleType.Actor)
+            @foreach (var r in actors)
             {
                 <li><a href="@r.Person.GetDetailsUrl()">@r.Person.Name</a> as ... @r.RoleName</li>
             }
-        }
             </ul>
         </div>
     </div>
@@ -109,34 +115,29 @@
          *@
             <h4>Director(s):</h4>
             <ul>
-        @foreach (FilmTrove.Models.Role r in ViewBag.Roles)
-        {
-            if (r.InRole == FilmTrove.Models.RoleType.Director)
+            @foreach (var r in directors)
             {
                 <li><a href="@r.Person.GetDetailsUrl()">@r.Person.Name</a></li>
             }
-        }
             </ul>
+        @if(writers.Count > 0){
             <h4>Writer(s):</h4>
             <ul>
-        @foreach (FilmTrove.Models.Role r in ViewBag.Roles)
-        {
-            if (r.InRole == FilmTrove.Models.RoleType.Writer)
+            @foreach (var r in writers)
             {
                 <li><a href="@r.Person.GetDetailsUrl()">@r.Person.Name</a></li>
             }
-        }
             </ul>
+        }
+        @if(producers.Count > 0){    
             <h4>Producer(s):</h4>
             <ul>
-        @foreach (FilmTrove.Models.Role r in ViewBag.Roles)
-        {
-            if (r.InRole == FilmTrove.Models.RoleType.Producer)
+            @foreach (var r in producers)
             {
                 <li><a href="@r.Person.GetDetailsUrl()">@r.Person.Name</a></li>
             }
-        }
             </ul>
+        }
         </div>
     </div> 
     @if(ViewBag.SimilarsExist)

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using FilmTrove.Models;
 using System.Text.RegularExpressions;
 using StackExchange.Profiling;
+using FlixSharp.Holders.Netflix;
 
 namespace FilmTrove.Controllers
 {
@@ -24,7 +25,7 @@ namespace FilmTrove.Controllers
             var ftc = (FilmTroveContext)HttpContext.Items["ftcontext"];
             Int32 movieid = Int32.Parse(id);
             Models.Movie m = ftc.Movies.Include("Roles.Person").Include("Genres.Genre").Where(movie => movie.MovieId == movieid).Single();//.Include("Roles.Person").Where(movie => movie.MovieId == movieid).Single();
-            Task<FlixSharp.Holders.Title> nfm = null;
+            Task<FlixSharp.Holders.Netflix.Title> nfm = null;
 
             if (m.Netflix.NeedsUpdate || m.DateLastModified > DateTime.Now.AddDays(28))
             {
@@ -98,8 +99,9 @@ namespace FilmTrove.Controllers
                         m.Rating = netflixtitle.Rating.RatingType == RatingType.Mpaa ?
                                 netflixtitle.Rating.MpaaRating.ToString() : netflixtitle.Rating.TvRating.ToString();
                         m.RatingType = netflixtitle.Rating.RatingType;
+                        m.RunTime = netflixtitle.RunTime;
 
-                        foreach (FlixSharp.Holders.FormatAvailability f in netflixtitle.Formats)
+                        foreach (FlixSharp.Holders.Netflix.FormatAvailability f in netflixtitle.Formats)
                         {
                             switch (f.Format)
                             {
@@ -131,7 +133,7 @@ namespace FilmTrove.Controllers
                         var matchedactorids = matchedactors.Select(p => p.Netflix.Id).ToList();
                         var actorsfordatabase = netflixtitle.Actors.Where(t => !matchedactorids.Contains(t.Id)).ToList();
 
-                        foreach (FlixSharp.Holders.Person p in actorsfordatabase)
+                        foreach (FlixSharp.Holders.Netflix.Person p in actorsfordatabase)
                         {
                             ///1) find the cast and loop through and add the people to the database in a similar manner as AsyncHelpers.GetDatabasePeople
                             FilmTrove.Models.Person ftperson = null;
@@ -199,7 +201,7 @@ namespace FilmTrove.Controllers
                         var matcheddirectors = ftc.People.Where(t => nfdirectorids.Contains(t.Netflix.Id)).ToList();
                         var matcheddirectorids = matcheddirectors.Select(p => p.Netflix.Id).ToList();
                         var directorsfordatabase = netflixtitle.Directors.Where(t => !matcheddirectorids.Contains(t.Id)).ToList();
-                        foreach (FlixSharp.Holders.Person p in directorsfordatabase)
+                        foreach (FlixSharp.Holders.Netflix.Person p in directorsfordatabase)
                         {
                             ///1) find the cast and loop through and add the people to the database in a similar manner as AsyncHelpers.GetDatabasePeople
                             FilmTrove.Models.Person ftperson = ftc.People.Local.Where(t => t.Netflix.Id == p.Id).SingleOrDefault();
@@ -283,7 +285,7 @@ namespace FilmTrove.Controllers
                                 return titleidsfordatabase.Any(f => f == fullid);//fullid);
                             }).ToList();
 
-                        foreach (FlixSharp.Holders.Title t in titlesfordatabase)
+                        foreach (FlixSharp.Holders.Netflix.Title t in titlesfordatabase)
                         {
                             FilmTrove.Models.Movie ftmovie = ftc.Movies.Create();
                             GeneralHelpers.FillBasicTitle(ftmovie, t);
@@ -366,12 +368,12 @@ namespace FilmTrove.Controllers
 
                         foreach (var nonerole in noneroles)
                         {
-                            FlixSharp.Holders.Person nfactor = netflixtitle.Actors.Where(p => p.Id == nonerole.Person.Netflix.Id).SingleOrDefault();
+                            FlixSharp.Holders.Netflix.Person nfactor = netflixtitle.Actors.Where(p => p.Id == nonerole.Person.Netflix.Id).SingleOrDefault();
                             if (nfactor != null)
                             {
                                 nonerole.InRole = RoleType.Actor;
                             }
-                            FlixSharp.Holders.Person nfdirector = netflixtitle.Directors.Where(p => p.Id == nonerole.Person.Netflix.Id).SingleOrDefault();
+                            FlixSharp.Holders.Netflix.Person nfdirector = netflixtitle.Directors.Where(p => p.Id == nonerole.Person.Netflix.Id).SingleOrDefault();
                             if (nfdirector != null)
                             {
                                 if (nonerole.InRole != RoleType.None)

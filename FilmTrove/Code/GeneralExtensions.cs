@@ -1,5 +1,6 @@
 ﻿using FlixSharp;
 using FlixSharp.Queries;
+using FlixSharp.Queries.Netflix;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -68,18 +69,18 @@ namespace FilmTrove.Code
 
         public static NetflixFill Randomized(this NetflixFill source)
         {
-            String details = accounts[random.Next(0, accounts.Length - 1)];
-            String[] account = details.Split(new[] { ';' });
-            Netflix.Login.SetCredentials(account[0], account[1], account[2]);
-            Netflix.OnUserBehalf = false;
+            //String details = accounts[random.Next(0, accounts.Length - 1)];
+            //String[] account = details.Split(new[] { ';' });
+            //Netflix.Login.SetCredentials(account[0], account[1], account[2]);
+            //Netflix.OnUserBehalf = false;
             return Netflix.Fill;
         }
         public static NetflixSearch Randomized(this NetflixSearch source)
         {
-            String details = accounts[random.Next(0, accounts.Length - 1)];
-            String[] account = details.Split(new[] { ';' });
-            Netflix.Login.SetCredentials(account[0], account[1], account[2]);
-            Netflix.OnUserBehalf = false;
+            //String details = accounts[random.Next(0, accounts.Length - 1)];
+            //String[] account = details.Split(new[] { ';' });
+            //Netflix.Login.SetCredentials(account[0], account[1], account[2]);
+            //Netflix.OnUserBehalf = false;
             return Netflix.Search;
         }
     }

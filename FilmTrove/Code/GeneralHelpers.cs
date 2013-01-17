@@ -1,5 +1,5 @@
 ﻿using FilmTrove.Models;
-using FlixSharp.Holders;
+using FlixSharp.Holders.Netflix;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +27,7 @@ namespace FilmTrove.Code
                 {
                     ///create FT database records for each of these with the movies basic information for now
                     FilmTrove.Models.Movie newmovie = ftc.Movies.Create();
-                    FlixSharp.Holders.Title netflixmovie = results.Find(nid);
+                    FlixSharp.Holders.Netflix.Title netflixmovie = results.Find(nid);
                     FillBasicTitle(newmovie, netflixmovie);
                     
                     var dbgenreslocal = ftc.Genres.Local.Where(g => netflixmovie.Genres.Contains(g.Name));
@@ -93,7 +93,7 @@ namespace FilmTrove.Code
                 {
                     ///create FT database records for each of these with the movies basic information for now
                     FilmTrove.Models.Person newperson = ftc.People.Create();
-                    FlixSharp.Holders.Person netflixperson = results.Find(nid);
+                    FlixSharp.Holders.Netflix.Person netflixperson = results.Find(nid);
                     FillBasicPerson(newperson, netflixperson);
                     //newperson.Name = netflixperson.Name;
                     //newperson.Bio = netflixperson.Bio;
@@ -127,7 +127,7 @@ namespace FilmTrove.Code
             }
         }
 
-        public static void FillBasicTitle(FilmTrove.Models.Movie movie, FlixSharp.Holders.Title ntitle)
+        public static void FillBasicTitle(FilmTrove.Models.Movie movie, FlixSharp.Holders.Netflix.Title ntitle)
         {
             movie.Netflix.Id = ntitle.Id;
             movie.Netflix.IdUrl = ntitle.IdUrl;
@@ -145,7 +145,7 @@ namespace FilmTrove.Code
             movie.BestPosterUrl = ntitle.BoxArtUrlLarge;
             movie.Year = ntitle.Year;
         }
-        public static void FillBasicPerson(FilmTrove.Models.Person person, FlixSharp.Holders.Person nperson)
+        public static void FillBasicPerson(FilmTrove.Models.Person person, FlixSharp.Holders.Netflix.Person nperson)
         {
             person.Netflix.Id = nperson.Id;
             person.Netflix.NeedsUpdate = true;

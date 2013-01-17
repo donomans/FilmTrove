@@ -10,6 +10,7 @@ using System.Data.Objects;
 using System.Data;
 using FlixSharp.Holders;
 using FilmTrove.Code;
+using FlixSharp.Holders.Netflix;
 
 namespace FilmTrove.Models
 {

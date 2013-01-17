@@ -1,7 +1,7 @@
 ﻿using FilmTrove.Code;
 using FilmTrove.Filters;
 using FlixSharp;
-using FlixSharp.Holders;
+using FlixSharp.Holders.Netflix;
 using System;
 using System.Collections.Generic;
 using System.Linq;

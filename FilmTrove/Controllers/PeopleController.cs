@@ -1,6 +1,5 @@
 ﻿using FilmTrove.Models;
 using FlixSharp;
-using FlixSharp.Holders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using FilmTrove.Code;
 using StackExchange.Profiling;
+using FlixSharp.Holders.Netflix;
 
 namespace FilmTrove.Controllers
 {
@@ -22,7 +22,7 @@ namespace FilmTrove.Controllers
             Int32 personid = Int32.Parse(id);
             FilmTrove.Models.Person p = ftc.People.Include("Roles.Movie").Where(person => person.PersonId == personid).Single();
 
-            Task<FlixSharp.Holders.Person> nfp = null;
+            Task<FlixSharp.Holders.Netflix.Person> nfp = null;
 
             if (p.Netflix.NeedsUpdate || p.DateLastModified > DateTime.Now.AddDays(28))
             {
@@ -37,7 +37,7 @@ namespace FilmTrove.Controllers
 
             if (nfp != null)
             {
-                FlixSharp.Holders.Person netflixperson = null;
+                FlixSharp.Holders.Netflix.Person netflixperson = null;
                 List<Movie> ftmoviesfound = null;
 
                 Dictionary<Movie, People> actors = new Dictionary<Movie, People>();
@@ -68,7 +68,7 @@ namespace FilmTrove.Controllers
                     
                     var ftmoviesfoundids = ftmoviesfound.Select(t => t.Netflix.Id).ToList();
                     var netflixmoviestoadd = netflixperson.Filmography.Where(t => !ftmoviesfoundids.Contains(t.Id + (t.SeasonId != "" ? ";" + t.SeasonId : ""))).ToList();
-                    foreach (FlixSharp.Holders.Title title in netflixmoviestoadd)
+                    foreach (FlixSharp.Holders.Netflix.Title title in netflixmoviestoadd)
                     {
                         var m = ftc.Movies.Create();
                         GeneralHelpers.FillBasicTitle(m, title);

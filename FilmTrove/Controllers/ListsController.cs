@@ -45,7 +45,7 @@ namespace FilmTrove.Controllers
                 ViewBag.Id = id;
                 FilmTroveContext ftc = (FilmTroveContext)HttpContext.Items["ftcontext"];
                 Movie movie = ftc.Movies.Find(movieid);
-                UserProfile up = ftc.UserProfiles.Include("UserLists.Items").Where(u=> u.UserId == WebSecurity.CurrentUserId).Single();
+                UserProfile up = ftc.UserProfiles.Include("UserLists.Items").Single(u=> u.UserId == WebSecurity.CurrentUserId);
                 if (up.UserLists.Count < 1)
                 {
                     ///this is only temporary
@@ -73,7 +73,7 @@ namespace FilmTrove.Controllers
         {
             formats = formats.Trim().Replace(" ", ", ").Replace("-","");
             FilmTroveContext ftc = (FilmTroveContext)HttpContext.Items["ftcontext"];
-            UserProfile up = ftc.UserProfiles.Include("UserLists.Items").Where(u => u.UserId == WebSecurity.CurrentUserId).Single();
+            UserProfile up = ftc.UserProfiles.Include("UserLists.Items").Single(u => u.UserId == WebSecurity.CurrentUserId);
             Int32 lid = Convert.ToInt32(listid);
             Int32 mid = Convert.ToInt32(movieid);
             UserList list = up.UserLists.Where(l => l.ListId == lid).Single();

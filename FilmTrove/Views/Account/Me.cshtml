@@ -23,23 +23,25 @@
     }
 
         <div class="sixteen columns">
-		<ul class="tabs-nav">
+		@*<ul class="tabs-nav">
 			<li class="active"><a href="#tab1"><i class="mini-ico-glass"></i>Update Details</a></li>
 			<li><a href="#tab2"><i class="mini-ico-list"></i>Netflix</a></li>
             <li><a href="#Friends"><i class="mini-ico-list"></i>Friends</a></li>
-		</ul>
+		</ul>*@
 				
-		<div class="tabs-container">
-			<div class="tab-content" id="tab1">
+		@*<div class="tabs-container">
+			<div class="tab-content" id="tab1">*@
+            <div class="one-third column">
                 <h4>Account information:</h4>
                 @if (WebSecurity.IsAuthenticated)
                 {
+                @model FilmTrove.Models.UserUpdate
+                    
                 <div class="field">
                     <label>Gravatar</label>
-                    <img src="@Gravatar.GetUrl(WebSecurity.CurrentUserName)" title="@WebSecurity.CurrentUserName" />
+                    <img src="@Gravatar.GetUrl(Model.Email)" title="@Model.Name" />
                 </div><br />
 
-                @model FilmTrove.Models.UserUpdate
                 using (Html.BeginForm("Me", "Account", FormMethod.Post, new { id = "accountupdateform" }))
                 {
                     <div class="field">
@@ -58,7 +60,8 @@
                     <div>Stop looking here. Log in to edit your account details.</div>
                 }
 			</div>
-			<div class="tab-content" id="tab2">  
+			@*<div class="tab-content" id="tab2">  *@
+            <div class="one-third column">
                 <h4>Netflix settings:</h4>      
                 @if(WebSecurity.IsAuthenticated)
                 {        
@@ -83,7 +86,8 @@
                     <div>Stop looking here. Log in to Link or Un-link your Netflix account.</div>
                 }
 			</div>
-            <div class="tab-content" id="Friends">
+           @* <div class="tab-content" id="Friends">*@
+            <div class="one-third column">
                 <h4>Friends</h4>
                 @if (WebSecurity.IsAuthenticated)
                 {

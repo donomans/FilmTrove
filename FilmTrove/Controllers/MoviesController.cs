@@ -27,18 +27,22 @@ namespace FilmTrove.Controllers
             Models.Movie m = ftc.Movies.Include("Roles.Person").Include("Genres.Genre").Where(movie => movie.MovieId == movieid).Single();//.Include("Roles.Person").Where(movie => movie.MovieId == movieid).Single();
             Task<FlixSharp.Holders.Netflix.Title> nfm = null;
 
-            if (m.Netflix.NeedsUpdate || m.DateLastModified > DateTime.Now.AddDays(28))
+            Random ran = new Random();
+
+            if (m.Netflix.NeedsUpdate || (m.DateLastModified.HasValue && m.DateLastModified > DateTime.Now.AddDays(28).AddDays(ran.Next(-5, 5))))
             {
                 nfm = Netflix.Fill.Randomized().Titles.GetCompleteTitle(m.Netflix.IdUrl, OnUserBehalf: true);//Randomized().
             }
             using (profiler.Step("Populate Amazon Movie"))
             {
-                if (m.Amazon.NeedsUpdate || (m.Amazon.LastPriceUpdate.HasValue && ((m.Amazon.LastPriceUpdate.Value - DateTime.Now) > new TimeSpan(1, 0, 0, 0))))
+                if (m.Amazon.NeedsUpdate || (m.Amazon.LastPriceUpdate.HasValue && 
+                    (m.Amazon.LastPriceUpdate.Value  > DateTime.Now.AddDays(1))))
                 {
                     if (m.Amazon.Id == null || m.Amazon.Id == "" ||
-                        m.Amazon.LastFullUpdate.HasValue && ((m.Amazon.LastFullUpdate.Value - DateTime.Now) > new TimeSpan(7, 0, 0, 0)))
+                        m.Amazon.LastFullUpdate.HasValue &&
+                        (m.Amazon.LastFullUpdate > DateTime.Now.AddDays(28).AddDays(ran.Next(-5, 5))))
                     {
-                        ///1) do query to match up title and fill in id with priority to blu-ray
+                        ///1) do a full lookup query to match up title and fill in id with priority to blu-ray
                     }
                     ///1) else use Id
 
@@ -58,10 +62,10 @@ namespace FilmTrove.Controllers
             using (profiler.Step("Populate Rotten Tomatoes Movie"))
             {
                 if (m.RottenTomatoes.NeedsUpdate ||
-                    (m.RottenTomatoes.LastFullUpdate.HasValue && ((m.Amazon.LastFullUpdate.Value - DateTime.Now) > new TimeSpan(7, 0, 0, 0))))
+                    (m.RottenTomatoes.LastFullUpdate.HasValue &&
+                    (m.RottenTomatoes.LastFullUpdate > DateTime.Now.AddDays(28).AddDays(ran.Next(-5, 5)))))
                 {
-                    if (m.RottenTomatoes.Id == null || m.RottenTomatoes.Id == "" ||
-                        m.RottenTomatoes.LastFullUpdate.HasValue && ((m.RottenTomatoes.LastFullUpdate.Value - DateTime.Now) > new TimeSpan(7, 0, 0, 0)))
+                    if (m.RottenTomatoes.Id == null || m.RottenTomatoes.Id == "")
                     {
                         ///1) title match like with amazon or use Id if present
                     }

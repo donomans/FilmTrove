@@ -50,7 +50,8 @@
     .container .sixteen.columns                 { width: 940px; }
 
     .container .one-third.column                { width: 300px; }
-    .container .one-fourth.column                { width: 220px; }
+    .container .one-fourth.column               { width: 220px; }
+    .container .one-fifth.column                { width: 172px; }
     .container .two-thirds.column               { width: 620px; }
 
     /* Offsets */
@@ -103,7 +104,8 @@
         .container .sixteen.columns                 { width: 748px; }
 
         .container .one-third.column                { width: 236px; }
-        .container .one-fourth.column                { width: 172px; }
+        .container .one-fourth.column,
+        .container .one-fifth.column                { width: 172px; }
         .container .two-thirds.column               { width: 492px; }
 
         /* Offsets */
@@ -154,6 +156,7 @@
         .container .sixteen.columns,
         .container .one-third.column,
         .container .one-fourth.column,
+        .container .one-fifth.column,
         .container .two-thirds.column  { width: 300px; }
 
         /* Offsets */
@@ -205,7 +208,15 @@
         .container .sixteen.columns,
         .container .one-third.column,
         .container .one-fourth.column,
+        .container .one-fifth.column,
         .container .two-thirds.column { width: 420px; }
+
+        .container .one-fifth.column {
+            width: 180px;
+            margin-left: 10px !important; 
+            margin-right: 10px !important;
+        }
+
     }
 
 
@@ -233,6 +244,11 @@
     .row,
     .clearfix {
       zoom: 1; }
+
+    .clearcarousel {
+        float:none;
+        clear:both;
+    }
 
     /* You can also use a <br class="clear" /> to clear columns */
     .clear {

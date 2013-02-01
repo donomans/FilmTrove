@@ -1,41 +1,167 @@
 ﻿@using FilmTrove.Code
 @{
     ViewBag.Title = "FilmTrove. beta.";
-    Layout = "~/Views/Shared/_viewlayout.cshtml";
+    Layout = "~/Views/Shared/_homelayout.cshtml";
     ViewBag.Description = "Make a list out of your movie collection and share with your friends.  Link your Netflix account and add a friend.  Create your collection.  Get detailed information on movies.";
     ViewBag.Keywords = "movies,films,actors,directors,actresses,lists,collection,queue";
 }
+@section extrajs
+{
+    <script src="http://cdn.filmtrove.com/javascript/jquery.carouFredSel-6.1.0-packed.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#carousel-new").carouFredSel(
+                {
+                    responsive: true,
+                    auto: false,
+                    items: {
+                        visible: 5,
+                        width: 176,
+                        height: 380
+                    },
+                    prev: "#carousel-new-prev",
+                    next: "#carousel-new-next"
+                });
+            $("#carousel-upcoming").carouFredSel(
+                {
+                    responsive: true,
+                    auto: false,
+                    items: {
+                        visible: 5,
+                        width: 176,
+                        height: 380
+                    },
+                    prev: "#carousel-upcoming-prev",
+                    next: "#carousel-upcoming-next"
+                });
+            $("#carousel-newtheater").carouFredSel(
+                {
+                    responsive: true,
+                    auto: false,
+                    items: {
+                        visible: 5,
+                        width: 176,
+                        height: 380
+                    },
+                    prev: "#carousel-newtheater-prev",
+                    next: "#carousel-newtheater-next"
+                });
+            $("#carousel-upcomingtheater").carouFredSel(
+                {
+                    responsive: true,
+                    auto: false,
+                    items: {
+                        visible: 5,
+                        width: 176,
+                        height: 380
+                    },
+                    prev: "#carousel-upcomingtheater-prev",
+                    next: "#carousel-upcomingtheater-next"
+                });
+        });
 
-<div id="portfolio-wrapper">
+    </script>
+}
+<div class="container">
+    <section class="section-title">
+        <h4>New Releases</h4>
+    </section>
+</div>
+<div id="carousel-new">
     @foreach (FilmTrove.Models.Movie m in ViewBag.Movies)
     {
         String friendlytitle = m.Title.UrlFriendly(m.Year);
-    <div class="one-fourth column portfolio-item">
+    <div class="one-fifth column carousel-item">
         <div class="movie">
             <a href="/movies/details/@m.MovieId/@friendlytitle" title="@m.Title"><img src="@m.BestPosterUrl" alt="@m.Title"/></a>
-			<div class="item-description alt">
-				<h5><a href="/movies/details/@m.MovieId/@friendlytitle">@m.Title</a></h5>
-				<p>
-				@Html.Raw(m.Description)
-				</p>
-                @*need actors, directors, writers here*@
+			<div class="item-description alt center">
+				<h5><a href="/movies/details/@m.MovieId/@friendlytitle">@m.Title (@m.Year)</a></h5>
 			</div>
 			<div class="post-meta center">
-                <span>
-                    <span>@m.Year</span>
-                    <span>@m.Rating</span>
                     <span><a href="/lists/links/@m.MovieId/@friendlytitle" class="button color addtocollection">Add To...</a></span>
-                </span>
-                @*<span>
-                <span>@m.Actors.Count</span>
-                <span>@m.Director.Count</span>
-                <span>@m.SimilarTitles.Count</span>
-                <span><i class="mini-ico-calendar"></i>@m.Year</span>
-                <span>@m.Rating</span> 
-                <span><i class="mini-ico-comment"></i>@(m.RunTime/60) m</span>
-                </span>*@
             </div>	
 		</div>
     </div>
     }
 </div>
+<div class="clearcarousel"></div>
+<a class="prev new" id="carousel-new-prev" href="#"><span>prev</span></a>
+<a class="next new" id="carousel-new-next" href="#"><span>next</span></a>
+
+<div class="container">
+    <section class="section-title">
+        <h4>Upcoming Releases</h4>
+    </section>
+</div>
+<div id="carousel-upcoming">
+    @foreach (FilmTrove.Models.Movie m in ViewBag.Movies)
+    {
+        String friendlytitle = m.Title.UrlFriendly(m.Year);
+    <div class="one-fifth column carousel-item">
+        <div class="movie">
+            <a href="/movies/details/@m.MovieId/@friendlytitle" title="@m.Title"><img src="@m.BestPosterUrl" alt="@m.Title"/></a>
+			<div class="item-description alt center">
+				<h5><a href="/movies/details/@m.MovieId/@friendlytitle">@m.Title (@m.Year)</a></h5>
+			</div>
+			<div class="post-meta center">
+                    <span><a href="/lists/links/@m.MovieId/@friendlytitle" class="button color addtocollection">Add To...</a></span>
+            </div>	
+		</div>
+    </div>
+    }
+</div>
+<div class="clearcarousel"></div>
+<a class="prev upcoming" id="carousel-upcoming-prev" href="#"><span>prev</span></a>
+<a class="next upcoming" id="carousel-upcoming-next" href="#"><span>next</span></a>
+
+<div class="container">
+    <section class="section-title">
+        <h4>New to Theaters</h4>
+    </section>
+</div>
+<div id="carousel-newtheater">
+    @foreach (FilmTrove.Models.Movie m in ViewBag.Movies)
+    {
+        String friendlytitle = m.Title.UrlFriendly(m.Year);
+    <div class="one-fifth column carousel-item">
+        <div class="movie">
+            <a href="/movies/details/@m.MovieId/@friendlytitle" title="@m.Title"><img src="@m.BestPosterUrl" alt="@m.Title"/></a>
+			<div class="item-description alt center">
+				<h5><a href="/movies/details/@m.MovieId/@friendlytitle">@m.Title (@m.Year)</a></h5>
+			</div>
+			<div class="post-meta center">
+                    <span><a href="/lists/links/@m.MovieId/@friendlytitle" class="button color addtocollection">Add To...</a></span>
+            </div>	
+		</div>
+    </div>
+    }
+</div>
+<div class="clearcarousel"></div>
+<a class="prev newtheater" id="carousel-newtheater-prev" href="#"><span>prev</span></a>
+<a class="next newtheater" id="carousel-newtheater-next" href="#"><span>next</span></a>
+
+<div class="container">
+    <section class="section-title">
+        <h4>Upcoming to Theaters</h4>
+    </section>
+</div>
+<div id="carousel-upcomingtheater">
+    @foreach (FilmTrove.Models.Movie m in ViewBag.Movies)
+    {
+        String friendlytitle = m.Title.UrlFriendly(m.Year);
+    <div class="one-fifth column carousel-item">
+        <div class="movie">
+            <a href="/movies/details/@m.MovieId/@friendlytitle" title="@m.Title"><img src="@m.BestPosterUrl" alt="@m.Title"/></a>
+			<div class="item-description alt center">
+				<h5><a href="/movies/details/@m.MovieId/@friendlytitle">@m.Title (@m.Year)</a></h5>
+			</div>
+			<div class="post-meta center">
+                    <span><a href="/lists/links/@m.MovieId/@friendlytitle" class="button color addtocollection">Add To...</a></span>
+            </div>	
+		</div>
+    </div>
+    }
+</div>
+<div class="clearcarousel"></div>
+<a class="prev upcomingtheater" id="carousel-upcomingtheater-prev" href="#"><span>prev</span></a>
+<a class="next upcomingtheater" id="carousel-upcomingtheater-next" href="#"><span>next</span></a>

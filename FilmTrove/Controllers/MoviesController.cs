@@ -148,7 +148,7 @@ namespace FilmTrove.Controllers
                                 if (ftperson == null || ftperson.Name == null || ftperson.Name == "")
                                 {
                                     ftperson = ftc.People.Create();
-                                    GeneralHelpers.FillBasicPerson(ftperson, p);
+                                    GeneralHelpers.FillBasicNetflixPerson(ftperson, p);
                                     ftc.People.Add(ftperson);
                                 }
                             }
@@ -215,7 +215,7 @@ namespace FilmTrove.Controllers
                                 if (ftperson == null || ftperson.Name == null || ftperson.Name == "")
                                 {
                                     ftperson = ftc.People.Create();
-                                    GeneralHelpers.FillBasicPerson(ftperson, p);
+                                    GeneralHelpers.FillBasicNetflixPerson(ftperson, p);
                                     ftc.People.Add(ftperson);
                                 }
                             }
@@ -292,7 +292,7 @@ namespace FilmTrove.Controllers
                         foreach (FlixSharp.Holders.Netflix.Title t in titlesfordatabase)
                         {
                             FilmTrove.Models.Movie ftmovie = ftc.Movies.Create();
-                            GeneralHelpers.FillBasicTitle(ftmovie, t);
+                            GeneralHelpers.FillBasicNetflixTitle(ftmovie, t);
                             HashSet<Genre> genres = new HashSet<Genre>();
                             IEnumerable<String> missinggenres = null;
                             ///get the genres that exist in the database (local cache and db)
@@ -372,12 +372,12 @@ namespace FilmTrove.Controllers
 
                         foreach (var nonerole in noneroles)
                         {
-                            FlixSharp.Holders.Netflix.Person nfactor = netflixtitle.Actors.Where(p => p.Id == nonerole.Person.Netflix.Id).SingleOrDefault();
+                            FlixSharp.Holders.Netflix.Person nfactor = netflixtitle.Actors.Where(p => p.Id == nonerole.Person.Netflix.Id).SingleOrDefault() as FlixSharp.Holders.Netflix.Person;
                             if (nfactor != null)
                             {
                                 nonerole.InRole = RoleType.Actor;
                             }
-                            FlixSharp.Holders.Netflix.Person nfdirector = netflixtitle.Directors.Where(p => p.Id == nonerole.Person.Netflix.Id).SingleOrDefault();
+                            FlixSharp.Holders.Netflix.Person nfdirector = netflixtitle.Directors.Where(p => p.Id == nonerole.Person.Netflix.Id).SingleOrDefault() as FlixSharp.Holders.Netflix.Person;
                             if (nfdirector != null)
                             {
                                 if (nonerole.InRole != RoleType.None)

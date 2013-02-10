@@ -242,6 +242,23 @@ namespace FilmTrove.Controllers
             return View();
         }
 
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult TwitterLogin()
+        {
+            OAuthWebSecurity.RequestAuthentication("Twitter", Url.Action("LoginCallBack"));
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult YahooLogin()
+        {
+            OAuthWebSecurity.RequestAuthentication("Yahoo", Url.Action("LoginCallBack"));
+            return View();
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]

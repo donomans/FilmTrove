@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using FilmTrove.Code;
 using StackExchange.Profiling;
 using FlixSharp.Holders.Netflix;
+using FlixSharp.Holders;
 
 namespace FilmTrove.Controllers
 {
@@ -71,7 +72,7 @@ namespace FilmTrove.Controllers
                     foreach (FlixSharp.Holders.Netflix.Title title in netflixmoviestoadd)
                     {
                         var m = ftc.Movies.Create();
-                        GeneralHelpers.FillBasicTitle(m, title);
+                        GeneralHelpers.FillBasicNetflixTitle(m, title);
 
                         var dbgenreslocal = ftc.Genres.Local.Where(g => title.Genres.Contains(g.Name));
                         var dbgenres = ftc.Genres.Where(g => title.Genres.Contains(g.Name));

@@ -1,4 +1,5 @@
 ﻿using FilmTrove.Models;
+using FlixSharp.Holders;
 using FlixSharp.Holders.Netflix;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,12 @@ namespace FilmTrove.Code
 {
     public class GeneralHelpers
     {
-        public static List<Models.Movie> GetDatabaseMovies(Titles results)
+        public static List<Models.Movie> GetDatabaseMoviesNetflix(Titles results)
         {
-            var netflixids = results.Select((m) => m.Id + (m.SeasonId != "" ? ";" + m.SeasonId : ""));
+            var netflixids = results.Select((m) => m.Id + 
+                (m as FlixSharp.Holders.Netflix.Title).SeasonId != "" ? 
+                ";" + (m as FlixSharp.Holders.Netflix.Title).SeasonId : "");
+
             using (FilmTroveContext ftc = new FilmTroveContext())
             {
 
@@ -27,8 +31,8 @@ namespace FilmTrove.Code
                 {
                     ///create FT database records for each of these with the movies basic information for now
                     FilmTrove.Models.Movie newmovie = ftc.Movies.Create();
-                    FlixSharp.Holders.Netflix.Title netflixmovie = results.Find(nid);
-                    FillBasicTitle(newmovie, netflixmovie);
+                    FlixSharp.Holders.Netflix.Title netflixmovie = results.Find(nid) as FlixSharp.Holders.Netflix.Title;
+                    FillBasicNetflixTitle(newmovie, netflixmovie);
                     
                     var dbgenreslocal = ftc.Genres.Local.Where(g => netflixmovie.Genres.Contains(g.Name));
                     var dbgenres = ftc.Genres.Where(g => netflixmovie.Genres.Contains(g.Name));
@@ -72,12 +76,12 @@ namespace FilmTrove.Code
                 //    return matchedmovies.ToList();
 
                 return results.Select(m => 
-                    matchedmovies.First(f => 
-                        f.Netflix.Id == (m.Id + (m.SeasonId != "" ? ";" + m.SeasonId : "")))).ToList();
+                    matchedmovies.First(f =>
+                        f.Netflix.Id == (m.Id + ((m as FlixSharp.Holders.Netflix.Title).SeasonId != "" ? ";" + (m as FlixSharp.Holders.Netflix.Title).SeasonId : "")))).ToList();
             }
         }
 
-        public static List<Models.Person> GetDatabasePeople(People results)
+        public static List<Models.Person> GetDatabasePeopleNetflix(People results)
         {
             var netflixids = results.Select(p => p.Id);
             using (FilmTroveContext ftc = new FilmTroveContext())
@@ -93,8 +97,8 @@ namespace FilmTrove.Code
                 {
                     ///create FT database records for each of these with the movies basic information for now
                     FilmTrove.Models.Person newperson = ftc.People.Create();
-                    FlixSharp.Holders.Netflix.Person netflixperson = results.Find(nid);
-                    FillBasicPerson(newperson, netflixperson);
+                    FlixSharp.Holders.Netflix.Person netflixperson = results.Find(nid) as FlixSharp.Holders.Netflix.Person;
+                    FillBasicNetflixPerson(newperson, netflixperson);
                     //newperson.Name = netflixperson.Name;
                     //newperson.Bio = netflixperson.Bio;
                     //newperson.Netflix = new NetflixPersonInfo();
@@ -127,7 +131,7 @@ namespace FilmTrove.Code
             }
         }
 
-        public static void FillBasicTitle(FilmTrove.Models.Movie movie, FlixSharp.Holders.Netflix.Title ntitle)
+        public static void FillBasicNetflixTitle(FilmTrove.Models.Movie movie, FlixSharp.Holders.Netflix.Title ntitle)
         {
             movie.Netflix.Id = ntitle.Id;
             movie.Netflix.IdUrl = ntitle.IdUrl;
@@ -145,7 +149,7 @@ namespace FilmTrove.Code
             movie.BestPosterUrl = ntitle.BoxArtUrlLarge;
             movie.Year = ntitle.Year;
         }
-        public static void FillBasicPerson(FilmTrove.Models.Person person, FlixSharp.Holders.Netflix.Person nperson)
+        public static void FillBasicNetflixPerson(FilmTrove.Models.Person person, FlixSharp.Holders.Netflix.Person nperson)
         {
             person.Netflix.Id = nperson.Id;
             person.Netflix.NeedsUpdate = true;

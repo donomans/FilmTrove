@@ -24,6 +24,11 @@ namespace FilmTrove
           
             OAuthWebSecurity.RegisterGoogleClient();
 
+            OAuthWebSecurity.RegisterTwitterClient(
+                consumerKey: "NnHdElxbG7LPGfiduCSLw",
+                consumerSecret: "GdXNb3ciErGW1910D9InxDE8zvx3F9orPTYfAqxs");
+
+            OAuthWebSecurity.RegisterYahooClient();
         }
     }
 

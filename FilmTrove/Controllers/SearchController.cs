@@ -1,6 +1,7 @@
 ﻿using FilmTrove.Code;
 using FilmTrove.Filters;
 using FlixSharp;
+using FlixSharp.Holders;
 using FlixSharp.Holders.Netflix;
 using System;
 using System.Collections.Generic;
@@ -21,8 +22,8 @@ namespace FilmTrove.Controllers
             //Netflix n = new Netflix();
             SearchResults results = await Netflix.Search.Randomized().Search(searchterm, Limit: 40);//Randomized().
             ///need to check if the results are in the database and populate it if not
-            ViewBag.MovieResults = GeneralHelpers.GetDatabaseMovies(results.MovieResults);
-            ViewBag.PeopleResults = GeneralHelpers.GetDatabasePeople(results.PeopleResults);
+            ViewBag.MovieResults = GeneralHelpers.GetDatabaseMoviesNetflix(results.MovieResults);
+            ViewBag.PeopleResults = GeneralHelpers.GetDatabasePeopleNetflix(results.PeopleResults);
 
             //ViewBag.SearchResults = results;
             ViewBag.Term = searchterm;

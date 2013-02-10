@@ -21,7 +21,7 @@
     <link rel="stylesheet" type="text/css" href="http://cdn.filmtrove.com/css/base.css" />
     <link rel="stylesheet" type="text/css" href="http://cdn.filmtrove.com/css/skeleton.css/4" />
     @*<link rel="stylesheet" type="text/css" href="/public/css/icons.css" />*@
-    <link rel="stylesheet" type="text/css" href="http://cdn.filmtrove.com/css/style.css/8" />
+    <link rel="stylesheet" type="text/css" href="http://cdn.filmtrove.com/css/style.css/9" />
     <link rel="stylesheet" type="text/css" href="http://cdn.filmtrove.com/css/color.css/4" id="colors" />
     <link rel="stylesheet" type="text/css" href="http://cdn.filmtrove.com/css/social_icons.css" />
     <link rel="stylesheet" type="text/css" href="http://cdn.filmtrove.com/css/jquery-ui.min.css" />
@@ -105,6 +105,20 @@
                                 {
                                 @Html.AntiForgeryToken()
                                 <a href="javascript: document.forms['fbform'].submit();">Facebook</a>
+                                }
+                            </li>
+                            <li>
+                                @using (Html.BeginForm("yahoologin", "account", FormMethod.Post, new { id = "yahooform" }))
+                                {
+                                @Html.AntiForgeryToken()
+                                <a href="javascript: document.forms['yahooform'].submit();">Yahoo</a>
+                                }
+                            </li>
+                            <li>
+                                @using (Html.BeginForm("twitterlogin", "account", FormMethod.Post, new { id = "twitterform" }))
+                                {
+                                @Html.AntiForgeryToken()
+                                <a href="javascript: document.forms['twitterform'].submit();">Twitter</a>
                                 }
                             </li>
 					    </ul>

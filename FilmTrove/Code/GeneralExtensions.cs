@@ -67,21 +67,21 @@ namespace FilmTrove.Code
                 return ts;
         }
 
-        public static NetflixFill Randomized(this NetflixFill source)
-        {
-            //String details = accounts[random.Next(0, accounts.Length - 1)];
-            //String[] account = details.Split(new[] { ';' });
-            //Netflix.Login.SetCredentials(account[0], account[1], account[2]);
-            //Netflix.OnUserBehalf = false;
-            return Netflix.Fill;
-        }
-        public static NetflixSearch Randomized(this NetflixSearch source)
-        {
-            //String details = accounts[random.Next(0, accounts.Length - 1)];
-            //String[] account = details.Split(new[] { ';' });
-            //Netflix.Login.SetCredentials(account[0], account[1], account[2]);
-            //Netflix.OnUserBehalf = false;
-            return Netflix.Search;
-        }
+        //public static Fill Randomized(this Fill source)
+        //{
+        //    //String details = accounts[random.Next(0, accounts.Length - 1)];
+        //    //String[] account = details.Split(new[] { ';' });
+        //    //Netflix.Login.SetCredentials(account[0], account[1], account[2]);
+        //    //Netflix.OnUserBehalf = false;
+        //    return Netflix.Fill;
+        //}
+        //public static Search Randomized(this Search source)
+        //{
+        //    //String details = accounts[random.Next(0, accounts.Length - 1)];
+        //    //String[] account = details.Split(new[] { ';' });
+        //    //Netflix.Login.SetCredentials(account[0], account[1], account[2]);
+        //    //Netflix.OnUserBehalf = false;
+        //    return Netflix.Search;
+        //}
     }
 }

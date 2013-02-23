@@ -31,7 +31,7 @@ namespace FilmTrove.Controllers
 
             if (m.Netflix.NeedsUpdate || (m.DateLastModified.HasValue && m.DateLastModified > DateTime.Now.AddDays(28).AddDays(ran.Next(-5, 5))))
             {
-                nfm = Netflix.Fill.Randomized().Titles.GetCompleteTitle(m.Netflix.IdUrl, OnUserBehalf: true);//Randomized().
+                nfm = Netflix.Fill.Titles.GetCompleteTitle(m.Netflix.IdUrl, OnUserBehalf: true);//Randomized().
             }
             using (profiler.Step("Populate Amazon Movie"))
             {

@@ -672,7 +672,7 @@ html[xmlns] .slides {display: block;}
 	border: none;
 	margin: 0px;
 }	
-.movie img {width: 100%; height: auto; }
+.movie img {width: 100%; min-height: 200px; }
 
 
 a.prev, a.next {
@@ -684,6 +684,7 @@ a.prev, a.next {
 }
 a.prev {			
     left: -40px;
+    top: 175px;
     -webkit-transform: scaleX(-1);
     -moz-transform: scaleX(-1);
     transform: scaleX(-1);
@@ -691,29 +692,18 @@ a.prev {
 }
 a.next {
     right: -40px;
-}
-
-a.new {
     top: 175px;
 }
-a.upcoming {
-    top: 625px;
-}
-a.newtheater {
-    top: 1075px;
-}
-a.upcomingtheater {
-    top: 1525px;
-}
+
 a.prev span, a.next span {
 	display: none;
 }
 
-.carousel {
+/*.carousel {
     min-height: 500px;
-}
+}*/
 .carousel-item {
-	margin: 5px 10px 25px 10px !important;
+	margin: 3px 10px 3px 10px !important;
 }
 
 .image-overlay-link,

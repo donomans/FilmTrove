@@ -2,7 +2,6 @@
 using FilmTrove.Filters;
 using FlixSharp;
 using FlixSharp.Holders;
-using FlixSharp.Holders.Netflix;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +19,9 @@ namespace FilmTrove.Controllers
         {
             //String term = form["searchterm"].ToString();
             //Netflix n = new Netflix();
-            SearchResults results = await Netflix.Search.Randomized().Search(searchterm, Limit: 40);//Randomized().
+            SearchResults results = await Netflix.Search.SearchEverything(searchterm, Limit: 40);//Randomized().
+
+            Titles rtresults = await RottenTomatoes.Search.SearchTitles(searchterm);
             ///need to check if the results are in the database and populate it if not
             ViewBag.MovieResults = GeneralHelpers.GetDatabaseMoviesNetflix(results.MovieResults);
             ViewBag.PeopleResults = GeneralHelpers.GetDatabasePeopleNetflix(results.PeopleResults);

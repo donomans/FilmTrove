@@ -70,6 +70,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\DotNetOpenAuth.OpenId.RelyingParty.4.2.1.13026\lib\net45-full\DotNetOpenAuth.OpenId.RelyingParty.dll</HintPath>
     </Reference>
+    <Reference Include="Elmah">
+      <HintPath>..\packages\elmah.corelibrary.1.2.2\lib\Elmah.dll</HintPath>
+    </Reference>
+    <Reference Include="Elmah.Mvc">
+      <HintPath>..\packages\Elmah.MVC.2.0.2\lib\net40\Elmah.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -259,6 +265,7 @@
     <Content Include="Public\Images\fancybox_sprite.png" />
     <Content Include="Public\Images\filmtrove.gif" />
     <Content Include="Public\Images\nav-bg.png" />
+    <Content Include="Public\Images\netflix.png" />
     <Content Include="Public\Js\jquery.fancybox.pack.js" />
     <Content Include="Public\Js\libs.js" />
     <Content Include="Public\themes\base\minified\images\ui-bg_flat_75_ffffff_40x100.png" />

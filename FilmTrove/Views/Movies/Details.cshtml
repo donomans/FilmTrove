@@ -5,6 +5,8 @@
     ViewBag.Title = m.ToString() + " Details";
     ViewBag.Description = ViewBag.Title + " - Add it to your collection.";
     ViewBag.Keywords = m.ToString() + ", " + m.Title + ", Lists, Ratings, Information, Description, Details, Synopsis, Collection";
+
+    String friendlytitlemain = m.Title.UrlFriendly(m.Year);
     ICollection<FilmTrove.Models.Role> roles = ViewBag.Roles;
     List<FilmTrove.Models.Role> directors = roles.Where(r => r.InRole == FilmTrove.Models.RoleType.Director).ToList();
     List<FilmTrove.Models.Role> actors = roles.Where(r => r.InRole == FilmTrove.Models.RoleType.Actor).ToList();
@@ -17,10 +19,14 @@
             <h2>@m.ToString()</h2>
         </section>
     </div>
-    <div class="eight columns portfolio-item">
-        <div class="movie"><img src="@m.BestPosterUrl" alt="@m.Title" /></div>
+    <div class="one-third column portfolio-item">
+        <div class="movie"><img src="@m.BestPosterUrl" alt="@m.Title" />
+            <div class="post-meta center">
+                    <span><a href="/lists/links/@m.MovieId/@friendlytitlemain" class="button color addtocollection">Add To My Lists</a></span>
+            </div>	
+        </div>
     </div>
-    <div class="one-fourth column portfolio-item" id="basicinfo">
+    <div class="one-third column portfolio-item" id="basicinfo">
         <div class="movie">
         @* Need to display:
             0) Title (in page title)
@@ -45,7 +51,7 @@
             <p>Genres: @String.Join(", ", m.Genres)</p>
         </div>
     </div>
-    <div class="one-fourth column portfolio-item" id="supplierdata">
+    <div class="one-third column portfolio-item" id="supplierdata">
         <div class="movie">
         @* Need to display:
             1) Amazon DVD buy link (w/ price)
@@ -56,16 +62,21 @@
             --6) Imdb link
             7) Formats
          *@
-            <p><a href="@m.Netflix.Url">@m.Title on Netflix</a></p>
+            <p class="center">
+                <a href="@m.Netflix.Url">
+                    <img src="http://cdn.filmtrove.com/img/netflix.png" />
+                    @m.Title on Netflix
+                </a>
+            </p>
         </div>
     </div>
     
-    <div class="container">
+    @*<div class="container">
         <section class="section-title">
             <h4>Synopsis</h4>
         </section>
-    </div>
-    <div class="sixteen columns portfolio-item" id="synopsis">
+    </div>*@
+    <div class="one-third column portfolio-item" id="synopsis">
         <div class="movie">
         @* Need to display:
             1) Netflix synopsis
@@ -73,7 +84,7 @@
             3) Amazon synopsis
             --4) Imdb synopsis
          *@
-            <h4>Netflix:</h4>
+            <h4>Netflix Synopsis:</h4>
             <p>@Html.Raw(m.Netflix.Synopsis)</p>
             @if (m.RottenTomatoes.CriticConsensus != null && m.RottenTomatoes.CriticConsensus != "")
             {<h4>Rotten Tomatoes Critic Consensus:</h4>

@@ -27,7 +27,7 @@ namespace FilmTrove.Controllers
 
             if (p.Netflix.NeedsUpdate || p.DateLastModified > DateTime.Now.AddDays(28))
             {
-                nfp = Netflix.Fill.Randomized().People.GetCompletePerson(p.Netflix.IdUrl, true);//Randomized().
+                nfp = Netflix.Fill.People.GetCompletePerson(p.Netflix.IdUrl, true);//Randomized().
             }
             if (p.RottenTomatoes.NeedsUpdate)
             {

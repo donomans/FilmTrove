@@ -11,6 +11,7 @@ namespace FilmTrove.Code
 {
     public class GeneralHelpers
     {
+        #region Netflix
         public static List<Models.Movie> GetDatabaseMoviesNetflix(Titles results)
         {
             var netflixids = results.Select((m) => m.Id + 
@@ -80,7 +81,6 @@ namespace FilmTrove.Code
                         f.Netflix.Id == (m.Id + ((m as FlixSharp.Holders.Netflix.Title).SeasonId != "" ? ";" + (m as FlixSharp.Holders.Netflix.Title).SeasonId : "")))).ToList();
             }
         }
-
         public static List<Models.Person> GetDatabasePeopleNetflix(People results)
         {
             var netflixids = results.Select(p => p.Id);
@@ -158,7 +158,10 @@ namespace FilmTrove.Code
             person.Bio = nperson.Bio;
             person.Name = nperson.Name;
         }
+        #endregion
+        #region Rotten Tomatoes
 
+        #endregion
 
     }
 }

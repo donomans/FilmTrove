@@ -1,4 +1,5 @@
 ﻿using FlixSharp;
+using FlixSharp.Holders;
 using FlixSharp.Queries;
 using FlixSharp.Queries.Netflix;
 using System;
@@ -58,6 +59,7 @@ namespace FilmTrove.Code
             else
                 return ts;
         }
+
         public static TSource WhereFirstOrCreate<TSource>(this ICollection<TSource> source, Func<TSource, Boolean> predicate) where TSource : new()
         {
             TSource ts = source.Where(predicate).FirstOrDefault();
@@ -82,6 +84,13 @@ namespace FilmTrove.Code
         //    //Netflix.Login.SetCredentials(account[0], account[1], account[2]);
         //    //Netflix.OnUserBehalf = false;
         //    return Netflix.Search;
+        //}
+
+        //public static String FullNetflixId<TSource>(this TSource title) where TSource : FlixSharp.Holders.Netflix.Title
+        //{
+        //    return title.Id +
+        //        title.SeasonId != "" ?
+        //        ";" + title.SeasonId : "";
         //}
     }
 }

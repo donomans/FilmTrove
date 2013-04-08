@@ -1,4 +1,5 @@
-﻿using FilmTrove.Models;
+﻿using FilmTrove.Code;
+using FilmTrove.Models;
 using FlixSharp;
 using System;
 using System.Collections.Generic;
@@ -20,15 +21,22 @@ namespace FilmTrove.Controllers
             ViewBag.Movies = (from m in ftc.Movies
                               select m).Take(50).ToList();
 
-            var BoxOffice = await RottenTomatoes.Fill.Lists.GetBoxOffice();
-            var InTheaters = await RottenTomatoes.Fill.Lists.GetInTheaters();
-            var OpeningMovies = await RottenTomatoes.Fill.Lists.GetOpeningMovies();
-            var UpcomingMovies = await RottenTomatoes.Fill.Lists.GetUpcomingMovies();
 
-            var CurrentReleaseDVDs = await RottenTomatoes.Fill.Lists.GetCurrentReleaseDVDs();
-            var NewReleaseDVDs = await RottenTomatoes.Fill.Lists.GetNewReleaseDVDs();
-            var TopRentals = await RottenTomatoes.Fill.Lists.GetTopRentals();
-            var UpcomingDVDs = await RottenTomatoes.Fill.Lists.GetUpcomingDVDs();
+            //var BoxOffice = RottenTomatoes.Fill.Lists.GetBoxOffice();
+            //var InTheaters = RottenTomatoes.Fill.Lists.GetInTheaters();
+            var OpeningMovies = RottenTomatoes.Fill.Lists.GetOpeningMovies();
+            var UpcomingMovies = RottenTomatoes.Fill.Lists.GetUpcomingMovies();
+
+            //var CurrentReleaseDVDs = RottenTomatoes.Fill.Lists.GetCurrentReleaseDVDs();
+            var NewReleaseDVDs = RottenTomatoes.Fill.Lists.GetNewReleaseDVDs();
+            //var TopRentals = RottenTomatoes.Fill.Lists.GetTopRentals();
+            var UpcomingDVDs = RottenTomatoes.Fill.Lists.GetUpcomingDVDs();
+
+            ViewBag.NewReleases = GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await NewReleaseDVDs);
+            ViewBag.UpcomingReleases = GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await UpcomingDVDs);
+            ViewBag.OpeningMovies = GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await OpeningMovies);
+            ViewBag.UpcomingMovies = GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await UpcomingMovies);
+
             return View();
         }
     }

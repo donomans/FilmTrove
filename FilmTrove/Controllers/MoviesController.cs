@@ -24,14 +24,35 @@ namespace FilmTrove.Controllers
             var profiler = MiniProfiler.Current; 
             var ftc = (FilmTroveContext)HttpContext.Items["ftcontext"];
             Int32 movieid = Int32.Parse(id);
-            Models.Movie m = ftc.Movies.Include("Roles.Person").Include("Genres.Genre").Where(movie => movie.MovieId == movieid).Single();//.Include("Roles.Person").Where(movie => movie.MovieId == movieid).Single();
+            Models.Movie m = ftc.Movies
+                .Include("Roles.Person").Include("Genres.Genre")
+                .Where(movie => movie.MovieId == movieid).Single();//.Include("Roles.Person").Where(movie => movie.MovieId == movieid).Single();
+            
             Task<FlixSharp.Holders.Netflix.Title> nfm = null;
+            FlixSharp.Holders.Netflix.Title netflixtitle = null;
+
+            Task<FlixSharp.Holders.RottenTomatoes.Title> rtm = null;
+            FlixSharp.Holders.RottenTomatoes.Title rottentomatoestitle = null;
 
             Random ran = new Random();
 
             if (m.Netflix.NeedsUpdate || (m.DateLastModified.HasValue && m.DateLastModified > DateTime.Now.AddDays(28).AddDays(ran.Next(-5, 5))))
             {
-                nfm = Netflix.Fill.Titles.GetCompleteTitle(m.Netflix.IdUrl, OnUserBehalf: true);//Randomized().
+                if (m.Netflix.IdUrl != "")
+                    nfm = Netflix.Fill.Titles.GetCompleteTitle(m.Netflix.IdUrl, OnUserBehalf: true);//Randomized().
+                else
+                {
+                    ////need to find the best match
+                    var searchtitles = await Netflix.Search.SearchTitles(m.Title);
+                    netflixtitle = searchtitles.Select(mv => mv as FlixSharp.Holders.Netflix.Title)
+                        .FirstOrDefault(mv => (mv.ShortTitle == m.AltTitle 
+                            || mv.FullTitle == m.Title
+                            || mv.ShortTitle.Contains(m.Title)
+                            || m.Title.Contains(mv.ShortTitle))
+                            && (mv.Year == m.Year 
+                                || mv.Year + 1 == m.Year 
+                                || mv.Year - 1 == m.Year));
+                }
             }
             using (profiler.Step("Populate Amazon Movie"))
             {
@@ -65,44 +86,45 @@ namespace FilmTrove.Controllers
                     (m.RottenTomatoes.LastFullUpdate.HasValue &&
                     (m.RottenTomatoes.LastFullUpdate > DateTime.Now.AddDays(28).AddDays(ran.Next(-5, 5)))))
                 {
-                    if (m.RottenTomatoes.Id == null || m.RottenTomatoes.Id == "")
+                    if (m.RottenTomatoes.Id != "")
                     {
                         ///1) title match like with amazon or use Id if present
+                        rtm = FlixSharp.RottenTomatoes.Fill.Titles.GetMoviesInfo(m.RottenTomatoes.Id);
                     }
-                    ///1.5) loop through the cast and match them with the current cast to get the role name filled.
-                    ///2) Critic score
-                    ///3) critic consensus
-                    ///4) poster medium
-                    ///5) poster large
-                    ///6) theatrical release
-                    ///7) dvd release
-                    ///8) average rating
-                    ///9) studio
-                    ///10) synopsis
+                    else
+                    {
+                        ////need to find the best match
+                        var searchtitles = await RottenTomatoes.Search.SearchTitles(m.Title);
+                        rottentomatoestitle = searchtitles.Select(mv => mv as FlixSharp.Holders.RottenTomatoes.Title)
+                            .FirstOrDefault(mv => (mv.FullTitle == m.AltTitle
+                                || mv.FullTitle == m.Title
+                                || mv.FullTitle.Contains(m.Title)
+                                || m.Title.Contains(mv.FullTitle))
+                                && (mv.Year == m.Year
+                                    || mv.Year + 1 == m.Year
+                                    || mv.Year - 1 == m.Year));
+                    }
                 }
             }
             #region Fill Netflix
-            if (nfm != null)
+            if (nfm != null || netflixtitle != null)
             {
                 using (profiler.Step("Fill Netflix Movie"))
                 {
-                    Title netflixtitle = null;
                     using (profiler.Step("Await Netflix Title"))
                     {
-                        netflixtitle = await nfm;
+                        if(nfm != null)
+                            netflixtitle = await nfm;
                     }
                     using (profiler.Step("Populate basic database 'm' record"))
                     {
                         ///populate all the netflix information
+                        GeneralHelpers.FillBasicNetflixTitle(m, netflixtitle);
+
                         m.Netflix.NeedsUpdate = false;
-                        m.Netflix.AvgRating = netflixtitle.AverageRating;
                         m.Netflix.Awards = netflixtitle.Awards.Select(a =>
                             a.AwardName + ";#" + a.PersonIdUrl + ";#" +
                             a.Type + ";#" + a.Winner + ";#" + a.Year).DefaultIfEmpty().ToList();
-                        m.AltTitle = netflixtitle.ShortTitle;
-                        m.Rating = netflixtitle.Rating.RatingType == RatingType.Mpaa ?
-                                netflixtitle.Rating.MpaaRating.ToString() : netflixtitle.Rating.TvRating.ToString();
-                        m.RatingType = netflixtitle.Rating.RatingType;
                         m.RunTime = netflixtitle.RunTime;
 
                         foreach (FlixSharp.Holders.Netflix.FormatAvailability f in netflixtitle.Formats)
@@ -120,11 +142,8 @@ namespace FilmTrove.Controllers
                                     break;
                             }
                         }
-                        //m.Netflix.RelatedTitles = netflixmovie.RelatedTitles.Select(t => t.Id).ToList();
+                        m.Netflix.SimilarTitles = netflixtitle.SimilarTitles.Select(t => t.FullId).ToList();
                         m.Netflix.Synopsis = netflixtitle.Synopsis;
-                        m.Netflix.IdUrl = netflixtitle.IdUrl;
-                        m.Netflix.Url = netflixtitle.NetflixSiteUrl;
-                        m.Netflix.OfficialWebsiteUrl = netflixtitle.NetflixSiteUrl;
                     }
 
                     ///need to find the roles that are already added (under the RoleType.None) so i can correct those
@@ -366,18 +385,18 @@ namespace FilmTrove.Controllers
                     {
                         ///need to find the roles that are already added (under the RoleType.None) so i can correct those
                         ///need to find the noneroles that are actors now
-                        Title netflixtitle = new Title();
-                        netflixtitle.Actors = await Netflix.Fill.Titles.GetActors(m.Netflix.IdUrl);
-                        netflixtitle.Directors = await Netflix.Fill.Titles.GetDirectors(m.Netflix.IdUrl);
+                        var nftitle = new Title();
+                        nftitle.Actors = await Netflix.Fill.Titles.GetActors(m.Netflix.IdUrl);
+                        nftitle.Directors = await Netflix.Fill.Titles.GetDirectors(m.Netflix.IdUrl);
 
                         foreach (var nonerole in noneroles)
                         {
-                            FlixSharp.Holders.Netflix.Person nfactor = netflixtitle.Actors.Where(p => p.Id == nonerole.Person.Netflix.Id).SingleOrDefault() as FlixSharp.Holders.Netflix.Person;
+                            FlixSharp.Holders.Netflix.Person nfactor = nftitle.Actors.Where(p => p.Id == nonerole.Person.Netflix.Id).SingleOrDefault() as FlixSharp.Holders.Netflix.Person;
                             if (nfactor != null)
                             {
                                 nonerole.InRole = RoleType.Actor;
                             }
-                            FlixSharp.Holders.Netflix.Person nfdirector = netflixtitle.Directors.Where(p => p.Id == nonerole.Person.Netflix.Id).SingleOrDefault() as FlixSharp.Holders.Netflix.Person;
+                            FlixSharp.Holders.Netflix.Person nfdirector = nftitle.Directors.Where(p => p.Id == nonerole.Person.Netflix.Id).SingleOrDefault() as FlixSharp.Holders.Netflix.Person;
                             if (nfdirector != null)
                             {
                                 if (nonerole.InRole != RoleType.None)
@@ -400,6 +419,31 @@ namespace FilmTrove.Controllers
             {
                 m.ViewCount++;
                 ftc.SaveChanges();
+            }
+            #endregion
+            #region Fill RottenTomatoes
+            if (rtm != null)
+            {
+                using (profiler.Step("Fill Rotten Tomatoes Movie"))
+                {
+                    using (profiler.Step("Await Rotten Tomatoes Title"))
+                    {
+                        if(rtm != null)
+                            rottentomatoestitle = await rtm;
+                    }
+                    ///1.5) loop through the cast and match them with the current cast to get the role name filled.
+                    ///2) Critic score
+                    ///3) critic consensus
+                    ///4) poster medium
+                    ///5) poster large
+                    ///6) theatrical release
+                    ///7) dvd release
+                    ///8) average rating
+                    ///9) studio
+                    ///10) synopsis
+                    GeneralHelpers.FillRottenTomatoesTitle(m, rottentomatoestitle);
+                    ftc.SaveChanges();
+                }
             }
             #endregion
             using (profiler.Step("Get Similar titles ready"))

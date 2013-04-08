@@ -60,7 +60,7 @@
         <h4>New Releases</h4>
     </section>
     <div id="carousel-new" class="row">
-        @foreach (FilmTrove.Models.Movie m in ViewBag.Movies)
+        @foreach (FilmTrove.Models.Movie m in ViewBag.NewReleases)
         {
             String friendlytitle = m.Title.UrlFriendly(m.Year);
         <div class="carousel-movie column carousel-item">
@@ -84,7 +84,7 @@
         <h4>Upcoming Releases</h4>
     </section>
     <div id="carousel-upcoming" class="row">
-        @foreach (FilmTrove.Models.Movie m in ViewBag.Movies)
+        @foreach (FilmTrove.Models.Movie m in ViewBag.UpcomingReleases)
         {
             String friendlytitle = m.Title.UrlFriendly(m.Year);
         <div class="carousel-movie column carousel-item">
@@ -108,7 +108,7 @@
         <h4>New to Theaters</h4>
     </section>
     <div id="carousel-newtheater" class="row">
-        @foreach (FilmTrove.Models.Movie m in ViewBag.Movies)
+        @foreach (FilmTrove.Models.Movie m in ViewBag.OpeningMovies)
         {
             String friendlytitle = m.Title.UrlFriendly(m.Year);
         <div class="carousel-movie column carousel-item">
@@ -133,7 +133,7 @@
         <h4>Upcoming to Theaters</h4>
     </section>
 <div id="carousel-upcomingtheater" class="row">
-    @foreach (FilmTrove.Models.Movie m in ViewBag.Movies)
+    @foreach (FilmTrove.Models.Movie m in ViewBag.UpcomingMovies)
     {
         String friendlytitle = m.Title.UrlFriendly(m.Year);
     <div class="carousel-movie column carousel-item">

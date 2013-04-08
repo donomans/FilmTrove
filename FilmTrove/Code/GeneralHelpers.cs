@@ -176,32 +176,36 @@ namespace FilmTrove.Code
                     ///create FT database records for each of these with the movies basic information for now
                     if (movie == null)
                         movie = ftc.Movies.Create();
+
                     FlixSharp.Holders.RottenTomatoes.Title rottentomatoemovie = results.Find(movie.RottenTomatoes.Id) as FlixSharp.Holders.RottenTomatoes.Title;
-                    FillBasicRottenTomatoesTitle(movie, rottentomatoemovie);
-
-                    var dbgenreslocal = ftc.Genres.Local.Where(g => rottentomatoemovie.Genres.Contains(g.Name));
-                    var dbgenres = ftc.Genres.Where(g => rottentomatoemovie.Genres.Contains(g.Name));
-                    HashSet<Genre> genres = new HashSet<Genre>();
-                    genres.AddRange(dbgenres);
-                    genres.AddRange(dbgenreslocal);
-
-                    var genrenames = genres.Select(g => g.Name);
-                    var missinggenres = rottentomatoemovie.Genres.Where(g => !genrenames.Contains(g));
-                    foreach (String genre in missinggenres)
+                    if (rottentomatoemovie != null)
                     {
-                        Genre g = new Genre() { Name = genre };
-                        genres.Add(g);
-                        ftc.Genres.Add(g);
+                        FillRottenTomatoesTitle(movie, rottentomatoemovie);
+
+                        var dbgenreslocal = ftc.Genres.Local.Where(g => rottentomatoemovie.Genres.Contains(g.Name));
+                        var dbgenres = ftc.Genres.Where(g => rottentomatoemovie.Genres.Contains(g.Name));
+                        HashSet<Genre> genres = new HashSet<Genre>();
+                        genres.AddRange(dbgenres);
+                        genres.AddRange(dbgenreslocal);
+
+                        var genrenames = genres.Select(g => g.Name);
+                        var missinggenres = rottentomatoemovie.Genres.Where(g => !genrenames.Contains(g));
+                        foreach (String genre in missinggenres)
+                        {
+                            Genre g = new Genre() { Name = genre };
+                            genres.Add(g);
+                            ftc.Genres.Add(g);
+                        }
+                        //newmovie.Genres = netflixmovie.Genres;
+                        foreach (Genre g in genres)
+                        {
+                            MovieGenre gi = ftc.GenreItems.Create();
+                            gi.Genre = g;
+                            gi.Movie = movie;
+                            ftc.GenreItems.Add(gi);
+                        }
+                        ftc.Movies.Add(movie);
                     }
-                    //newmovie.Genres = netflixmovie.Genres;
-                    foreach (Genre g in genres)
-                    {
-                        MovieGenre gi = ftc.GenreItems.Create();
-                        gi.Genre = g;
-                        gi.Movie = movie;
-                        ftc.GenreItems.Add(gi);
-                    }
-                    ftc.Movies.Add(movie);
                 }
 
                 ftc.SaveChanges();
@@ -220,7 +224,7 @@ namespace FilmTrove.Code
             return null;
         }
 
-        public static void FillBasicRottenTomatoesTitle(FilmTrove.Models.Movie movie, FlixSharp.Holders.RottenTomatoes.Title rtitle)
+        public static void FillRottenTomatoesTitle(FilmTrove.Models.Movie movie, FlixSharp.Holders.RottenTomatoes.Title rtitle)
         {
             movie.RottenTomatoes.Id = rtitle.Id;
             var avgrating = rtitle.Ratings

@@ -109,8 +109,6 @@ namespace FilmTrove.Models
             //modelBuilder.Entity<Movie>().
             //    HasMany(m => m.SimilarTitles);
 
-
-
             modelBuilder.Entity<UserList>().
                 HasRequired(l => l.Owner).
                 WithMany(u => u.UserLists);

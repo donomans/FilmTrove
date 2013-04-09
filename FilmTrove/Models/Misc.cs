@@ -40,7 +40,7 @@ namespace FilmTrove.Models
             }
             set
             {
-                if (value != "")
+                if (value != null && value != "")
                 {
                     String[] val = value.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
                     if (val.Length > 1)

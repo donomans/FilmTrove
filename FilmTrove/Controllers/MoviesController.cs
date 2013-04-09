@@ -44,14 +44,23 @@ namespace FilmTrove.Controllers
                 {
                     ////need to find the best match
                     var searchtitles = await Netflix.Search.SearchTitles(m.Title);
-                    netflixtitle = searchtitles.Select(mv => mv as FlixSharp.Holders.Netflix.Title)
-                        .FirstOrDefault(mv => (mv.ShortTitle == m.AltTitle 
-                            || mv.FullTitle == m.Title
-                            || mv.ShortTitle.Contains(m.Title)
-                            || m.Title.Contains(mv.ShortTitle))
-                            && (mv.Year == m.Year 
-                                || mv.Year + 1 == m.Year 
-                                || mv.Year - 1 == m.Year));
+                    netflixtitle = searchtitles
+                        .Select(mv => mv as FlixSharp.Holders.Netflix.Title)
+                        .FirstOrDefault(mv => 
+                        {
+                            Int32 maxlength = (Int32)(m.Title.Length * 1.2);
+                            Int32 minlength = (Int32)(m.Title.Length * .8);
+                            //mv.ShortTitle == m.AltTitle ||
+                            ///this might be bad as it's potentilaly comparing a null value to a null value
+                            ///or a blank to a blank -- false positives
+                            return ((mv.FullTitle == m.Title && mv.FullTitle.Length >= minlength && mv.FullTitle.Length <= maxlength)
+                            || (mv.ShortTitle.Contains(m.Title) && mv.FullTitle.Length >= minlength && mv.FullTitle.Length <= maxlength)
+                            || (mv.FullTitle.Contains(m.Title) && mv.FullTitle.Length >= minlength && mv.FullTitle.Length <= maxlength)
+                            || (m.Title.Contains(mv.ShortTitle) && mv.FullTitle.Length >= minlength && mv.FullTitle.Length <= maxlength))
+                            && (mv.Year == m.Year
+                                || mv.Year + 1 == m.Year
+                                || mv.Year - 1 == m.Year);
+                        });
                 }
             }
             using (profiler.Step("Populate Amazon Movie"))
@@ -95,14 +104,22 @@ namespace FilmTrove.Controllers
                     {
                         ////need to find the best match
                         var searchtitles = await RottenTomatoes.Search.SearchTitles(m.Title);
-                        rottentomatoestitle = searchtitles.Select(mv => mv as FlixSharp.Holders.RottenTomatoes.Title)
-                            .FirstOrDefault(mv => (mv.FullTitle == m.AltTitle
-                                || mv.FullTitle == m.Title
-                                || mv.FullTitle.Contains(m.Title)
-                                || m.Title.Contains(mv.FullTitle))
-                                && (mv.Year == m.Year
+                        
+                        rottentomatoestitle = searchtitles
+                            .Select(mv => mv as FlixSharp.Holders.RottenTomatoes.Title)
+                            .FirstOrDefault(mv => 
+                                {
+                                    Int32 maxlength = (Int32)(m.Title.Length * 1.2);
+                                    Int32 minlength = (Int32)(m.Title.Length * .8);
+                                    return ((mv.FullTitle == m.AltTitle && mv.FullTitle.Length > minlength && mv.FullTitle.Length < maxlength)
+                                    || (mv.FullTitle == m.Title && mv.FullTitle.Length > minlength && mv.FullTitle.Length < maxlength)
+                                    || (mv.FullTitle.Contains(m.Title) && mv.FullTitle.Length > minlength && mv.FullTitle.Length < maxlength)
+                                    || (m.Title.Contains(mv.FullTitle) && mv.FullTitle.Length > minlength && mv.FullTitle.Length < maxlength)
+                                    || (m.AltTitle.Contains(mv.FullTitle) && mv.FullTitle.Length > minlength && mv.FullTitle.Length < maxlength))
+                                    && (mv.Year == m.Year
                                     || mv.Year + 1 == m.Year
-                                    || mv.Year - 1 == m.Year));
+                                    || mv.Year - 1 == m.Year);
+                                });
                     }
                 }
             }
@@ -442,6 +459,7 @@ namespace FilmTrove.Controllers
                     ///9) studio
                     ///10) synopsis
                     GeneralHelpers.FillRottenTomatoesTitle(m, rottentomatoestitle);
+                    m.RottenTomatoes.NeedsUpdate = false;
                     ftc.SaveChanges();
                 }
             }

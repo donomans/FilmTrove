@@ -130,6 +130,7 @@ namespace FilmTrove.Models
             if (netflixuserid == null)
             {
                 if (WebMatrix.WebData.WebSecurity.IsAuthenticated)
+                {
                     using (FilmTroveContext ftc = new FilmTroveContext())
                     {
                         UserProfile profile = ftc.UserProfiles.Find(WebSecurity.CurrentUserId);
@@ -144,6 +145,7 @@ namespace FilmTrove.Models
 
                         return na;
                     }
+                }
                 else
                     return null;
             }

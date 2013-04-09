@@ -12,12 +12,12 @@ namespace FilmTrove.Code
     public class GeneralHelpers
     {
         #region Netflix
-        public static List<Models.Movie> GetDatabaseMoviesNetflix(Titles results)
+        public static List<Models.Movie> GetDatabaseMoviesNetflix(Titles results, FilmTroveContext ftc)
         {
             var netflixids = results.Select((m) => (m as FlixSharp.Holders.Netflix.Title).FullId);
 
-            using (FilmTroveContext ftc = (FilmTroveContext)HttpContext.Current.Items["ftcontext"])
-            {
+            //using (FilmTroveContext ftc = (FilmTroveContext)HttpContext.Current.Items["ftcontext"])
+            //{
 
                 ///1) find the matching records from the database
                 var matchedmovies = ftc.Movies.Where(m => netflixids.Contains(m.Netflix.Id));
@@ -35,7 +35,7 @@ namespace FilmTrove.Code
                 {
                     //String nid = unmatched.FullId;
                     ///check for FT record incase it was added using a different data source (like RT)
-                    Models.Movie movie = GetExistingMovie(unmatched);
+                    Models.Movie movie = GetExistingMovie(unmatched, ftc);
                     ///create FT database records for each of these with the movies basic information for now
                     if(movie == null)
                         movie = ftc.Movies.Create();
@@ -74,14 +74,14 @@ namespace FilmTrove.Code
 
                 return results.Select(m => 
                     matchedmovies.First(f =>
-                        f.Netflix.Id == (m.Id + ((m as FlixSharp.Holders.Netflix.Title).SeasonId != "" ? ";" + (m as FlixSharp.Holders.Netflix.Title).SeasonId : "")))).ToList();
-            }
+                        f.Netflix.Id == m.FullId)).ToList();
+            //}
         }
-        public static List<Models.Person> GetDatabasePeopleNetflix(People results)
+        public static List<Models.Person> GetDatabasePeopleNetflix(People results, FilmTroveContext ftc)
         {
             var netflixids = results.Select(p => p.Id);
-            using (FilmTroveContext ftc = (FilmTroveContext)HttpContext.Current.Items["ftcontext"])
-            {
+            //using (FilmTroveContext ftc = (FilmTroveContext)HttpContext.Current.Items["ftcontext"])
+            //{
                 ///1) find the matching records from the database
                 var matchedpeople = ftc.People.Where(m => netflixids.Contains(m.Netflix.Id));
                 ///2) find the records that don't have a match
@@ -118,7 +118,7 @@ namespace FilmTrove.Code
                 return results.Select(p =>
                     matchedpeople.First(f =>
                         f.Netflix.Id == p.Id)).ToList();
-            }
+            //}
         }
 
         public static void FillBasicNetflixTitle(FilmTrove.Models.Movie movie, FlixSharp.Holders.Netflix.Title ntitle)
@@ -150,17 +150,17 @@ namespace FilmTrove.Code
         }
         #endregion
         #region Rotten Tomatoes
-        public static List<Models.Movie> GetDatabaseMoviesRottenTomatoes(Titles results)
-        {
+        public static List<Models.Movie> GetDatabaseMoviesRottenTomatoes(Titles results, FilmTroveContext ftc)
+        {            
             var rottentomatoesids = results.Select(m => m.Id);
 
-            using (FilmTroveContext ftc = (FilmTroveContext)HttpContext.Current.Items["ftcontext"])
-            {
+            //using (FilmTroveContext ftc = (FilmTroveContext)HttpContext.Current.Items["ftcontext"])
+            //{
                 ///1) find the matching records from the database
                 var matchedmovies = ftc.Movies.Where(m => rottentomatoesids.Contains(m.RottenTomatoes.Id));
                 ///2) find the records that don't have a match
                 ///select the ids and get the rotten tomato Ids that aren't in the FT database
-                var ftrtids = matchedmovies.Select(m => m.Netflix.Id).ToList();
+                var ftrtids = matchedmovies.Select(m => m.RottenTomatoes.Id).ToList();
                 var rottentomatoesidsunmatched = rottentomatoesids.Where(m => !ftrtids.Contains(m)).ToList();
                 //Int32 count = 0;
                 var unmatchedresults = results
@@ -172,24 +172,29 @@ namespace FilmTrove.Code
                 {
                     //String nid = unmatched.FullId;
                     ///check for FT record incase it was added using a different data source (like RT)
-                    Models.Movie movie = GetExistingMovie(unmatched);
+                    Models.Movie movie = GetExistingMovie(unmatched, ftc);
                     ///create FT database records for each of these with the movies basic information for now
+                    Boolean wasempty = false;
                     if (movie == null)
-                        movie = ftc.Movies.Create();
-
-                    FlixSharp.Holders.RottenTomatoes.Title rottentomatoemovie = results.Find(movie.RottenTomatoes.Id) as FlixSharp.Holders.RottenTomatoes.Title;
-                    if (rottentomatoemovie != null)
                     {
-                        FillRottenTomatoesTitle(movie, rottentomatoemovie);
+                        movie = ftc.Movies.Create();
+                        wasempty = true;
+                    }
 
-                        var dbgenreslocal = ftc.Genres.Local.Where(g => rottentomatoemovie.Genres.Contains(g.Name));
-                        var dbgenres = ftc.Genres.Where(g => rottentomatoemovie.Genres.Contains(g.Name));
+                    //FlixSharp.Holders.RottenTomatoes.Title rottentomatoemovie = results.Find(movie.RottenTomatoes.Id) as FlixSharp.Holders.RottenTomatoes.Title;
+                    //if (rottentomatoemovie != null)
+                    //{
+                    FillRottenTomatoesTitle(movie, unmatched);
+                    if (unmatched.Genres.Count > 0)
+                    {
+                        var dbgenreslocal = ftc.Genres.Local.Where(g => unmatched.Genres.Contains(g.Name));
+                        var dbgenres = ftc.Genres.Where(g => unmatched.Genres.Contains(g.Name));
                         HashSet<Genre> genres = new HashSet<Genre>();
                         genres.AddRange(dbgenres);
                         genres.AddRange(dbgenreslocal);
 
                         var genrenames = genres.Select(g => g.Name);
-                        var missinggenres = rottentomatoemovie.Genres.Where(g => !genrenames.Contains(g));
+                        var missinggenres = unmatched.Genres.Where(g => !genrenames.Contains(g));
                         foreach (String genre in missinggenres)
                         {
                             Genre g = new Genre() { Name = genre };
@@ -204,22 +209,23 @@ namespace FilmTrove.Code
                             gi.Movie = movie;
                             ftc.GenreItems.Add(gi);
                         }
-                        ftc.Movies.Add(movie);
                     }
+                    if(wasempty)
+                        ftc.Movies.Add(movie);
+                    //}
                 }
 
                 ftc.SaveChanges();
 
                 if (matchedmovies.Count() < results.Count())
-                    matchedmovies = ftc.Movies.Where(m => rottentomatoesids.Contains(m.Netflix.Id));
+                    matchedmovies = ftc.Movies.Where(m => rottentomatoesids.Contains(m.RottenTomatoes.Id));
 
                 return results.Select(m =>
-                    matchedmovies.First(f =>
-                        f.Netflix.Id == (m.Id + ((m as FlixSharp.Holders.Netflix.Title).SeasonId != "" ? ";" 
-                        + (m as FlixSharp.Holders.Netflix.Title).SeasonId : "")))).ToList();
-            }
+                    matchedmovies.First(r =>
+                        r.RottenTomatoes.Id == m.FullId)).ToList();
+            //}
         }
-        public static List<Models.Person> GetDatabasePeopleRottenTomatoes(Titles results)
+        public static List<Models.Person> GetDatabasePeopleRottenTomatoes(Titles results, FilmTroveContext ftc)
         {
             return null;
         }
@@ -241,12 +247,12 @@ namespace FilmTrove.Code
             if (dvdrelease != null)
                 movie.RottenTomatoes.DvdRelease = dvdrelease.Date;
             var theatricalrelease = rtitle.ReleaseDates
-                .FirstOrDefault(r => r.ReleaseType == FlixSharp.Holders.RottenTomatoes.ReleaseDateType.Theatrical);
+                .FirstOrDefault(r => r.ReleaseType == FlixSharp.Holders.RottenTomatoes.ReleaseDateType.Theater);
             if (theatricalrelease != null)
                 movie.RottenTomatoes.TheatricalRelase = theatricalrelease.Date;
 
             movie.RottenTomatoes.LastFullUpdate = DateTime.Now;
-            movie.RottenTomatoes.NeedsUpdate = false;
+            movie.RottenTomatoes.NeedsUpdate = true;
 
             var largeposter = rtitle.Posters
                 .FirstOrDefault(r => r.Type == FlixSharp.Holders.RottenTomatoes.PosterType.Detailed);
@@ -262,6 +268,11 @@ namespace FilmTrove.Code
             movie.RottenTomatoes.Url = rtitle.RottenTomatoesSiteUrl;
             movie.RottenTomatoes.CriticConsensus = rtitle.CriticsConsensus;
 
+            var imdbid = rtitle.AlternateIds
+                .FirstOrDefault(i => i.Type == FlixSharp.Holders.RottenTomatoes.AlternateIdType.Imdb);
+            movie.Imdb.Id = imdbid != null ? imdbid.Id : "";
+
+            movie.RunTime = rtitle.RunTime * 60;
             movie.Rating = rtitle.Rating.ToString();
             movie.RatingType = RatingType.Mpaa;
             movie.AltTitle = rtitle.FullTitle;
@@ -271,18 +282,25 @@ namespace FilmTrove.Code
         }
         #endregion
 
-        public static Models.Movie GetExistingMovie(ITitle title)
+        public static Models.Movie GetExistingMovie(ITitle title, FilmTroveContext ftc)
         {
-            using (FilmTroveContext ftc = (FilmTroveContext)HttpContext.Current.Items["ftcontext"])
-            {
+            //using (FilmTroveContext ftc = (FilmTroveContext)HttpContext.Current.Items["ftcontext"])
+            //{
                 ///make a best effort to find the movie
-                return ftc.Movies.FirstOrDefault(m=> (m.AltTitle == title.FullTitle
-                    || m.AltTitle.Contains(title.FullTitle)
-                    || title.FullTitle.Contains(m.AltTitle))
-                    && (m.Year == title.Year 
-                        || title.Year + 1 == m.Year 
-                        || title.Year - 1 == m.Year));
-            }
+            //Int32 length = title.FullTitle.Length;
+            Int32 maxlength = (Int32)(title.FullTitle.Length * 1.2);
+            Int32 minlength = (Int32)(title.FullTitle.Length * .8);
+            return ftc.Movies.FirstOrDefault(m => 
+                ((m.AltTitle == title.FullTitle && m.AltTitle.Length > minlength && m.AltTitle.Length < maxlength)
+                || (m.Title == title.FullTitle && m.Title.Length > minlength && m.Title.Length < maxlength)
+                || (m.AltTitle.Contains(title.FullTitle) && m.AltTitle.Length > minlength && m.AltTitle.Length < maxlength)
+                || (m.Title.Contains(title.FullTitle) && m.Title.Length > minlength && m.Title.Length < maxlength)
+                || (title.FullTitle.Contains(m.AltTitle) && m.AltTitle.Length > minlength && m.AltTitle.Length < maxlength)
+                || (title.FullTitle.Contains(m.Title) && m.Title.Length > minlength && m.Title.Length < maxlength))
+                && (m.Year == title.Year 
+                    || title.Year + 1 == m.Year 
+                    || title.Year - 1 == m.Year));
+            //}
         }
 
     }

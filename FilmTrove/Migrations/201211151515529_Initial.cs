@@ -71,7 +71,7 @@ namespace FilmTrove.Migrations
                         DateLastModified = c.DateTime(),
                     })
                 .PrimaryKey(t => t.MovieId)
-                .Index(t => t.Netflix_Id, unique: true)
+                .Index(t => t.Netflix_Id)
                 .Index(t => t.Amazon_Id)
                 .Index(t => t.RottenTomatoes_Id)
                 .Index(t => t.RedBox_Id)

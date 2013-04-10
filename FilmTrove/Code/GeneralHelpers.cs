@@ -272,11 +272,13 @@ namespace FilmTrove.Code
                 .FirstOrDefault(i => i.Type == FlixSharp.Holders.RottenTomatoes.AlternateIdType.Imdb);
             movie.Imdb.Id = imdbid != null ? imdbid.Id : "";
 
+            ///consider not overwriting these if they have values???
             movie.RunTime = rtitle.RunTime * 60;
             movie.Rating = rtitle.Rating.ToString();
             movie.RatingType = RatingType.Mpaa;
             movie.AltTitle = rtitle.FullTitle;
             movie.Title = rtitle.FullTitle;
+            //need to not overwrite a netflix url if the default rotten tomatoes image is all i have
             movie.BestPosterUrl = movie.RottenTomatoes.PosterUrlLarge;
             movie.Year = rtitle.Year;
         }

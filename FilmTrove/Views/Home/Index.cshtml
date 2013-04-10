@@ -1,7 +1,7 @@
 ﻿@using FilmTrove.Code
 @{
     ViewBag.Title = "FilmTrove. beta.";
-    Layout = "~/Views/Shared/_homelayout.cshtml";
+    //Layout = "~/Views/Shared/_homelayout.cshtml";
     ViewBag.Description = "Make a list out of your movie collection and share with your friends.  Link your Netflix account and add a friend.  Create your collection.  Get detailed information on movies.";
     ViewBag.Keywords = "movies,films,actors,directors,actresses,lists,collection,queue";
 }
@@ -60,7 +60,7 @@
         <h4>New Releases</h4>
     </section>
     <div id="carousel-new" class="row">
-        @foreach (FilmTrove.Models.Movie m in ViewBag.NewReleases)
+        @foreach (FilmTrove.Models.Movie m in ViewBag.NewReleaseDVDs)
         {
             String friendlytitle = m.Title.UrlFriendly(m.Year);
         <div class="carousel-movie column carousel-item">
@@ -84,7 +84,7 @@
         <h4>Upcoming Releases</h4>
     </section>
     <div id="carousel-upcoming" class="row">
-        @foreach (FilmTrove.Models.Movie m in ViewBag.UpcomingReleases)
+        @foreach (FilmTrove.Models.Movie m in ViewBag.UpcomingDVDs)
         {
             String friendlytitle = m.Title.UrlFriendly(m.Year);
         <div class="carousel-movie column carousel-item">

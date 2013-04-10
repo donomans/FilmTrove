@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <title>@ViewBag.Title</title> 
     <meta name="description" content="@ViewBag.Description"/>
-    <meta name="keywords" content="@ViewBag.Keywords" />
+    @*<meta name="keywords" content="@ViewBag.Keywords" />*@
     <meta name="title" content="@ViewBag.Title" />
     <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
@@ -49,9 +49,7 @@
 			    <div id="social-links">
 				    <ul class="social-bookmarks">
 					    <li class="googleplus"><a href="https://plus.google.com/u/0/103329967765839498686">google+</a></li>
-					    <li class="facebook"><a href="http://www.facebook.com/donomans">facebook</a></li>
 					    <li class="github"><a href="https://github.com/fronn">github</a></li>
-					    <li class="twitter"><a href="https://twitter.com/fronn">twitter</a></li>
 				    </ul>
 				    <div id="search">
                         @*@using (Html.BeginForm("Search", "Movies", FormMethod.Post, new { id = "searchform"}))
@@ -71,11 +69,11 @@
 		    @*<div id="logo-small"></div>*@
 		    <div id="navigation">
 			    <ul id="nav">
-				    <li><a href="/search/picker">Find me a movie</a></li>
+				    <li><a href="#/search/picker">Find me a movie</a></li>
 				    <li><a href="/me">Me</a>
 					    <ul>
-					        <li><a href="/lists/collection/">Collection</a></li>
-					        <li><a href="/lists/view">Lists</a></li>
+					        <li><a href="#/lists/collection/">Collection</a></li>
+					        <li><a href="#/lists/view">Lists</a></li>
 					        <li><a href="/me/#Friends">Friends</a></li>
 					    </ul>
 				    </li>

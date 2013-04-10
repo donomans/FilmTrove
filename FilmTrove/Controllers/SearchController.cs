@@ -23,7 +23,7 @@ namespace FilmTrove.Controllers
             //Netflix n = new Netflix();
             SearchResults results = await Netflix.Search.SearchEverything(searchterm, Limit: 40);//Randomized().
 
-            Titles rtresults = await RottenTomatoes.Search.SearchTitles(searchterm);
+            Titles rtresults = await RottenTomatoes.Search.SearchTitles(searchterm, Limit: 20);
             ///need to check if the results are in the database and populate it if not
             ViewBag.MovieResults = GeneralHelpers.GetDatabaseMoviesNetflix(results.MovieResults, ftc);
             ViewBag.PeopleResults = GeneralHelpers.GetDatabasePeopleNetflix(results.PeopleResults, ftc);

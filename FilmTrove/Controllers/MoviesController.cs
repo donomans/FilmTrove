@@ -36,7 +36,7 @@ namespace FilmTrove.Controllers
 
             Random ran = new Random();
 
-            if (m.Netflix.NeedsUpdate || (m.DateLastModified.HasValue && m.DateLastModified > DateTime.Now.AddDays(28).AddDays(ran.Next(-5, 5))))
+            if (m.Netflix.NeedsUpdate || (m.DateLastModified.HasValue && m.DateLastModified > DateTime.Now.AddDays(20).AddDays(ran.Next(-5, 5))))
             {
                 if (m.Netflix.IdUrl != "")
                     nfm = Netflix.Fill.Titles.GetCompleteTitle(m.Netflix.IdUrl, OnUserBehalf: true);//Randomized().
@@ -91,10 +91,10 @@ namespace FilmTrove.Controllers
             }
             using (profiler.Step("Populate Rotten Tomatoes Movie"))
             {
-                if (m.RottenTomatoes.NeedsUpdate ||
-                    (m.RottenTomatoes.LastFullUpdate.HasValue &&
-                    (m.RottenTomatoes.LastFullUpdate > DateTime.Now.AddDays(28).AddDays(ran.Next(-5, 5)))))
-                {
+                //if (m.RottenTomatoes.NeedsUpdate ||
+                //    (m.RottenTomatoes.LastFullUpdate.HasValue &&
+                //    (m.RottenTomatoes.LastFullUpdate > DateTime.Now.AddDays(20).AddDays(ran.Next(-5, 5)))))
+                //{
                     if (m.RottenTomatoes.Id != "")
                     {
                         ///1) title match like with amazon or use Id if present
@@ -120,8 +120,9 @@ namespace FilmTrove.Controllers
                                     || mv.Year + 1 == m.Year
                                     || mv.Year - 1 == m.Year);
                                 });
+                        m.RottenTomatoes.NeedsUpdate = false; //gave it a try, wait a while
                     }
-                }
+                //}
             }
             #region Fill Netflix
             if (nfm != null || netflixtitle != null)
@@ -439,7 +440,7 @@ namespace FilmTrove.Controllers
             }
             #endregion
             #region Fill RottenTomatoes
-            if (rtm != null)
+            if (rtm != null || rottentomatoestitle != null)
             {
                 using (profiler.Step("Fill Rotten Tomatoes Movie"))
                 {

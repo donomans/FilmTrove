@@ -31,15 +31,15 @@ namespace FilmTrove.Code
                     .Where(m => netflixidsunmatched.Contains(m.FullId))
                     .ToList();
 
-                foreach (var unmatched in unmatchedresults)
+                foreach (var netflixmovie in unmatchedresults)
                 {
                     //String nid = unmatched.FullId;
                     ///check for FT record incase it was added using a different data source (like RT)
-                    Models.Movie movie = GetExistingMovie(unmatched, ftc);
+                    Models.Movie movie = GetExistingMovie(netflixmovie, ftc);
                     ///create FT database records for each of these with the movies basic information for now
                     if(movie == null)
                         movie = ftc.Movies.Create();
-                    FlixSharp.Holders.Netflix.Title netflixmovie = results.Find(movie.Netflix.Id) as FlixSharp.Holders.Netflix.Title;
+                    //FlixSharp.Holders.Netflix.Title netflixmovie = results.Find(movie.Netflix.Id) as FlixSharp.Holders.Netflix.Title;
                     FillBasicNetflixTitle(movie, netflixmovie);
                     
                     var dbgenreslocal = ftc.Genres.Local.Where(g => netflixmovie.Genres.Contains(g.Name));

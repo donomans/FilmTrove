@@ -1,4 +1,5 @@
-﻿using FlixSharp;
+﻿using FilmTrove.Models;
+using FlixSharp;
 using FlixSharp.Holders;
 using FlixSharp.Queries;
 using FlixSharp.Queries.Netflix;
@@ -23,6 +24,7 @@ namespace FilmTrove.Code
             "ym68z674zmkpszk7mf7z9fuz;eVZYNummyZ;ftrove",    
             "dfh77wfcv3afvugjrjvcgm8y;GjKHCbQrHR;ft",    
             "vntdbbpcja5huvqfd6ypcmvx;enn4mwrAPm;filmt"};
+
         private static Random random = new Random();
 
         public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> values)
@@ -67,6 +69,20 @@ namespace FilmTrove.Code
                 return new TSource();
             else
                 return ts;
+        }
+
+        public static List<Movie> Uniques(this List<Movie> first, List<Movie> second)
+        {
+            List<Int32> s = second.Select(m => m.MovieId).ToList();
+            List<Movie> uniques = new List<Movie>(first.Count + second.Count);
+            foreach (var item in first)
+            {
+                if (!s.Contains(item.MovieId))
+                    uniques.Add(item);
+            }
+            uniques = second.Concat(uniques).ToList();
+            //uniques.Reverse();
+            return uniques;
         }
 
         //public static Fill Randomized(this Fill source)

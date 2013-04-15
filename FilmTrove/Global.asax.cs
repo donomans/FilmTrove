@@ -42,7 +42,7 @@ namespace FilmTrove
             if (Request.IsLocal)
             {
                 MiniProfiler.Start();
-                MiniProfilerEF.Initialize_EF42();
+                MiniProfilerEF.InitializeEF42();
             }
             HttpContext.Current.Items["ftcontext"] = new FilmTroveContext();
         }

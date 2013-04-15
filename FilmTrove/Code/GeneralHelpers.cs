@@ -276,11 +276,16 @@ namespace FilmTrove.Code
             movie.RunTime = rtitle.RunTime * 60;
             movie.Rating = rtitle.Rating.ToString();
             movie.RatingType = RatingType.Mpaa;
-            movie.AltTitle = rtitle.FullTitle;
-            movie.Title = rtitle.FullTitle;
+            if (movie.Title == null || movie.AltTitle == "")
+                movie.AltTitle = rtitle.FullTitle;
+            if(movie.Title == null || movie.Title == "")
+                movie.Title = rtitle.FullTitle;
             //need to not overwrite a netflix url if the default rotten tomatoes image is all i have
-            movie.BestPosterUrl = movie.RottenTomatoes.PosterUrlLarge;
-            movie.Year = rtitle.Year;
+            if(!movie.RottenTomatoes.PosterUrlLarge.EndsWith("poster_default.gif"))
+                movie.BestPosterUrl = movie.RottenTomatoes.PosterUrlLarge;
+            if(movie.Year == null)
+                movie.Year = rtitle.Year;
+            movie.RottenTomatoes.Year = rtitle.Year;
         }
         #endregion
 

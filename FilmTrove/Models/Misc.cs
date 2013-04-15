@@ -165,6 +165,8 @@ namespace FilmTrove.Models
         public String Studio { get; set; }
         [MaxLength(250)]
         public String TrailerUrl { get; set; }
+
+        public Int32? Year { get; set; }
     }
 
     public abstract class ProviderInfo

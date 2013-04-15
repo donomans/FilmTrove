@@ -61,6 +61,8 @@ namespace FilmTrove.Controllers
                                 || mv.Year + 1 == m.Year
                                 || mv.Year - 1 == m.Year);
                         });
+
+                    nfm = Netflix.Fill.Titles.GetCompleteTitle(netflixtitle.IdUrl, OnUserBehalf: true);
                 }
             }
             using (profiler.Step("Populate Amazon Movie"))

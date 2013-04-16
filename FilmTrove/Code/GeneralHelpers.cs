@@ -1,6 +1,9 @@
 ﻿using FilmTrove.Models;
 using FlixSharp.Holders;
 using FlixSharp.Holders.Netflix;
+using Lucene.Net.Documents;
+using Lucene.Net.Index;
+using Lucene.Net.Store.Azure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -283,9 +286,11 @@ namespace FilmTrove.Code
             //need to not overwrite a netflix url if the default rotten tomatoes image is all i have
             if(!movie.RottenTomatoes.PosterUrlLarge.EndsWith("poster_default.gif"))
                 movie.BestPosterUrl = movie.RottenTomatoes.PosterUrlLarge;
-            if(movie.Year == null)
+            if(movie.Year < 1900)
                 movie.Year = rtitle.Year;
             movie.RottenTomatoes.Year = rtitle.Year;
+
+            
         }
         #endregion
 

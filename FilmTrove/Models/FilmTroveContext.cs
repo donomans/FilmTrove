@@ -55,6 +55,11 @@ namespace FilmTrove.Models
                 }
 
                 entityBase.DateLastModified = currentTime;
+
+                if (entityBase is Movie)
+                {
+                    ///add some lucene shit in here to update the title indexes??
+                }
             }
 
             return base.SaveChanges();

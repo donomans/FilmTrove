@@ -206,8 +206,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\Api\NetflixController.cs" />
-    <Compile Include="Controllers\Api\NetflixSearchController.cs" />
+    <Compile Include="Controllers\Api\MoviesController.cs" />
+    <Compile Include="Controllers\Api\SearchController.cs" />
     <Compile Include="Controllers\PeopleController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Controllers\Api\UserServicesController.cs" />

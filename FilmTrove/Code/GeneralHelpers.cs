@@ -296,10 +296,7 @@ namespace FilmTrove.Code
 
         public static Models.Movie GetExistingMovie(ITitle title, FilmTroveContext ftc)
         {
-            //using (FilmTroveContext ftc = (FilmTroveContext)HttpContext.Current.Items["ftcontext"])
-            //{
                 ///make a best effort to find the movie
-            //Int32 length = title.FullTitle.Length;
             Int32 maxlength = (Int32)(title.FullTitle.Length * 1.2);
             Int32 minlength = (Int32)(title.FullTitle.Length * .8);
             return ftc.Movies.FirstOrDefault(m => 
@@ -312,7 +309,8 @@ namespace FilmTrove.Code
                 && (m.Year == title.Year 
                     || title.Year + 1 == m.Year 
                     || title.Year - 1 == m.Year));
-            //}
+
+            
         }
 
     }

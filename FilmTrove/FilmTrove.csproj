@@ -198,6 +198,8 @@
     <Compile Include="Code\GeneralHelpers.cs" />
     <Compile Include="Code\ContextHelpers.cs" />
     <Compile Include="Code\GeneralExtensions.cs" />
+    <Compile Include="Code\NetflixHelpers.cs" />
+    <Compile Include="Code\RottenTomatoesHelpers.cs" />
     <Compile Include="Code\SeedHelpers.cs" />
     <Compile Include="Code\OAuthHelpers.cs" />
     <Compile Include="App_Start\AuthConfig.cs" />
@@ -249,6 +251,10 @@
     <Compile Include="Migrations\201304150436280_rtyear.cs" />
     <Compile Include="Migrations\201304150436280_rtyear.Designer.cs">
       <DependentUpon>201304150436280_rtyear.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201304212119578_FullUpdateDTForNetflix.cs" />
+    <Compile Include="Migrations\201304212119578_FullUpdateDTForNetflix.Designer.cs">
+      <DependentUpon>201304212119578_FullUpdateDTForNetflix.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\FilmTroveContext.cs" />
@@ -443,6 +449,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201304150436280_rtyear.resx">
       <DependentUpon>201304150436280_rtyear.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201304212119578_FullUpdateDTForNetflix.resx">
+      <DependentUpon>201304212119578_FullUpdateDTForNetflix.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

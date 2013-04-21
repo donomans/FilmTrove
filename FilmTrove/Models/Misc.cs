@@ -88,6 +88,8 @@ namespace FilmTrove.Models
 
         [MaxLength(250)]
         public String OfficialWebsiteUrl { get; set; }
+
+        public DateTime? LastFullUpdate { get; set; }
     }
     [ComplexType]
     public class ImdbInfo : ProviderInfo

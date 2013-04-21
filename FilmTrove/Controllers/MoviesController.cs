@@ -12,6 +12,8 @@ using FilmTrove.Models;
 using System.Text.RegularExpressions;
 using StackExchange.Profiling;
 using FlixSharp.Holders.Netflix;
+using FilmTrove.Code.Netflix;
+using FilmTrove.Code.RottenTomatoes;
 
 namespace FilmTrove.Controllers
 {
@@ -139,7 +141,7 @@ namespace FilmTrove.Controllers
                     using (profiler.Step("Populate basic database 'm' record"))
                     {
                         ///populate all the netflix information
-                        GeneralHelpers.FillBasicNetflixTitle(m, netflixtitle);
+                        NetflixHelpers.FillBasicNetflixTitle(m, netflixtitle);
 
                         m.Netflix.NeedsUpdate = false;
                         m.Netflix.Awards = netflixtitle.Awards.Select(a =>
@@ -187,7 +189,7 @@ namespace FilmTrove.Controllers
                                 if (ftperson == null || ftperson.Name == null || ftperson.Name == "")
                                 {
                                     ftperson = ftc.People.Create();
-                                    GeneralHelpers.FillBasicNetflixPerson(ftperson, p);
+                                    NetflixHelpers.FillBasicNetflixPerson(ftperson, p);
                                     ftc.People.Add(ftperson);
                                 }
                             }
@@ -254,7 +256,7 @@ namespace FilmTrove.Controllers
                                 if (ftperson == null || ftperson.Name == null || ftperson.Name == "")
                                 {
                                     ftperson = ftc.People.Create();
-                                    GeneralHelpers.FillBasicNetflixPerson(ftperson, p);
+                                    NetflixHelpers.FillBasicNetflixPerson(ftperson, p);
                                     ftc.People.Add(ftperson);
                                 }
                             }
@@ -331,7 +333,7 @@ namespace FilmTrove.Controllers
                         foreach (FlixSharp.Holders.Netflix.Title t in titlesfordatabase)
                         {
                             FilmTrove.Models.Movie ftmovie = ftc.Movies.Create();
-                            GeneralHelpers.FillBasicNetflixTitle(ftmovie, t);
+                            NetflixHelpers.FillBasicNetflixTitle(ftmovie, t);
                             HashSet<Genre> genres = new HashSet<Genre>();
                             IEnumerable<String> missinggenres = null;
                             ///get the genres that exist in the database (local cache and db)
@@ -461,7 +463,7 @@ namespace FilmTrove.Controllers
                     ///8) average rating
                     ///9) studio
                     ///10) synopsis
-                    GeneralHelpers.FillRottenTomatoesTitle(m, rottentomatoestitle);
+                    RottenTomatoesHelpers.FillRottenTomatoesTitle(m, rottentomatoestitle);
                     m.RottenTomatoes.NeedsUpdate = false;
                     ftc.SaveChanges();
                 }

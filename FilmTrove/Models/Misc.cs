@@ -89,7 +89,6 @@ namespace FilmTrove.Models
         [MaxLength(250)]
         public String OfficialWebsiteUrl { get; set; }
 
-        public DateTime? LastFullUpdate { get; set; }
     }
     [ComplexType]
     public class ImdbInfo : ProviderInfo
@@ -131,7 +130,6 @@ namespace FilmTrove.Models
 
         public Double? LastPrice { get; set; }
         public DateTime? LastPriceUpdate { get; set; }
-        public DateTime? LastFullUpdate { get; set; }
         [MaxLength(250)]
         public String PosterUrlMedium { get; set; }
         [MaxLength(250)]
@@ -152,7 +150,6 @@ namespace FilmTrove.Models
             NeedsUpdate = true;
         }
 
-        public DateTime? LastFullUpdate { get; set; }
         public Int32? CriticScore { get; set; }
         public String CriticConsensus { get; set; }
         [MaxLength(250)]
@@ -178,6 +175,7 @@ namespace FilmTrove.Models
         [MaxLength(250)]
         public String Url { get; set; }
         public Boolean NeedsUpdate { get; set; }
+        public DateTime? LastFullUpdate { get; set; }
     }
 
     [ComplexType]

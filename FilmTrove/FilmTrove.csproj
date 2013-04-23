@@ -209,6 +209,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Api\MoviesController.cs" />
+    <Compile Include="Controllers\Api\PeopleController.cs" />
     <Compile Include="Controllers\Api\SearchController.cs" />
     <Compile Include="Controllers\PeopleController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
@@ -255,6 +256,10 @@
     <Compile Include="Migrations\201304212119578_FullUpdateDTForNetflix.cs" />
     <Compile Include="Migrations\201304212119578_FullUpdateDTForNetflix.Designer.cs">
       <DependentUpon>201304212119578_FullUpdateDTForNetflix.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201304232309314_LastFullUpdateToProviderInfo.cs" />
+    <Compile Include="Migrations\201304232309314_LastFullUpdateToProviderInfo.Designer.cs">
+      <DependentUpon>201304232309314_LastFullUpdateToProviderInfo.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\FilmTroveContext.cs" />
@@ -452,6 +457,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201304212119578_FullUpdateDTForNetflix.resx">
       <DependentUpon>201304212119578_FullUpdateDTForNetflix.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201304232309314_LastFullUpdateToProviderInfo.resx">
+      <DependentUpon>201304232309314_LastFullUpdateToProviderInfo.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

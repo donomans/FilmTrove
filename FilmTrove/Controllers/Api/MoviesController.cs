@@ -28,11 +28,11 @@ namespace FilmTrove.Controllers.Api
 
                 ///need to:
                 ///1) Check if it needs to update netflix
-                Task n =  UpdateNetflix(m, ftc);
+                var n =  UpdateNetflix(m, ftc);
                 ///2) Check if it needs to update rotten tomatoes data
-                Task rt = UpdateRottenTomatoes(m, ftc);
+                var rt = UpdateRottenTomatoes(m, ftc);
                 ///3) Check if it needs to update amazon
-                Task a = UpdateAmazon(m, ftc);
+                var a = UpdateAmazon(m, ftc);
 
                 await n;
                 await rt;
@@ -64,6 +64,22 @@ namespace FilmTrove.Controllers.Api
                     return null;
             }
         }
+        [HttpPost]
+        public Int64 UpdateCount([FromUri] Int32 Id)
+        {
+            using (FilmTroveContext ftc = new FilmTroveContext())
+            {
+                Movie m = ftc.Movies.Find(Id);
+                if (m != null)
+                {
+                    m.ViewCount++;
+                    Int64 currentcount = m.ViewCount;
+                    ftc.SaveChanges();
+                    return currentcount;
+                }
+                return 0;
+            }
+        }
 
         private async Task UpdateNetflix(Movie m, FilmTroveContext ftc)
         {
@@ -72,7 +88,9 @@ namespace FilmTrove.Controllers.Api
             Task<FlixSharp.Holders.Netflix.Title> nfm = null;
             FlixSharp.Holders.Netflix.Title netflixtitle = null;
 
-            if (m.Netflix.NeedsUpdate || (m.DateLastModified.HasValue && m.DateLastModified > DateTime.Now.AddDays(20).AddDays(ran.Next(-5, 5))))
+            if (m.Netflix.NeedsUpdate || 
+                !m.Netflix.LastFullUpdate.HasValue || //this field was only added recently
+                m.Netflix.LastFullUpdate > DateTime.Now.AddDays(20).AddDays(ran.Next(-5, 5)))
             {
                 if (m.Netflix.IdUrl != "")
                     nfm = Netflix.Fill.Titles.GetCompleteTitle(m.Netflix.IdUrl);//Randomized().
@@ -98,7 +116,6 @@ namespace FilmTrove.Controllers.Api
                 await NetflixHelpers.CorrectNoneRoles(m, ftc);
         }
 
-        
         private async Task UpdateRottenTomatoes(Movie m, FilmTroveContext ftc)
         {
             Random ran = new Random();
@@ -106,22 +123,24 @@ namespace FilmTrove.Controllers.Api
             Task<FlixSharp.Holders.RottenTomatoes.Title> rtm = null;
             FlixSharp.Holders.RottenTomatoes.Title rottentomatoestitle = null;
 
-            if (m.RottenTomatoes.Id != "")
+            if (m.RottenTomatoes.Id != "" &&
+                (!m.RottenTomatoes.LastFullUpdate.HasValue ||
+                m.RottenTomatoes.LastFullUpdate > DateTime.Now.AddDays(20).AddDays(ran.Next(-5, 5))))
             {
                 ///1) title match like with amazon or use Id if present
                 rtm = FlixSharp.RottenTomatoes.Fill.Titles.GetMoviesInfo(m.RottenTomatoes.Id);
             }
-            else
+            else if(m.RottenTomatoes.Id == "")
             {
                 ////need to find the best match
                 rottentomatoestitle = await RottenTomatoesHelpers.FindRottenTomatoesMatch(m);
                 rtm = FlixSharp.RottenTomatoes.Fill.Titles.GetMoviesInfo(rottentomatoestitle.Id);
             }
 
-            if (rtm != null || rottentomatoestitle != null)
+            if (rtm != null)
             {
-                if (rtm != null)
-                    rottentomatoestitle = await rtm;
+                //if (rtm != null)
+                //    rottentomatoestitle = await rtm;
                 ///1.5) loop through the cast and match them with the current cast to get the role name filled.
                 ///2) Critic score
                 ///3) critic consensus
@@ -138,28 +157,9 @@ namespace FilmTrove.Controllers.Api
                 m.RottenTomatoes.NeedsUpdate = false;
             }
         }
-
         
         private async Task UpdateAmazon(Movie m, FilmTroveContext ftc)
         {
-        }
-
-
-        [HttpPost]
-        public Int64 UpdateCount([FromUri] Int32 Id)
-        {
-            using (FilmTroveContext ftc = new FilmTroveContext())
-            {
-                Movie m = ftc.Movies.Find(Id);
-                if (m != null)
-                {
-                    m.ViewCount++;
-                    Int64 currentcount = m.ViewCount;
-                    ftc.SaveChanges();
-                    return currentcount;
-                }
-                return 0;
-            }
         }
     }
 }

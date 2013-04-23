@@ -3,11 +3,13 @@ using FilmTrove.Code.Netflix;
 using FilmTrove.Code.RottenTomatoes;
 using FilmTrove.Models;
 using FlixSharp;
+using FlixSharp.Holders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -15,8 +17,7 @@ namespace FilmTrove.Controllers.Api
 {
     public class MoviesController : ApiController
     {
-
-        // GET api/movies
+        [HttpGet]
         public async Task<Movie> Details([FromUri] Int32 id)
         {
             using (FilmTroveContext ftc = new FilmTroveContext())
@@ -40,6 +41,27 @@ namespace FilmTrove.Controllers.Api
                 ftc.SaveChanges();
 
                 return m;
+            }
+        }
+
+        [HttpGet]
+        public List<Movie> Similars([FromUri] Int32 id)
+        {
+            using (FilmTroveContext ftc = new FilmTroveContext())
+            {
+                Movie m = ftc.Movies.Find(id);
+                if (m.Netflix.SimilarTitles.Count > 0)
+                {
+                    var similars = m.Netflix.SimilarTitles.Take(20).Select(f =>
+                    {
+                        MatchCollection match = Regex.Matches(f, "[0-9]{3,10}");
+                        var r = match.Cast<Match>().Select(t => t.Value).Take(2);
+                        return r.First() + (r.Count() > 1 ? ";" + r.LastOrDefault() : "");
+                    }).ToList();
+                    return ftc.Movies.Where(t => similars.Contains(t.Netflix.Id)).ToList();
+                }
+                else
+                    return null;
             }
         }
 
@@ -122,26 +144,6 @@ namespace FilmTrove.Controllers.Api
         {
         }
 
-        //// GET api/movies/5
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
-
-        //// POST api/movies
-        //public void Post([FromBody] Movie movie)
-        //{
-        //}
-
-        //// PUT api/movies/5
-        //public void Put(int id, [FromBody]Movie movie)
-        //{
-        //}
-
-        //// DELETE api/movies/5
-        //public void Delete(int id)
-        //{
-        //}
 
         [HttpPost]
         public Int64 UpdateCount([FromUri] Int32 Id)

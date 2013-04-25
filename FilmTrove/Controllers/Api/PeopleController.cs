@@ -38,67 +38,29 @@ namespace FilmTrove.Controllers.Api
         {
             Task<FlixSharp.Holders.Netflix.Person> nfp = null;
             Random ran = new Random();
-
+            
             if (p.Netflix.NeedsUpdate ||
                 p.Netflix.LastFullUpdate > DateTime.Now.AddDays(20).AddDays(ran.Next(-5, 5)))
             {
-                nfp = Netflix.Fill.People.GetCompletePerson(p.Netflix.IdUrl, true);//Randomized().
+                nfp = Netflix.Fill.People.GetCompletePerson(p.Netflix.IdUrl, true);
             }
 
             if (nfp != null)
             {
-                FlixSharp.Holders.Netflix.Person netflixperson = null;
-                List<Movie> ftmoviesfound = null;
+                FlixSharp.Holders.Netflix.Person netflixperson = await nfp;
 
-                Dictionary<Movie, People> actors = new Dictionary<Movie, People>();
-                Dictionary<Movie, People> directors = new Dictionary<Movie, People>();
-
-                ///1) get filmography
-                netflixperson = await nfp;
-                ///2) get the netflixids of all the films
-                var netflixfilmographyids = netflixperson.Filmography.Select(t => t.Id + (t.SeasonId != "" ? ";" + t.SeasonId : "")).ToList();
-                ///3) look up the movies in ft database by netflixids
-                ftmoviesfound = ftc.Movies.Include("Roles.Person").Where(t => netflixfilmographyids.Contains(t.Netflix.Id)).ToList();
-
-                ///need to find the netflix titles that aren't in the roles list so i can add them as blank roles
-                var roletitles = ftmoviesfound.Where(m => p.Roles.FirstOrDefault(r => r.Movie.MovieId == m.MovieId) == null).DefaultIfEmpty().ToList();
-                foreach (var m in roletitles)
-                {
-                    if (m != null)
-                    { ///there's a dumb issue caused by the line that generates roletitles that causes a null value to be put into the list if it's otherwise empty
-                        Role r = ftc.Roles.Create();
-                        r.Movie = m;
-                        r.Person = p;
-                        ftc.Roles.Add(r);
-                    }
-                }
+                List<Movie> ftmoviesfound = NetflixHelpers.GetNetflixPeopleMoviesFound(p, ftc, netflixperson);
 
                 var ftmoviesfoundids = ftmoviesfound.Select(t => t.Netflix.Id).ToList();
-                var netflixmoviestoadd = netflixperson.Filmography.Where(t => !ftmoviesfoundids.Contains(t.Id + (t.SeasonId != "" ? ";" + t.SeasonId : ""))).ToList();
+                var netflixmoviestoadd = netflixperson.Filmography
+                    .Where(t => !ftmoviesfoundids.Contains(t.FullId))
+                    .ToList();
                 foreach (FlixSharp.Holders.Netflix.Title title in netflixmoviestoadd)
                 {
                     var m = ftc.Movies.Create();
                     NetflixHelpers.FillBasicNetflixTitle(m, title);
-
-                    var dbgenreslocal = ftc.Genres.Local.Where(g => title.Genres.Contains(g.Name));
-                    var dbgenres = ftc.Genres.Where(g => title.Genres.Contains(g.Name));
-                    HashSet<Genre> genres = new HashSet<Genre>();
-                    genres.AddRange(dbgenres);
-                    genres.AddRange(dbgenreslocal);
-
-                    var genrenames = genres.Select(g => g.Name);
-                    var missinggenres = title.Genres.Where(g => !genrenames.Contains(g));
-                    foreach (String genre in missinggenres)
-                    {
-                        ftc.Genres.Add(new Genre() { Name = genre });
-                    }
-                    foreach (Genre g in genres)
-                    {
-                        MovieGenre gi = ftc.GenreItems.Create();
-                        gi.Genre = g;
-                        gi.Movie = m;
-                        ftc.GenreItems.Add(gi);
-                    }
+                    NetflixHelpers.FillNetflixGenres(m, ftc, title);
+                    
                     ftc.Movies.Add(m);
 
                     Role r = ftc.Roles.Create();
@@ -108,9 +70,12 @@ namespace FilmTrove.Controllers.Api
                 }
             }
             p.Netflix.NeedsUpdate = false;
+            p.Netflix.LastFullUpdate = DateTime.Now;
 
             ftc.SaveChanges();
         }
+
+        
 
         // GET api/people
         public IEnumerable<string> Get()

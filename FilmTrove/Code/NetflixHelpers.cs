@@ -177,7 +177,6 @@ namespace FilmTrove.Code.Netflix
                 }
             }
         }
-
         private static void AddNetflixActors(Movie m, FilmTroveContext ftc, FlixSharp.Holders.Netflix.Title netflixtitle, List<Role> noneroles)
         {
             var nfactorids = netflixtitle.Actors.Select(t => t.Id).ToList();
@@ -294,7 +293,8 @@ namespace FilmTrove.Code.Netflix
                 }
             }
         }
-        public static async Task<FlixSharp.Holders.Netflix.Title> FindNetflixMatch(Movie m)
+        
+        public static async Task<Title> FindNetflixMatch(Movie m)
         {
             var searchtitles = await FlixSharp.Netflix.Search.SearchTitles(m.Title);
             return searchtitles
@@ -325,6 +325,37 @@ namespace FilmTrove.Code.Netflix
             person.Bio = nperson.Bio;
             person.Name = nperson.Name;
         }
-        
+
+        public static List<Movie> GetNetflixPeopleMoviesFound(FilmTrove.Models.Person p, FilmTroveContext ftc, FlixSharp.Holders.Netflix.Person netflixperson)
+        {
+            ///1) get filmography
+            ///2) get the netflixids of all the films
+            var netflixfilmographyids = netflixperson.Filmography
+                .Select(t => t.FullId)
+                .ToList();
+            ///3) look up the movies in ft database by netflixids
+            List<Movie> ftmoviesfound = ftc.Movies
+                .Include("Roles.Person")
+                .Where(t => netflixfilmographyids.Contains(t.Netflix.Id))
+                .ToList();
+
+            ///need to find the netflix titles that aren't in the roles list so i can add them as blank roles
+            var roletitles = ftmoviesfound
+                .Where(m => p.Roles.FirstOrDefault(r => r.Movie.MovieId == m.MovieId) == null)
+                .DefaultIfEmpty()
+                .ToList();
+            foreach (var m in roletitles)
+            {
+                if (m != null)
+                { ///there's a dumb issue caused by the line that generates roletitles that causes a null value to be put into the list if it's otherwise empty
+                    Role r = ftc.Roles.Create();
+                    r.Movie = m;
+                    r.Person = p;
+                    ftc.Roles.Add(r);
+                }
+            }
+            return ftmoviesfound;
+        }
+
     }
 }

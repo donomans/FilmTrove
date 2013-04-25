@@ -42,8 +42,8 @@ namespace FilmTrove.Controllers
                 FlixSharp.Holders.Netflix.Person netflixperson = null;
                 List<Movie> ftmoviesfound = null;
 
-                Dictionary<Movie, People> actors = new Dictionary<Movie, People>();
-                Dictionary<Movie, People> directors = new Dictionary<Movie, People>();
+                //Dictionary<Movie, People> actors = new Dictionary<Movie, People>();
+                //Dictionary<Movie, People> directors = new Dictionary<Movie, People>();
 
                 using (profiler.Step("Get filmography"))
                 {

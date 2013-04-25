@@ -208,6 +208,12 @@ namespace FilmTrove.Code
 
         #endregion
 
+        /// <summary>
+        /// This function sucks.
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="ftc"></param>
+        /// <returns></returns>
         public static Models.Movie GetExistingMovie(ITitle title, FilmTroveContext ftc)
         {
                 ///make a best effort to find the movie

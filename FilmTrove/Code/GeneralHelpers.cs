@@ -216,6 +216,10 @@ namespace FilmTrove.Code
         /// <returns></returns>
         public static Models.Movie GetExistingMovie(ITitle title, FilmTroveContext ftc)
         {
+            //title.Source
+            
+            //look at the other sources and do a best guess using their search?
+
                 ///make a best effort to find the movie
             Int32 maxlength = (Int32)(title.FullTitle.Length * 1.2);
             Int32 minlength = (Int32)(title.FullTitle.Length * .8);

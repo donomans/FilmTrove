@@ -1,5 +1,6 @@
 ﻿using FilmTrove.Models;
 using FlixSharp.Holders;
+using FlixSharp.Holders.RottenTomatoes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace FilmTrove.Code.RottenTomatoes
             movie.RottenTomatoes.Url = rtitle.RottenTomatoesSiteUrl;
 
             var imdbid = rtitle.AlternateIds
-                .FirstOrDefault(i => i.Type == FlixSharp.Holders.RottenTomatoes.AlternateIdType.Imdb);
+                .FirstOrDefault(i => i.Type == AlternateIdType.Imdb);
             movie.Imdb.Id = imdbid != null ? imdbid.Id : "";
 
             ///consider not overwriting these if they have values???
@@ -40,14 +41,14 @@ namespace FilmTrove.Code.RottenTomatoes
             movie.RottenTomatoes.Year = rtitle.Year;
         }
 
-        private static void FillRottenTomatoesRatings(FilmTrove.Models.Movie movie, FlixSharp.Holders.RottenTomatoes.Title rtitle)
+        private static void FillRottenTomatoesRatings(FilmTrove.Models.Movie movie, Title rtitle)
         {
             var avgrating = rtitle.Ratings
-                .FirstOrDefault(r => r.Type == FlixSharp.Holders.RottenTomatoes.RottenRatingType.Audience);
+                .FirstOrDefault(r => r.Type == RottenRatingType.Audience);
             if (avgrating != null)
                 movie.RottenTomatoes.AvgRating = avgrating.Score;
             var criticrating = rtitle.Ratings
-                .FirstOrDefault(r => r.Type == FlixSharp.Holders.RottenTomatoes.RottenRatingType.Critic);
+                .FirstOrDefault(r => r.Type == RottenRatingType.Critic);
             if (criticrating != null)
                 movie.RottenTomatoes.CriticScore = criticrating.Score;
 
@@ -55,26 +56,26 @@ namespace FilmTrove.Code.RottenTomatoes
             movie.RottenTomatoes.Synopsis = rtitle.Synopsis;
         }
 
-        private static void FillRottenTomatoesPosters(FilmTrove.Models.Movie movie, FlixSharp.Holders.RottenTomatoes.Title rtitle)
+        private static void FillRottenTomatoesPosters(FilmTrove.Models.Movie movie, Title rtitle)
         {
             var largeposter = rtitle.Posters
-                .FirstOrDefault(r => r.Type == FlixSharp.Holders.RottenTomatoes.PosterType.Detailed);
+                .FirstOrDefault(r => r.Type == PosterType.Detailed);
             if (largeposter != null)
                 movie.RottenTomatoes.PosterUrlLarge = largeposter.Url;
             var mediumposter = rtitle.Posters
-                .FirstOrDefault(r => r.Type == FlixSharp.Holders.RottenTomatoes.PosterType.Detailed);
+                .FirstOrDefault(r => r.Type == PosterType.Detailed);
             if (mediumposter != null)
                 movie.RottenTomatoes.PosterUrlMedium = mediumposter.Url;
         }
 
-        private static void FillRottenTomatoesReleaseDates(FilmTrove.Models.Movie movie, FlixSharp.Holders.RottenTomatoes.Title rtitle)
+        private static void FillRottenTomatoesReleaseDates(FilmTrove.Models.Movie movie, Title rtitle)
         {
             var dvdrelease = rtitle.ReleaseDates
-                .FirstOrDefault(r => r.ReleaseType == FlixSharp.Holders.RottenTomatoes.ReleaseDateType.DVD);
+                .FirstOrDefault(r => r.ReleaseType == ReleaseDateType.DVD);
             if (dvdrelease != null)
                 movie.RottenTomatoes.DvdRelease = dvdrelease.Date;
             var theatricalrelease = rtitle.ReleaseDates
-                .FirstOrDefault(r => r.ReleaseType == FlixSharp.Holders.RottenTomatoes.ReleaseDateType.Theater);
+                .FirstOrDefault(r => r.ReleaseType == ReleaseDateType.Theater);
             if (theatricalrelease != null)
                 movie.RottenTomatoes.TheatricalRelase = theatricalrelease.Date;
 
@@ -83,12 +84,12 @@ namespace FilmTrove.Code.RottenTomatoes
                 movie.BestPosterUrl = movie.RottenTomatoes.PosterUrlLarge;
         }
 
-        public static async Task<FlixSharp.Holders.RottenTomatoes.Title> FindRottenTomatoesMatch(Movie m)
+        public static async Task<Title> FindRottenTomatoesMatch(Movie m)
         {
             var searchtitles = await FlixSharp.RottenTomatoes.Search.SearchTitles(m.Title);
 
             return searchtitles
-                .Select(mv => mv as FlixSharp.Holders.RottenTomatoes.Title)
+                .Select(mv => mv as Title)
                 .FirstOrDefault(mv =>
                 {
                     Int32 maxlength = (Int32)(m.Title.Length * 1.2);
@@ -101,6 +102,24 @@ namespace FilmTrove.Code.RottenTomatoes
                     && (mv.Year == m.Year
                     || mv.Year + 1 == m.Year
                     || mv.Year - 1 == m.Year);
+                });
+        }
+        public static async Task<Title> FindRottenTomatoesMatch(ITitle t)
+        {
+            var searchtitles = await FlixSharp.RottenTomatoes.Search.SearchTitles(t.FullTitle);
+
+            return searchtitles
+                .Select(mv => mv as FlixSharp.Holders.RottenTomatoes.Title)
+                .FirstOrDefault(mv =>
+                {
+                    Int32 maxlength = (Int32)(t.FullTitle.Length * 1.2);
+                    Int32 minlength = (Int32)(t.FullTitle.Length * .8);
+                    return ((mv.FullTitle == t.FullTitle && mv.FullTitle.Length > minlength && mv.FullTitle.Length < maxlength)
+                    || (mv.FullTitle.Contains(t.FullTitle) && mv.FullTitle.Length > minlength && mv.FullTitle.Length < maxlength)
+                    || (t.FullTitle.Contains(mv.FullTitle) && mv.FullTitle.Length > minlength && mv.FullTitle.Length < maxlength)
+                    && (mv.Year == t.Year
+                    || mv.Year + 1 == t.Year
+                    || mv.Year - 1 == t.Year));
                 });
         }
     }

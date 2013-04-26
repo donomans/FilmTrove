@@ -315,7 +315,24 @@ namespace FilmTrove.Code.Netflix
                         || mv.Year - 1 == m.Year);
                 });
         }
+        public static async Task<Title> FindNetflixMatch(ITitle t)
+        {
+            var searchtitles = await FlixSharp.Netflix.Search.SearchTitles(t.FullTitle);
 
+            return searchtitles
+                .Select(mv => mv as Title)
+                .FirstOrDefault(mv =>
+                {
+                    Int32 maxlength = (Int32)(t.FullTitle.Length * 1.2);
+                    Int32 minlength = (Int32)(t.FullTitle.Length * .8);
+                    return ((mv.FullTitle == t.FullTitle && mv.FullTitle.Length > minlength && mv.FullTitle.Length < maxlength)
+                    || (mv.FullTitle.Contains(t.FullTitle) && mv.FullTitle.Length > minlength && mv.FullTitle.Length < maxlength)
+                    || (t.FullTitle.Contains(mv.FullTitle) && mv.FullTitle.Length > minlength && mv.FullTitle.Length < maxlength)
+                    && (mv.Year == t.Year
+                    || mv.Year + 1 == t.Year
+                    || mv.Year - 1 == t.Year));
+                });
+        }
         public static void FillBasicNetflixPerson(FilmTrove.Models.Person person, FlixSharp.Holders.Netflix.Person nperson)
         {
             person.Netflix.Id = nperson.Id;

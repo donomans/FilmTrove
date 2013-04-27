@@ -45,10 +45,10 @@ namespace FilmTrove.Controllers
                         var UpcomingDVDsTask = RottenTomatoes.Fill.Lists.GetUpcomingDVDs(Limit: 20);
                         using (profiler.Step("GetDatabaseMoviesRottenTomatoes and Awaits"))
                         {
-                            var NewReleaseDVDs = GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await NewReleaseDVDsTask, ftc);
-                            var UpcomingDVDs = GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await UpcomingDVDsTask, ftc);
-                            var OpeningMovies = GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await OpeningMoviesTask, ftc);
-                            var UpcomingMovies = GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await UpcomingMoviesTask, ftc);
+                            var NewReleaseDVDs = await GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await NewReleaseDVDsTask, ftc);
+                            var UpcomingDVDs = await GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await UpcomingDVDsTask, ftc);
+                            var OpeningMovies = await GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await OpeningMoviesTask, ftc);
+                            var UpcomingMovies = await GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await UpcomingMoviesTask, ftc);
                             HttpContext.Cache.Insert("OpeningMovies", OpeningMovies, null, DateTime.Now.AddHours(6), System.Web.Caching.Cache.NoSlidingExpiration);
                             HttpContext.Cache.Insert("NewReleaseDVDs", NewReleaseDVDs, null, DateTime.Now.AddHours(6), System.Web.Caching.Cache.NoSlidingExpiration);
                             HttpContext.Cache.Insert("UpcomingDVDs", UpcomingDVDs, null, DateTime.Now.AddHours(6), System.Web.Caching.Cache.NoSlidingExpiration);

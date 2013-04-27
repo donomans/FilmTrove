@@ -25,8 +25,8 @@ namespace FilmTrove.Controllers
 
             Titles rtresults = await RottenTomatoes.Search.SearchTitles(searchterm, Limit: 30);
             ///need to check if the results are in the database and populate it if not
-            List<Movie> rtmovies = GeneralHelpers.GetDatabaseMoviesRottenTomatoes(rtresults, ftc);
-            List<Movie> nfmovies = GeneralHelpers.GetDatabaseMoviesNetflix(results.MovieResults, ftc);
+            List<Movie> rtmovies = await GeneralHelpers.GetDatabaseMoviesRottenTomatoes(rtresults, ftc);
+            List<Movie> nfmovies = await GeneralHelpers.GetDatabaseMoviesNetflix(results.MovieResults, ftc);
             ViewBag.MovieResults = nfmovies.Uniques(rtmovies);
             ViewBag.PeopleResults = GeneralHelpers.GetDatabasePeopleNetflix(results.PeopleResults, ftc);
 

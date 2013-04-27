@@ -24,7 +24,7 @@ namespace FilmTrove.Controllers.Api
             using (FilmTroveContext ftc = new FilmTroveContext())
             {
                 var OpeningMoviesTask = RottenTomatoes.Fill.Lists.GetOpeningMovies(Limit: 20);
-                return GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await OpeningMoviesTask, ftc);
+                return await GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await OpeningMoviesTask, ftc);
             }
         }
         [HttpGet]
@@ -33,7 +33,7 @@ namespace FilmTrove.Controllers.Api
             using (FilmTroveContext ftc = new FilmTroveContext())
             {
                 var UpcomingMoviesTask = RottenTomatoes.Fill.Lists.GetUpcomingMovies(Limit: 20);
-                return GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await UpcomingMoviesTask, ftc);
+                return await GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await UpcomingMoviesTask, ftc);
             }
         }
         [HttpGet]
@@ -42,7 +42,7 @@ namespace FilmTrove.Controllers.Api
             using (FilmTroveContext ftc = new FilmTroveContext())
             {
                 var NewReleaseDVDsTask = RottenTomatoes.Fill.Lists.GetNewReleaseDVDs(Limit: 20);
-                return GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await NewReleaseDVDsTask, ftc);
+                return await GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await NewReleaseDVDsTask, ftc);
             }
         }
         [HttpGet]
@@ -51,7 +51,7 @@ namespace FilmTrove.Controllers.Api
             using (FilmTroveContext ftc = new FilmTroveContext())
             {
                 var UpcomingDVDsTask = RottenTomatoes.Fill.Lists.GetUpcomingDVDs(Limit: 20);
-                return GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await UpcomingDVDsTask, ftc);
+                return await GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await UpcomingDVDsTask, ftc);
             }
         }
         #endregion

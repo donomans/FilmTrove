@@ -15,7 +15,7 @@ namespace FilmTrove.Code.Netflix
 
         public static void FillBasicNetflixTitle(FilmTrove.Models.Movie movie, FlixSharp.Holders.Netflix.Title ntitle)
         {
-            movie.Netflix.Id = ntitle.Id;
+            movie.Netflix.Id = ntitle.FullId;
             movie.Netflix.IdUrl = ntitle.IdUrl;
             movie.Netflix.SeasonId = ntitle.SeasonId;
             movie.Netflix.Url = ntitle.NetflixSiteUrl;
@@ -61,12 +61,12 @@ namespace FilmTrove.Code.Netflix
         public static void FillNetflixSimilars(Movie m, FilmTroveContext ftc, FlixSharp.Holders.Netflix.Title netflixtitle)
         {
             ///3) add all similar titles to the database similar to step 1 for people
-            var nftitleids = netflixtitle.SimilarTitles.Select(t => t.Id + (t.SeasonId != "" ? ";" + t.SeasonId : "")).ToList();
+            var nftitleids = netflixtitle.SimilarTitles.Select(t => t.FullId).ToList();
             var matchedtitleids = ftc.Movies.Where(t => nftitleids.Contains(t.Netflix.Id)).Select(t => t.Netflix.Id).ToList();
             var titleidsfordatabase = nftitleids.Where(t => !matchedtitleids.Contains(t)).ToList();
             var titlesfordatabase = netflixtitle.SimilarTitles.Where(t =>
             {
-                var fullid = t.Id + (t.SeasonId != "" ? ";" + t.SeasonId : "");
+                var fullid = t.FullId;
                 return titleidsfordatabase.Any(f => f == fullid);//fullid);
             }).ToList();
 
@@ -315,23 +315,29 @@ namespace FilmTrove.Code.Netflix
                         || mv.Year - 1 == m.Year);
                 });
         }
-        public static async Task<Title> FindNetflixMatch(ITitle t)
+        public static async Task<Movie> FindNetflixMatch(ITitle t, FilmTroveContext ftc)
         {
             var searchtitles = await FlixSharp.Netflix.Search.SearchTitles(t.FullTitle);
+            String tFullTitle = t.FullTitle.ToLower();
+            Int32 maxlength = (Int32)(t.FullTitle.Length * 1.2);
+            Int32 minlength = (Int32)(t.FullTitle.Length * .8);
 
-            return searchtitles
+            var match = searchtitles
                 .Select(mv => mv as Title)
                 .FirstOrDefault(mv =>
                 {
-                    Int32 maxlength = (Int32)(t.FullTitle.Length * 1.2);
-                    Int32 minlength = (Int32)(t.FullTitle.Length * .8);
-                    return ((mv.FullTitle == t.FullTitle && mv.FullTitle.Length > minlength && mv.FullTitle.Length < maxlength)
-                    || (mv.FullTitle.Contains(t.FullTitle) && mv.FullTitle.Length > minlength && mv.FullTitle.Length < maxlength)
-                    || (t.FullTitle.Contains(mv.FullTitle) && mv.FullTitle.Length > minlength && mv.FullTitle.Length < maxlength)
+                    String mvFullTitle = mv.FullTitle.ToLower();
+                    return ((mvFullTitle == tFullTitle)
+                    || (mvFullTitle.Contains(tFullTitle) && mvFullTitle.Length > minlength && mvFullTitle.Length < maxlength)
+                    || (tFullTitle.Contains(mvFullTitle) && mvFullTitle.Length > minlength && mvFullTitle.Length < maxlength)
                     && (mv.Year == t.Year
                     || mv.Year + 1 == t.Year
                     || mv.Year - 1 == t.Year));
                 });
+            if (match == null)
+                throw new Exception("crap.");
+            return ftc.Movies.Where(m => m.Netflix.Id == match.FullId).FirstOrDefault();
+
         }
         public static void FillBasicNetflixPerson(FilmTrove.Models.Person person, FlixSharp.Holders.Netflix.Person nperson)
         {

@@ -16,7 +16,7 @@ namespace FilmTrove.Code
     public class GeneralHelpers
     {
         #region Netflix
-        public static List<Models.Movie> GetDatabaseMoviesNetflix(Titles results, FilmTroveContext ftc)
+        public static async Task<List<Models.Movie>> GetDatabaseMoviesNetflix(Titles results, FilmTroveContext ftc)
         {
             var netflixids = results.Select((m) => (m as FlixSharp.Holders.Netflix.Title).FullId);
 
@@ -39,7 +39,7 @@ namespace FilmTrove.Code
                 {
                     //String nid = unmatched.FullId;
                     ///check for FT record incase it was added using a different data source (like RT)
-                    Models.Movie movie = GetExistingMovie(netflixmovie, ftc);
+                    Models.Movie movie = await GetExistingMovie(netflixmovie, ftc);
                     ///create FT database records for each of these with the movies basic information for now
                     if(movie == null)
                         movie = ftc.Movies.Create();
@@ -126,7 +126,7 @@ namespace FilmTrove.Code
         }
         #endregion
         #region Rotten Tomatoes
-        public static List<Models.Movie> GetDatabaseMoviesRottenTomatoes(Titles results, FilmTroveContext ftc)
+        public static async Task<List<Models.Movie>> GetDatabaseMoviesRottenTomatoes(Titles results, FilmTroveContext ftc)
         {            
             var rottentomatoesids = results.Select(m => m.Id);
 
@@ -148,7 +148,7 @@ namespace FilmTrove.Code
                 {
                     //String nid = unmatched.FullId;
                     ///check for FT record incase it was added using a different data source (like RT)
-                    Models.Movie movie = GetExistingMovie(unmatched, ftc);
+                    Models.Movie movie = await GetExistingMovie(unmatched, ftc);
                     ///create FT database records for each of these with the movies basic information for now
                     Boolean wasempty = false;
                     if (movie == null)
@@ -209,33 +209,71 @@ namespace FilmTrove.Code
         #endregion
 
         /// <summary>
-        /// This function sucks.
+        /// 
         /// </summary>
         /// <param name="title"></param>
         /// <param name="ftc"></param>
         /// <returns></returns>
-        public static Models.Movie GetExistingMovie(ITitle title, FilmTroveContext ftc)
+        public static async Task<Models.Movie> GetExistingMovie(ITitle title, FilmTroveContext ftc)
         {
-            //title.Source
-            
-            //look at the other sources and do a best guess using their search?
-
-                ///make a best effort to find the movie
             Int32 maxlength = (Int32)(title.FullTitle.Length * 1.2);
             Int32 minlength = (Int32)(title.FullTitle.Length * .8);
-            return ftc.Movies.FirstOrDefault(m => 
-                ((m.AltTitle == title.FullTitle && m.AltTitle.Length > minlength && m.AltTitle.Length < maxlength)
-                || (m.Title == title.FullTitle && m.Title.Length > minlength && m.Title.Length < maxlength)
-                || (m.AltTitle.Contains(title.FullTitle) && m.AltTitle.Length > minlength && m.AltTitle.Length < maxlength)
-                || (m.Title.Contains(title.FullTitle) && m.Title.Length > minlength && m.Title.Length < maxlength)
-                || (title.FullTitle.Contains(m.AltTitle) && m.AltTitle.Length > minlength && m.AltTitle.Length < maxlength)
-                || (title.FullTitle.Contains(m.Title) && m.Title.Length > minlength && m.Title.Length < maxlength))
-                && (m.Year == title.Year 
-                    || title.Year + 1 == m.Year 
-                    || title.Year - 1 == m.Year));
+            var match =
+                (from m
+                in ftc.Movies
+                let mAltTitle = m.AltTitle.ToLower()
+                let mTitle = m.Title.ToLower()
+                let tFullTitle = title.FullTitle.ToLower()
+                where ((mAltTitle == tFullTitle)
+                || (mTitle == tFullTitle)
+                || (mAltTitle.Contains(tFullTitle) && mAltTitle.Length > minlength && mAltTitle.Length < maxlength)
+                || (mTitle.Contains(tFullTitle) && mTitle.Length > minlength && mTitle.Length < maxlength)
+                || (tFullTitle.Contains(mAltTitle) && mAltTitle.Length > minlength && mAltTitle.Length < maxlength)
+                || (tFullTitle.Contains(mTitle) && mTitle.Length > minlength && mTitle.Length < maxlength))
+                && (m.Year == title.Year
+                    || title.Year + 1 == m.Year
+                    || title.Year - 1 == m.Year)
+                select m).FirstOrDefault();
+                         
+            //var match = ftc.Movies.FirstOrDefault(m =>
+            //        ((m.AltTitle == title.FullTitle && m.AltTitle.Length > minlength && m.AltTitle.Length < maxlength)
+            //        || (m.Title == title.FullTitle && m.Title.Length > minlength && m.Title.Length < maxlength)
+            //        || (m.AltTitle.Contains(title.FullTitle) && m.AltTitle.Length > minlength && m.AltTitle.Length < maxlength)
+            //        || (m.Title.Contains(title.FullTitle) && m.Title.Length > minlength && m.Title.Length < maxlength)
+            //        || (title.FullTitle.Contains(m.AltTitle) && m.AltTitle.Length > minlength && m.AltTitle.Length < maxlength)
+            //        || (title.FullTitle.Contains(m.Title) && m.Title.Length > minlength && m.Title.Length < maxlength))
+            //        && (m.Year == title.Year
+            //            || title.Year + 1 == m.Year
+            //            || title.Year - 1 == m.Year)
+            //    );
 
-            
+            if (match != null)
+                return match;
+            else
+            {
+                switch (title.Source)
+                {
+                    case TitleSource.Netflix:
+                        return await RottenTomatoesHelpers.FindRottenTomatoesMatch(title, ftc);
+                    case TitleSource.RottenTomatoes:
+                        return await NetflixHelpers.FindNetflixMatch(title, ftc);
+                    default:
+                        throw new NotImplementedException("Title type of: " + title.Source.ToString() + " is not implemented");
+                }
+            }
+            //    ///make a best effort to find the movie
+            //Int32 maxlength = (Int32)(title.FullTitle.Length * 1.2);
+            //Int32 minlength = (Int32)(title.FullTitle.Length * .8);
+            //return ftc.Movies.FirstOrDefault(m =>
+            //    ((m.AltTitle == title.FullTitle && m.AltTitle.Length > minlength && m.AltTitle.Length < maxlength)
+            //    || (m.Title == title.FullTitle && m.Title.Length > minlength && m.Title.Length < maxlength)
+            //    || (m.AltTitle.Contains(title.FullTitle) && m.AltTitle.Length > minlength && m.AltTitle.Length < maxlength)
+            //    || (m.Title.Contains(title.FullTitle) && m.Title.Length > minlength && m.Title.Length < maxlength)
+            //    || (title.FullTitle.Contains(m.AltTitle) && m.AltTitle.Length > minlength && m.AltTitle.Length < maxlength)
+            //    || (title.FullTitle.Contains(m.Title) && m.Title.Length > minlength && m.Title.Length < maxlength))
+            //    && (m.Year == title.Year
+            //        || title.Year + 1 == m.Year
+            //        || title.Year - 1 == m.Year));
         }
-
     }
 }

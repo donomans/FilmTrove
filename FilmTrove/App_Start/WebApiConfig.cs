@@ -24,7 +24,7 @@ namespace FilmTrove
 
             #region Lists
             config.Routes.MapHttpRoute(
-                name: "V1ApiLists",
+                name: "V1Lists",
                 routeTemplate: "api/v1/Lists/{action}/{id}",
                 defaults: new { controller = "ListServices", id = RouteParameter.Optional },
                 constraints: new { id = @"^\d+$" }
@@ -33,7 +33,7 @@ namespace FilmTrove
 
             #region Movies
             config.Routes.MapHttpRoute(
-                name: "V1Api",
+                name: "V1MovieDetails",
                 routeTemplate: "api/v1/movies/{action}/{id}",
                 defaults: new { id = RouteParameter.Optional, action = "details" },
                 constraints: new { id = @"^\d+$" }
@@ -43,12 +43,12 @@ namespace FilmTrove
 
             #region Search
             config.Routes.MapHttpRoute(
-                name: "V1Search",
+                name: "V1SearchNetflix",
                 routeTemplate: "api/v1/search/netflix/{action}",
                 defaults: new { action = "everything" }
             );
             config.Routes.MapHttpRoute(
-                name: "V1Search",
+                name: "V1SearchRotten",
                 routeTemplate: "api/v1/search/rottentomatoes/{action}",
                 defaults: new { action = "titles" }
             );
@@ -60,7 +60,7 @@ namespace FilmTrove
             #endregion
 
             config.Routes.MapHttpRoute(
-                name: "V1Api",
+                name: "V1",
                 routeTemplate: "api/v1/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional },
                 constraints: new { id = @"^\d+$" }

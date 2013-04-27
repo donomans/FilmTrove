@@ -66,6 +66,10 @@ namespace FilmTrove.Code.RottenTomatoes
                 .FirstOrDefault(r => r.Type == PosterType.Detailed);
             if (mediumposter != null)
                 movie.RottenTomatoes.PosterUrlMedium = mediumposter.Url;
+
+            //need to not overwrite a netflix url if the default rotten tomatoes image is all i have
+            if (!movie.RottenTomatoes.PosterUrlLarge.EndsWith("poster_default.gif"))
+                movie.BestPosterUrl = movie.RottenTomatoes.PosterUrlLarge;
         }
 
         private static void FillRottenTomatoesReleaseDates(FilmTrove.Models.Movie movie, Title rtitle)
@@ -78,10 +82,6 @@ namespace FilmTrove.Code.RottenTomatoes
                 .FirstOrDefault(r => r.ReleaseType == ReleaseDateType.Theater);
             if (theatricalrelease != null)
                 movie.RottenTomatoes.TheatricalRelase = theatricalrelease.Date;
-
-            //need to not overwrite a netflix url if the default rotten tomatoes image is all i have
-            if (!movie.RottenTomatoes.PosterUrlLarge.EndsWith("poster_default.gif"))
-                movie.BestPosterUrl = movie.RottenTomatoes.PosterUrlLarge;
         }
 
         public static async Task<Title> FindRottenTomatoesMatch(Movie m)
@@ -104,23 +104,28 @@ namespace FilmTrove.Code.RottenTomatoes
                     || mv.Year - 1 == m.Year);
                 });
         }
-        public static async Task<Title> FindRottenTomatoesMatch(ITitle t)
+        public static async Task<Movie> FindRottenTomatoesMatch(ITitle t, FilmTroveContext ftc)
         {
             var searchtitles = await FlixSharp.RottenTomatoes.Search.SearchTitles(t.FullTitle);
+            Int32 maxlength = (Int32)(t.FullTitle.Length * 1.2);
+            Int32 minlength = (Int32)(t.FullTitle.Length * .8);
+            String tFullTitle = t.FullTitle.ToLower();
 
-            return searchtitles
+            var match = searchtitles
                 .Select(mv => mv as FlixSharp.Holders.RottenTomatoes.Title)
                 .FirstOrDefault(mv =>
                 {
-                    Int32 maxlength = (Int32)(t.FullTitle.Length * 1.2);
-                    Int32 minlength = (Int32)(t.FullTitle.Length * .8);
-                    return ((mv.FullTitle == t.FullTitle && mv.FullTitle.Length > minlength && mv.FullTitle.Length < maxlength)
-                    || (mv.FullTitle.Contains(t.FullTitle) && mv.FullTitle.Length > minlength && mv.FullTitle.Length < maxlength)
-                    || (t.FullTitle.Contains(mv.FullTitle) && mv.FullTitle.Length > minlength && mv.FullTitle.Length < maxlength)
+                    String mvFullTitle = mv.FullTitle.ToLower();                    
+                    return ((mvFullTitle == tFullTitle)
+                    || (mvFullTitle.Contains(tFullTitle) && mvFullTitle.Length > minlength && mvFullTitle.Length < maxlength)
+                    || (tFullTitle.Contains(mv.FullTitle) && mvFullTitle.Length > minlength && mvFullTitle.Length < maxlength)
                     && (mv.Year == t.Year
                     || mv.Year + 1 == t.Year
                     || mv.Year - 1 == t.Year));
                 });
+            if (match == null)
+                throw new Exception("crap.");
+            return ftc.Movies.Where(m => m.RottenTomatoes.Id == match.Id).FirstOrDefault();
         }
     }
 }

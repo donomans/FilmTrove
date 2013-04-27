@@ -321,12 +321,12 @@ namespace FilmTrove.Controllers
                     using (profiler.Step("Populate Similar Titles"))
                     {
                         ///3) add all similar titles to the database similar to step 1 for people
-                        var nftitleids = netflixtitle.SimilarTitles.Select(t => t.Id + (t.SeasonId != "" ? ";" + t.SeasonId : "")).ToList();
+                        var nftitleids = netflixtitle.SimilarTitles.Select(t => t.FullId).ToList();
                         var matchedtitleids = ftc.Movies.Where(t => nftitleids.Contains(t.Netflix.Id)).Select(t => t.Netflix.Id).ToList();
                         var titleidsfordatabase = nftitleids.Where(t => !matchedtitleids.Contains(t)).ToList();
                         var titlesfordatabase = netflixtitle.SimilarTitles.Where(t =>
                             {
-                                var fullid = t.Id + (t.SeasonId != "" ? ";" + t.SeasonId : "");
+                                var fullid = t.FullId;
                                 return titleidsfordatabase.Any(f => f == fullid);//fullid);
                             }).ToList();
 

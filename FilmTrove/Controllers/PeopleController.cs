@@ -50,7 +50,7 @@ namespace FilmTrove.Controllers
                     ///1) get filmography
                     netflixperson = await nfp;
                     ///2) get the netflixids of all the films
-                    var netflixfilmographyids = netflixperson.Filmography.Select(t => t.Id + (t.SeasonId != "" ? ";" + t.SeasonId : "")).ToList();
+                    var netflixfilmographyids = netflixperson.Filmography.Select(t => t.FullId).ToList();
                     ///3) look up the movies in ft database by netflixids
                     ftmoviesfound = ftc.Movies.Include("Roles.Person").Where(t => netflixfilmographyids.Contains(t.Netflix.Id)).ToList();
 
@@ -69,7 +69,7 @@ namespace FilmTrove.Controllers
                     //var roles = p.Roles.Where(r => ftmoviesfound.Find(m => m.MovieId == r.Movie.MovieId) == null).DefaultIfEmpty().ToList();//r.Movie, Comparer<Movie>.Create(m => m.MovieId)));
                     
                     var ftmoviesfoundids = ftmoviesfound.Select(t => t.Netflix.Id).ToList();
-                    var netflixmoviestoadd = netflixperson.Filmography.Where(t => !ftmoviesfoundids.Contains(t.Id + (t.SeasonId != "" ? ";" + t.SeasonId : ""))).ToList();
+                    var netflixmoviestoadd = netflixperson.Filmography.Where(t => !ftmoviesfoundids.Contains(t.FullId)).ToList();
                     foreach (FlixSharp.Holders.Netflix.Title title in netflixmoviestoadd)
                     {
                         var m = ftc.Movies.Create();

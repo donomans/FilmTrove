@@ -107,15 +107,16 @@ namespace FilmTrove.Code.RottenTomatoes
         public static async Task<Movie> FindRottenTomatoesMatch(ITitle t, FilmTroveContext ftc)
         {
             var searchtitles = await FlixSharp.RottenTomatoes.Search.SearchTitles(t.FullTitle);
-            Int32 maxlength = (Int32)(t.FullTitle.Length * 1.2);
-            Int32 minlength = (Int32)(t.FullTitle.Length * .8);
+            Boolean pars = t.FullTitle.Contains("(") && t.FullTitle.Contains(")");
+            Int32 maxlength = pars ? 200 : (Int32)(t.FullTitle.Length * 1.2);
+            Int32 minlength = pars ? 0 : (Int32)(t.FullTitle.Length * .8);
             String tFullTitle = t.FullTitle.ToLower();
 
             var match = searchtitles
                 .Select(mv => mv as FlixSharp.Holders.RottenTomatoes.Title)
                 .FirstOrDefault(mv =>
                 {
-                    String mvFullTitle = mv.FullTitle.ToLower();                    
+                    String mvFullTitle = mv.FullTitle.ToLower();
                     return ((mvFullTitle == tFullTitle)
                     || (mvFullTitle.Contains(tFullTitle) && mvFullTitle.Length > minlength && mvFullTitle.Length < maxlength)
                     || (tFullTitle.Contains(mv.FullTitle) && mvFullTitle.Length > minlength && mvFullTitle.Length < maxlength)

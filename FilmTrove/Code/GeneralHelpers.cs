@@ -224,7 +224,9 @@ namespace FilmTrove.Code
                 let mAltTitle = m.AltTitle.ToLower()
                 let mTitle = m.Title.ToLower()
                 let tFullTitle = title.FullTitle.ToLower()
-                where ((mAltTitle == tFullTitle)
+                where (m.Netflix.Id == title.FullId 
+                || m.RottenTomatoes.Id == title.FullId
+                || (mAltTitle == tFullTitle)
                 || (mTitle == tFullTitle)
                 || (mAltTitle.Contains(tFullTitle) && mAltTitle.Length > minlength && mAltTitle.Length < maxlength)
                 || (mTitle.Contains(tFullTitle) && mTitle.Length > minlength && mTitle.Length < maxlength)

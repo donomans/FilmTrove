@@ -60,6 +60,8 @@ namespace FilmTrove.Code.Netflix
 
         public static void FillNetflixSimilars(Movie m, FilmTroveContext ftc, FlixSharp.Holders.Netflix.Title netflixtitle)
         {
+            ///this essentially seems like GeneralHelpers.GetDatabaseMoviesNetflix??
+
             ///3) add all similar titles to the database similar to step 1 for people
             var nftitleids = netflixtitle.SimilarTitles.Select(t => t.FullId).ToList();
             var matchedtitleids = ftc.Movies.Where(t => nftitleids.Contains(t.Netflix.Id)).Select(t => t.Netflix.Id).ToList();
@@ -317,10 +319,16 @@ namespace FilmTrove.Code.Netflix
         }
         public static async Task<Movie> FindNetflixMatch(ITitle t, FilmTroveContext ftc)
         {
+            ///if the t.FullTitle has '(' and ')' then ignore the min/max lengths?
+            ///probably a foreign title that our only hope is to match on contains
+            ///
             var searchtitles = await FlixSharp.Netflix.Search.SearchTitles(t.FullTitle);
             String tFullTitle = t.FullTitle.ToLower();
-            Int32 maxlength = (Int32)(t.FullTitle.Length * 1.2);
-            Int32 minlength = (Int32)(t.FullTitle.Length * .8);
+            Boolean pars =  t.FullTitle.Contains("(") && t.FullTitle.Contains(")");
+            Int32 maxlength = pars ? 200 : (Int32)(t.FullTitle.Length * 1.2);
+            Int32 minlength = pars ? 0 : (Int32)(t.FullTitle.Length * .8);
+            
+            //await GeneralHelpers.GetDatabaseMoviesNetflix(searchtitles, ftc);
 
             var match = searchtitles
                 .Select(mv => mv as Title)
@@ -335,7 +343,10 @@ namespace FilmTrove.Code.Netflix
                     || mv.Year - 1 == t.Year));
                 });
             if (match == null)
-                throw new Exception("crap.");
+            {
+                //ugh.  bunohan (return to murder) vs bunohan: return to murder
+                return null;
+            }
             return ftc.Movies.Where(m => m.Netflix.Id == match.FullId).FirstOrDefault();
 
         }

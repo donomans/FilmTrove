@@ -11,6 +11,10 @@ using StackExchange.Profiling;
 using FlixSharp.Holders.Netflix;
 using FlixSharp.Holders;
 using FilmTrove.Code.Netflix;
+using Lucene.Net.Documents;
+using Lucene.Net.Store;
+using Lucene.Net.Index;
+using Lucene.Net.Analysis.Standard;
 
 namespace FilmTrove.Controllers
 {
@@ -70,52 +74,74 @@ namespace FilmTrove.Controllers
                     
                     var ftmoviesfoundids = ftmoviesfound.Select(t => t.Netflix.Id).ToList();
                     var netflixmoviestoadd = netflixperson.Filmography.Where(t => !ftmoviesfoundids.Contains(t.FullId)).ToList();
-                    foreach (FlixSharp.Holders.Netflix.Title title in netflixmoviestoadd)
+                    if (netflixmoviestoadd.Count > 0)
                     {
-                        var m = ftc.Movies.Create();
-                        NetflixHelpers.FillBasicNetflixTitle(m, title);
+                        RAMDirectory ramindex = (RAMDirectory)HttpContext.Items["ftramindex"];
+                        if (ramindex == null)
+                            throw new MissingMemberException("ramindex was null");
 
-                        var dbgenreslocal = ftc.Genres.Local.Where(g => title.Genres.Contains(g.Name));
-                        var dbgenres = ftc.Genres.Where(g => title.Genres.Contains(g.Name));
-                        HashSet<Genre> genres = new HashSet<Genre>();
-                        genres.AddRange(dbgenres);
-                        genres.AddRange(dbgenreslocal);
+                        IndexWriter iw = new IndexWriter(ramindex,
+                            new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30),
+                            IndexWriter.MaxFieldLength.LIMITED);
 
-                        var genrenames = genres.Select(g => g.Name);
-                        var missinggenres = title.Genres.Where(g => !genrenames.Contains(g));
-                        foreach (String genre in missinggenres)
+                        foreach (FlixSharp.Holders.Netflix.Title title in netflixmoviestoadd)
                         {
-                            ftc.Genres.Add(new Genre() { Name = genre });
+                            var m = ftc.Movies.Create();
+                            NetflixHelpers.FillBasicNetflixTitle(m, title);
+
+                            var dbgenreslocal = ftc.Genres.Local.Where(g => title.Genres.Contains(g.Name));
+                            var dbgenres = ftc.Genres.Where(g => title.Genres.Contains(g.Name));
+                            HashSet<Genre> genres = new HashSet<Genre>();
+                            genres.AddRange(dbgenres);
+                            genres.AddRange(dbgenreslocal);
+
+                            var genrenames = genres.Select(g => g.Name);
+                            var missinggenres = title.Genres.Where(g => !genrenames.Contains(g));
+                            foreach (String genre in missinggenres)
+                            {
+                                ftc.Genres.Add(new Genre() { Name = genre });
+                            }
+                            foreach (Genre g in genres)
+                            {
+                                MovieGenre gi = ftc.GenreItems.Create();
+                                gi.Genre = g;
+                                gi.Movie = m;
+                                ftc.GenreItems.Add(gi);
+                            }
+                            Document d = new Document();
+                            d.Add(new Field("NetflixId", title.FullId,
+                                Field.Store.YES, Field.Index.NO));
+                            d.Add(new Field("Title", title.FullTitle,
+                                Field.Store.YES, Field.Index.ANALYZED));
+                            d.Add(new Field("AltTitle", title.ShortTitle,
+                                Field.Store.YES, Field.Index.ANALYZED));
+                            iw.AddDocument(d);
+
+                            ftc.Movies.Add(m);
+
+                            Role r = ftc.Roles.Create();
+                            r.Movie = m;
+                            r.Person = p;
+                            ftc.Roles.Add(r);
                         }
-                        foreach (Genre g in genres)
-                        {
-                            MovieGenre gi = ftc.GenreItems.Create();
-                            gi.Genre = g;
-                            gi.Movie = m;
-                            ftc.GenreItems.Add(gi);
-                        }
-                        ftc.Movies.Add(m);
-                        
-                        Role r = ftc.Roles.Create();
-                        r.Movie = m;
-                        r.Person = p;
-                        ftc.Roles.Add(r);
+
+                        iw.Optimize();
+                        iw.Close();
+                        ///4) check each of those to see they have roles defined (if so then ignore it)
+                        //foreach (FilmTrove.Models.Movie ftm in ftmoviesfound)
+                        //{
+                        //    if (ftm.Roles.Count < 1)
+                        //    {
+                        //        using (profiler.Step("Start GetActors/Directors"))
+                        //        {
+                        //            ///7) make call to actors/directors api 
+                        //            //http://api-public.netflix.com/catalog/titles/series/60030701/seasons/60035075
+                        //            directors.Add(ftm, await Netflix.Fill.Randomized().Titles.GetDirectors(ftm.Netflix.IdUrl));//.Randomized()
+                        //            actors.Add(ftm, await Netflix.Fill.Randomized().Titles.GetActors(ftm.Netflix.IdUrl));//Randomized().
+                        //        }
+                        //    }
+                        //}
                     }
-
-                    ///4) check each of those to see they have roles defined (if so then ignore it)
-                    //foreach (FilmTrove.Models.Movie ftm in ftmoviesfound)
-                    //{
-                    //    if (ftm.Roles.Count < 1)
-                    //    {
-                    //        using (profiler.Step("Start GetActors/Directors"))
-                    //        {
-                    //            ///7) make call to actors/directors api 
-                    //            //http://api-public.netflix.com/catalog/titles/series/60030701/seasons/60035075
-                    //            directors.Add(ftm, await Netflix.Fill.Randomized().Titles.GetDirectors(ftm.Netflix.IdUrl));//.Randomized()
-                    //            actors.Add(ftm, await Netflix.Fill.Randomized().Titles.GetActors(ftm.Netflix.IdUrl));//Randomized().
-                    //        }
-                    //    }
-                    //}
                 }
             //    using (profiler.Step("Add Titles"))
             //    {

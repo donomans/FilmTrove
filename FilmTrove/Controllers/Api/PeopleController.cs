@@ -10,6 +10,11 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using FlixSharp.Holders;
+using Lucene.Net.Store;
+using Lucene.Net.Index;
+using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Documents;
+using System.Web;
 
 namespace FilmTrove.Controllers.Api
 {
@@ -49,24 +54,49 @@ namespace FilmTrove.Controllers.Api
             {
                 FlixSharp.Holders.Netflix.Person netflixperson = await nfp;
 
-                List<Movie> ftmoviesfound = NetflixHelpers.GetNetflixPeopleMoviesFound(p, ftc, netflixperson);
+                List<Movie> ftmoviesfound = 
+                    NetflixHelpers.GetNetflixPeopleMoviesFound(p, ftc, netflixperson);
 
                 var ftmoviesfoundids = ftmoviesfound.Select(t => t.Netflix.Id).ToList();
                 var netflixmoviestoadd = netflixperson.Filmography
                     .Where(t => !ftmoviesfoundids.Contains(t.FullId))
                     .ToList();
-                foreach (FlixSharp.Holders.Netflix.Title title in netflixmoviestoadd)
-                {
-                    var m = ftc.Movies.Create();
-                    NetflixHelpers.FillBasicNetflixTitle(m, title);
-                    NetflixHelpers.FillNetflixGenres(m, ftc, title);
-                    
-                    ftc.Movies.Add(m);
 
-                    Role r = ftc.Roles.Create();
-                    r.Movie = m;
-                    r.Person = p;
-                    ftc.Roles.Add(r);
+                if (netflixmoviestoadd.Count > 0)
+                {
+                    RAMDirectory ramindex = (RAMDirectory)HttpContext.Current.Items["ftramindex"];
+                    if (ramindex == null)
+                        throw new MissingMemberException("ramindex was null");
+
+                    IndexWriter iw = new IndexWriter(ramindex,
+                        new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30),
+                        IndexWriter.MaxFieldLength.LIMITED);
+                
+                    foreach (FlixSharp.Holders.Netflix.Title title in netflixmoviestoadd)
+                    {
+                        var m = ftc.Movies.Create();
+                        NetflixHelpers.FillBasicNetflixTitle(m, title);
+                        NetflixHelpers.FillNetflixGenres(m, ftc, title);
+
+                        Document d = new Document();
+                        d.Add(new Field("NetflixId", title.FullId,
+                            Field.Store.YES, Field.Index.NO));
+                        d.Add(new Field("Title", title.FullTitle,
+                            Field.Store.YES, Field.Index.ANALYZED));
+                        d.Add(new Field("AltTitle", title.ShortTitle,
+                            Field.Store.YES, Field.Index.ANALYZED));
+                        iw.AddDocument(d);
+                    
+                        ftc.Movies.Add(m);
+
+                        Role r = ftc.Roles.Create();
+                        r.Movie = m;
+                        r.Person = p;
+                        ftc.Roles.Add(r);
+                    }
+
+                    iw.Optimize();
+                    iw.Close();
                 }
             }
             p.Netflix.NeedsUpdate = false;

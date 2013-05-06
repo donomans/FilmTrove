@@ -14,6 +14,10 @@ using StackExchange.Profiling;
 using FlixSharp.Holders.Netflix;
 using FilmTrove.Code.Netflix;
 using FilmTrove.Code.RottenTomatoes;
+using Lucene.Net.Store;
+using Lucene.Net.Index;
+using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Documents;
 
 namespace FilmTrove.Controllers
 {
@@ -329,39 +333,61 @@ namespace FilmTrove.Controllers
                                 var fullid = t.FullId;
                                 return titleidsfordatabase.Any(f => f == fullid);//fullid);
                             }).ToList();
-
-                        foreach (FlixSharp.Holders.Netflix.Title t in titlesfordatabase)
+                        if (titlesfordatabase.Count > 0)
                         {
-                            FilmTrove.Models.Movie ftmovie = ftc.Movies.Create();
-                            NetflixHelpers.FillBasicNetflixTitle(ftmovie, t);
-                            HashSet<Genre> genres = new HashSet<Genre>();
-                            IEnumerable<String> missinggenres = null;
-                            ///get the genres that exist in the database (local cache and db)
-                            var dbgenreslocal = ftc.Genres.Local.Where(g => t.Genres.Contains(g.Name));
-                            var dbgenres = ftc.Genres.Where(g => t.Genres.Contains(g.Name));
-                            ///add them together into one non duplicated list
-                            genres.AddRange(dbgenres);
-                            genres.AddRange(dbgenreslocal);
-                            ///get the names of the database genres
-                            var genrenames = genres.Select(g => g.Name);
-                            ///find the genres on the movie that aren't in the database
-                            missinggenres = t.Genres.Where(g => !genrenames.Contains(g));
-                            foreach (String genre in missinggenres)
+                            RAMDirectory ramindex = (RAMDirectory)HttpContext.Items["ftramindex"];
+                            if (ramindex == null)
+                                throw new MissingMemberException("ramindex was null");
+
+                            IndexWriter iw = new IndexWriter(ramindex,
+                                new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30),
+                                IndexWriter.MaxFieldLength.LIMITED);
+
+                            foreach (FlixSharp.Holders.Netflix.Title t in titlesfordatabase)
                             {
-                                Genre g = new Genre() { Name = genre };
-                                ///add the genre to the list
-                                genres.Add(g);
-                                ftc.Genres.Add(g);
+                                FilmTrove.Models.Movie ftmovie = ftc.Movies.Create();
+                                NetflixHelpers.FillBasicNetflixTitle(ftmovie, t);
+                                HashSet<Genre> genres = new HashSet<Genre>();
+                                IEnumerable<String> missinggenres = null;
+                                ///get the genres that exist in the database (local cache and db)
+                                var dbgenreslocal = ftc.Genres.Local.Where(g => t.Genres.Contains(g.Name));
+                                var dbgenres = ftc.Genres.Where(g => t.Genres.Contains(g.Name));
+                                ///add them together into one non duplicated list
+                                genres.AddRange(dbgenres);
+                                genres.AddRange(dbgenreslocal);
+                                ///get the names of the database genres
+                                var genrenames = genres.Select(g => g.Name);
+                                ///find the genres on the movie that aren't in the database
+                                missinggenres = t.Genres.Where(g => !genrenames.Contains(g));
+                                foreach (String genre in missinggenres)
+                                {
+                                    Genre g = new Genre() { Name = genre };
+                                    ///add the genre to the list
+                                    genres.Add(g);
+                                    ftc.Genres.Add(g);
+                                }
+                                ///create all the genre-movie records
+                                foreach (Genre g in genres)
+                                {
+                                    MovieGenre gi = ftc.GenreItems.Create();
+                                    gi.Genre = g;
+                                    gi.Movie = ftmovie;
+                                    ftc.GenreItems.Add(gi);
+                                }
+                                Document d = new Document();
+                                d.Add(new Field("NetflixId", t.FullId,
+                                    Field.Store.YES, Field.Index.NO));
+                                d.Add(new Field("Title", t.FullTitle,
+                                    Field.Store.YES, Field.Index.ANALYZED));
+                                d.Add(new Field("AltTitle", t.ShortTitle,
+                                    Field.Store.YES, Field.Index.ANALYZED));
+                                iw.AddDocument(d);
+
+                                ftc.Movies.Add(ftmovie);
                             }
-                            ///create all the genre-movie records
-                            foreach (Genre g in genres)
-                            {
-                                MovieGenre gi = ftc.GenreItems.Create();
-                                gi.Genre = g;
-                                gi.Movie = ftmovie;
-                                ftc.GenreItems.Add(gi);
-                            }
-                            ftc.Movies.Add(ftmovie);
+
+                            iw.Optimize();
+                            iw.Close();
                         }
                         m.Netflix.SimilarTitles = netflixtitle.SimilarTitles.Select(t => t.IdUrl).ToList();
                         m.Netflix.NeedsUpdate = false;

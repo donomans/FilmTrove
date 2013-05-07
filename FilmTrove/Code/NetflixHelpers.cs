@@ -62,7 +62,8 @@ namespace FilmTrove.Code.Netflix
             m.Description = netflixtitle.Synopsis;
         }
 
-        public static void FillNetflixSimilars(Movie m, FilmTroveContext ftc, FlixSharp.Holders.Netflix.Title netflixtitle)
+        public static void FillNetflixSimilars(Movie m, FilmTroveContext ftc, 
+            FlixSharp.Holders.Netflix.Title netflixtitle, RAMDirectory ramindex)
         {
             ///this essentially seems like GeneralHelpers.GetDatabaseMoviesNetflix??
 
@@ -76,61 +77,36 @@ namespace FilmTrove.Code.Netflix
                 .ToList();
             if (titlesfordatabase.Count > 0)
             {
-                RAMDirectory ramindex = (RAMDirectory)HttpContext.Current.Items["ftramindex"];
+                //var Cache = new System.Web.Caching.Cache();
+                //var ramindex = (RAMDirectory)Cache.Get("ftramindex");
+                //RAMDirectory ramindex = (RAMDirectory)HttpContext.Current.Items["ftramindex"];
                 if (ramindex == null)
                     throw new MissingMemberException("ramindex was null");
 
-                IndexWriter iw = new IndexWriter(ramindex,
-                    new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30),
-                    IndexWriter.MaxFieldLength.LIMITED);
-
-                foreach (FlixSharp.Holders.Netflix.Title t in titlesfordatabase)
+                using (IndexWriter iw = new IndexWriter(ramindex,
+                     new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30),
+                     IndexWriter.MaxFieldLength.LIMITED))
                 {
-                    FilmTrove.Models.Movie ftmovie = ftc.Movies.Create();
-                    FillBasicNetflixTitle(ftmovie, t);
-                    FillNetflixGenres(ftmovie, ftc, t);
+                    foreach (FlixSharp.Holders.Netflix.Title t in titlesfordatabase)
+                    {
+                        FilmTrove.Models.Movie ftmovie = ftc.Movies.Create();
+                        FillBasicNetflixTitle(ftmovie, t);
+                        FillNetflixGenres(ftmovie, ftc, t);
 
-                    //HashSet<Genre> genres = new HashSet<Genre>();
-                    //IEnumerable<String> missinggenres = null;
-                    /////get the genres that exist in the database (local cache and db)
-                    //var dbgenreslocal = ftc.Genres.Local.Where(g => t.Genres.Contains(g.Name));
-                    //var dbgenres = ftc.Genres.Where(g => t.Genres.Contains(g.Name));
-                    /////add them together into one non duplicated list
-                    //genres.AddRange(dbgenres);
-                    //genres.AddRange(dbgenreslocal);
-                    /////get the names of the database genres
-                    //var genrenames = genres.Select(g => g.Name);
-                    /////find the genres on the movie that aren't in the database
-                    //missinggenres = t.Genres.Where(g => !genrenames.Contains(g));
-                    //foreach (String genre in missinggenres)
-                    //{
-                    //    Genre g = new Genre() { Name = genre };
-                    //    ///add the genre to the list
-                    //    genres.Add(g);
-                    //    ftc.Genres.Add(g);
-                    //}
-                    /////create all the genre-movie records
-                    //foreach (Genre g in genres)
-                    //{
-                    //    MovieGenre gi = ftc.GenreItems.Create();
-                    //    gi.Genre = g;
-                    //    gi.Movie = ftmovie;
-                    //    ftc.GenreItems.Add(gi);
-                    //}
-                    Document d = new Document();
-                    d.Add(new Field("NetflixId", t.FullId,
-                        Field.Store.YES, Field.Index.NO));
-                    d.Add(new Field("Title", t.FullTitle,
-                        Field.Store.YES, Field.Index.ANALYZED));
-                    d.Add(new Field("AltTitle", t.ShortTitle,
-                        Field.Store.YES, Field.Index.ANALYZED));
-                    iw.AddDocument(d);
+                        Document d = new Document();
+                        d.Add(new Field("NetflixId", t.FullId,
+                            Field.Store.YES, Field.Index.NO));
+                        d.Add(new Field("Title", t.FullTitle,
+                            Field.Store.YES, Field.Index.ANALYZED));
+                        d.Add(new Field("AltTitle", t.ShortTitle,
+                            Field.Store.YES, Field.Index.ANALYZED));
+                        iw.AddDocument(d);
 
-                    ftc.Movies.Add(ftmovie);
+                        ftc.Movies.Add(ftmovie);
+                    }
+
+                    iw.Optimize();
                 }
-
-                iw.Optimize();
-                iw.Close();
             }
             m.Netflix.SimilarTitles = netflixtitle.SimilarTitles.Select(t => t.IdUrl).ToList();
         }

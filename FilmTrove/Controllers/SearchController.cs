@@ -3,6 +3,7 @@ using FilmTrove.Filters;
 using FilmTrove.Models;
 using FlixSharp;
 using FlixSharp.Holders;
+using Lucene.Net.Store;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace FilmTrove.Controllers
             //String term = form["searchterm"].ToString();
             //Netflix n = new Netflix();
             SearchResults results = await Netflix.Search.SearchEverything(searchterm, Limit: 30);//Randomized().
-
+            //var ramindex = (RAMDirectory)HttpContext.Cache.Get("ftramindex"); 
             Titles rtresults = await RottenTomatoes.Search.SearchTitles(searchterm, Limit: 30);
             ///need to check if the results are in the database and populate it if not
             List<Movie> rtmovies = await GeneralHelpers.GetDatabaseMoviesRottenTomatoes(rtresults, ftc);

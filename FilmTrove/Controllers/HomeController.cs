@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using StackExchange.Profiling;
+using Lucene.Net.Store;
 
 
 namespace FilmTrove.Controllers
@@ -45,6 +46,7 @@ namespace FilmTrove.Controllers
                         var UpcomingDVDsTask = RottenTomatoes.Fill.Lists.GetUpcomingDVDs(Limit: 20);
                         using (profiler.Step("GetDatabaseMoviesRottenTomatoes and Awaits"))
                         {
+                            //var ramindex = (RAMDirectory)HttpContext.Cache.Get("ftramindex"); 
                             var NewReleaseDVDs = await GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await NewReleaseDVDsTask, ftc);
                             var UpcomingDVDs = await GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await UpcomingDVDsTask, ftc);
                             var OpeningMovies = await GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await OpeningMoviesTask, ftc);

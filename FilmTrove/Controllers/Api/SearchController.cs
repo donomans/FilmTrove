@@ -2,6 +2,7 @@
 using FilmTrove.Models;
 using FlixSharp;
 using FlixSharp.Holders;
+using Lucene.Net.Store;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,7 @@ namespace FilmTrove.Controllers.Api
                 Titles nfresults = await Netflix.Search.SearchTitles(term, limit);
 
                 Titles rtresults = await RottenTomatoes.Search.SearchTitles(term, limit);
+                //var ramindex = (RAMDirectory)HttpContext.Current.Cache.Get("ftramindex"); 
                 ///need to check if the results are in the database and populate it if not
                 List<Movie> rtmovies = await GeneralHelpers.GetDatabaseMoviesRottenTomatoes(rtresults, ftc);
                 List<Movie> nfmovies = await GeneralHelpers.GetDatabaseMoviesNetflix(nfresults, ftc);

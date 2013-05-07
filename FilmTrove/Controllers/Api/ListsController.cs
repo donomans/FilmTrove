@@ -1,12 +1,14 @@
 ﻿using FilmTrove.Code;
 using FilmTrove.Models;
 using FlixSharp;
+using Lucene.Net.Store;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 
 namespace FilmTrove.Controllers.Api
@@ -23,7 +25,7 @@ namespace FilmTrove.Controllers.Api
         {
             using (FilmTroveContext ftc = new FilmTroveContext())
             {
-                var OpeningMoviesTask = RottenTomatoes.Fill.Lists.GetOpeningMovies(Limit: 20);
+                var OpeningMoviesTask = RottenTomatoes.Fill.Lists.GetOpeningMovies(Limit: 20); 
                 return await GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await OpeningMoviesTask, ftc);
             }
         }
@@ -33,6 +35,7 @@ namespace FilmTrove.Controllers.Api
             using (FilmTroveContext ftc = new FilmTroveContext())
             {
                 var UpcomingMoviesTask = RottenTomatoes.Fill.Lists.GetUpcomingMovies(Limit: 20);
+                //var ramindex = (RAMDirectory)HttpContext.Current.Cache.Get("ftramindex"); 
                 return await GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await UpcomingMoviesTask, ftc);
             }
         }
@@ -42,6 +45,7 @@ namespace FilmTrove.Controllers.Api
             using (FilmTroveContext ftc = new FilmTroveContext())
             {
                 var NewReleaseDVDsTask = RottenTomatoes.Fill.Lists.GetNewReleaseDVDs(Limit: 20);
+                //var ramindex = (RAMDirectory)HttpContext.Current.Cache.Get("ftramindex"); 
                 return await GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await NewReleaseDVDsTask, ftc);
             }
         }
@@ -51,6 +55,7 @@ namespace FilmTrove.Controllers.Api
             using (FilmTroveContext ftc = new FilmTroveContext())
             {
                 var UpcomingDVDsTask = RottenTomatoes.Fill.Lists.GetUpcomingDVDs(Limit: 20);
+                //var ramindex = (RAMDirectory)HttpContext.Current.Cache.Get("ftramindex"); 
                 return await GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await UpcomingDVDsTask, ftc);
             }
         }

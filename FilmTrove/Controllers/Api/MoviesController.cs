@@ -4,6 +4,7 @@ using FilmTrove.Code.RottenTomatoes;
 using FilmTrove.Models;
 using FlixSharp;
 using FlixSharp.Holders;
+using Lucene.Net.Store;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 
 namespace FilmTrove.Controllers.Api
@@ -103,10 +105,12 @@ namespace FilmTrove.Controllers.Api
                 if (nfm != null)
                     netflixtitle = await nfm;
 
+                var ramindex = (RAMDirectory)HttpContext.Current.Cache.Get("ftramindex"); 
+
                 NetflixHelpers.FillBasicNetflixTitle(m, netflixtitle);
                 NetflixHelpers.FillAdvancedNetflix(m, netflixtitle);
                 NetflixHelpers.FillNetflixRoles(m, ftc, netflixtitle);
-                NetflixHelpers.FillNetflixSimilars(m, ftc, netflixtitle);
+                NetflixHelpers.FillNetflixSimilars(m, ftc, netflixtitle, ramindex);
                 NetflixHelpers.FillNetflixGenres(m, ftc, netflixtitle);
 
                 m.Netflix.LastFullUpdate = DateTime.Now;

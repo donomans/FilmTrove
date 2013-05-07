@@ -40,41 +40,46 @@ namespace FilmTrove
             
             Netflix.SetMethodForGettingCurrentUserAccount(FilmTrove.Models.NetflixAccount.GetCurrentUserNetflixUserInfo);
 
+            
             ///Set up Lucene's index
             #region Lucene
             using (FilmTroveContext ftc = new FilmTroveContext())
             {
-                List<MovieTitleHolder> titles = ftc.Database
-                    .SqlQuery<MovieTitleHolder>("SELECT MovieId, Title, AltTitle FROM Movies")
+                var titles = ftc.Movies
+                    .Select(m => new { MovieId = m.MovieId, Title = m.Title, AltTitle = m.AltTitle })
                     .ToList();
-                RAMDirectory ramindex = new RAMDirectory();
-                IndexWriter iw = new IndexWriter(ramindex,
-                    new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30),
-                    IndexWriter.MaxFieldLength.LIMITED);
-                foreach (var title in titles)
+                using (var index = FSDirectory.Open(Server.MapPath("/App_Data/index")))
                 {
-                    Document d = new Document();
-                    d.Add(new Field("Id", title.MovieId.ToString(),
-                        Field.Store.YES, Field.Index.NO));
-                    d.Add(new Field("Title", title.Title,
-                        Field.Store.YES, Field.Index.ANALYZED));
-                    d.Add(new Field("AltTitle", title.AltTitle,
-                        Field.Store.YES, Field.Index.ANALYZED));
-                    iw.AddDocument(d);
+                    using (IndexWriter iw = new IndexWriter(index,
+                        new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30),
+                        IndexWriter.MaxFieldLength.LIMITED))
+                    {
+                        iw.DeleteAll();
+                        foreach (var title in titles)
+                        {
+                            Document d = new Document();
+                            d.Add(new Field("Id", title.MovieId.ToString(),
+                                Field.Store.YES, Field.Index.ANALYZED));
+                            d.Add(new Field("Title", title.Title,
+                                Field.Store.YES, Field.Index.ANALYZED));
+                            d.Add(new Field("AltTitle", title.AltTitle,
+                                Field.Store.YES, Field.Index.ANALYZED));
+                            iw.AddDocument(d);
+                        }
+                        iw.Optimize();
+                    }
                 }
-                iw.Optimize();
-                iw.Close();
-                HttpContext.Current.Items["ftramindex"] = ramindex;
+                //Movie movie = GeneralHelpers.LuceneSearch("hot shots", ftc, index);
             }
             #endregion
         }
 
-        public class MovieTitleHolder
-        {
-            public Int32 MovieId = -1;
-            public String Title = "";
-            public String AltTitle = "";
-        }
+        //public class MovieTitleHolder
+        //{
+        //    public Int32 MovieId = -1;
+        //    public String Title = "";
+        //    public String AltTitle = "";
+        //}
 
         protected void Application_BeginRequest(object sender, EventArgs e)
         {
@@ -83,14 +88,8 @@ namespace FilmTrove
                 MiniProfiler.Start();
                 MiniProfilerEF.InitializeEF42();
             }
+
             HttpContext.Current.Items["ftcontext"] = new FilmTroveContext();
-
-            //StorageCredentialsAccountAndKey scaak = new StorageCredentialsAccountAndKey("fttable",
-            //    "ZUyPecw760rXbPfpGuUbOgc6LL2EgxrkKLWIxGAC2XL53gQWsVGmRz1y1tT7JDYFWoO0R/uEled6MYsLAdZWVg==");
-            //CloudStorageAccount csa = new CloudStorageAccount(scaak, true);
-
-            //AzureDirectory ad = new AzureDirectory(csa, "TESTING");///change this to get the live or localhost version
-            //HttpContext.Current.Items["ftlucene"] = ad;
         }
         protected void Application_EndRequest(object sender, EventArgs e)
         {

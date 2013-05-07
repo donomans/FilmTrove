@@ -76,57 +76,40 @@ namespace FilmTrove.Controllers
                     var netflixmoviestoadd = netflixperson.Filmography.Where(t => !ftmoviesfoundids.Contains(t.FullId)).ToList();
                     if (netflixmoviestoadd.Count > 0)
                     {
-                        RAMDirectory ramindex = (RAMDirectory)HttpContext.Items["ftramindex"];
+                        var ramindex = (RAMDirectory)HttpContext.Cache.Get("ftramindex");
+                        //RAMDirectory ramindex = (RAMDirectory)HttpContext.Items["ftramindex"];
                         if (ramindex == null)
                             throw new MissingMemberException("ramindex was null");
 
-                        IndexWriter iw = new IndexWriter(ramindex,
+                        using (IndexWriter iw = new IndexWriter(ramindex,
                             new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30),
-                            IndexWriter.MaxFieldLength.LIMITED);
-
-                        foreach (FlixSharp.Holders.Netflix.Title title in netflixmoviestoadd)
+                            IndexWriter.MaxFieldLength.LIMITED))
                         {
-                            var m = ftc.Movies.Create();
-                            NetflixHelpers.FillBasicNetflixTitle(m, title);
-
-                            var dbgenreslocal = ftc.Genres.Local.Where(g => title.Genres.Contains(g.Name));
-                            var dbgenres = ftc.Genres.Where(g => title.Genres.Contains(g.Name));
-                            HashSet<Genre> genres = new HashSet<Genre>();
-                            genres.AddRange(dbgenres);
-                            genres.AddRange(dbgenreslocal);
-
-                            var genrenames = genres.Select(g => g.Name);
-                            var missinggenres = title.Genres.Where(g => !genrenames.Contains(g));
-                            foreach (String genre in missinggenres)
+                            foreach (FlixSharp.Holders.Netflix.Title title in netflixmoviestoadd)
                             {
-                                ftc.Genres.Add(new Genre() { Name = genre });
-                            }
-                            foreach (Genre g in genres)
-                            {
-                                MovieGenre gi = ftc.GenreItems.Create();
-                                gi.Genre = g;
-                                gi.Movie = m;
-                                ftc.GenreItems.Add(gi);
-                            }
-                            Document d = new Document();
-                            d.Add(new Field("NetflixId", title.FullId,
-                                Field.Store.YES, Field.Index.NO));
-                            d.Add(new Field("Title", title.FullTitle,
-                                Field.Store.YES, Field.Index.ANALYZED));
-                            d.Add(new Field("AltTitle", title.ShortTitle,
-                                Field.Store.YES, Field.Index.ANALYZED));
-                            iw.AddDocument(d);
+                                var m = ftc.Movies.Create();
+                                NetflixHelpers.FillBasicNetflixTitle(m, title);
+                                NetflixHelpers.FillNetflixGenres(m, ftc, title);
 
-                            ftc.Movies.Add(m);
+                                Document d = new Document();
+                                d.Add(new Field("NetflixId", title.FullId,
+                                    Field.Store.YES, Field.Index.NO));
+                                d.Add(new Field("Title", title.FullTitle,
+                                    Field.Store.YES, Field.Index.ANALYZED));
+                                d.Add(new Field("AltTitle", title.ShortTitle,
+                                    Field.Store.YES, Field.Index.ANALYZED));
+                                iw.AddDocument(d);
 
-                            Role r = ftc.Roles.Create();
-                            r.Movie = m;
-                            r.Person = p;
-                            ftc.Roles.Add(r);
+                                ftc.Movies.Add(m);
+
+                                Role r = ftc.Roles.Create();
+                                r.Movie = m;
+                                r.Person = p;
+                                ftc.Roles.Add(r);
+                            }
+
+                            iw.Optimize();
                         }
-
-                        iw.Optimize();
-                        iw.Close();
                         ///4) check each of those to see they have roles defined (if so then ignore it)
                         //foreach (FilmTrove.Models.Movie ftm in ftmoviesfound)
                         //{

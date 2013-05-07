@@ -28,8 +28,8 @@ namespace FilmTrove.Controllers.Api
                 Person p = ftc.People
                     .Include("Roles.Movie")
                     .Where(person => person.PersonId == id).Single();
-
-                var n = UpdateNetflix(p, ftc);
+                var ramindex = (RAMDirectory)HttpContext.Current.Cache.Get("ftramindex"); 
+                var n = UpdateNetflix(p, ftc, ramindex);
 
                 await n;
 
@@ -39,7 +39,7 @@ namespace FilmTrove.Controllers.Api
             }
         }
 
-        private async Task UpdateNetflix(Person p, FilmTroveContext ftc)
+        private async Task UpdateNetflix(Person p, FilmTroveContext ftc, RAMDirectory ramindex)
         {
             Task<FlixSharp.Holders.Netflix.Person> nfp = null;
             Random ran = new Random();
@@ -64,39 +64,41 @@ namespace FilmTrove.Controllers.Api
 
                 if (netflixmoviestoadd.Count > 0)
                 {
-                    RAMDirectory ramindex = (RAMDirectory)HttpContext.Current.Items["ftramindex"];
-                    if (ramindex == null)
-                        throw new MissingMemberException("ramindex was null");
+                    //var Cache = new System.Web.Caching.Cache();
+                    //var ramindex = (RAMDirectory)Cache.Get("ftramindex");
+                    //RAMDirectory ramindex = (RAMDirectory)HttpContext.Current.Items["ftramindex"];
+                    //if (ramindex == null)
+                    //    throw new MissingMemberException("ramindex was null");
 
-                    IndexWriter iw = new IndexWriter(ramindex,
-                        new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30),
-                        IndexWriter.MaxFieldLength.LIMITED);
-                
-                    foreach (FlixSharp.Holders.Netflix.Title title in netflixmoviestoadd)
+                    using (IndexWriter iw = new IndexWriter(ramindex,
+                    new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30),
+                    IndexWriter.MaxFieldLength.LIMITED))
                     {
-                        var m = ftc.Movies.Create();
-                        NetflixHelpers.FillBasicNetflixTitle(m, title);
-                        NetflixHelpers.FillNetflixGenres(m, ftc, title);
+                        foreach (FlixSharp.Holders.Netflix.Title title in netflixmoviestoadd)
+                        {
+                            var m = ftc.Movies.Create();
+                            NetflixHelpers.FillBasicNetflixTitle(m, title);
+                            NetflixHelpers.FillNetflixGenres(m, ftc, title);
 
-                        Document d = new Document();
-                        d.Add(new Field("NetflixId", title.FullId,
-                            Field.Store.YES, Field.Index.NO));
-                        d.Add(new Field("Title", title.FullTitle,
-                            Field.Store.YES, Field.Index.ANALYZED));
-                        d.Add(new Field("AltTitle", title.ShortTitle,
-                            Field.Store.YES, Field.Index.ANALYZED));
-                        iw.AddDocument(d);
-                    
-                        ftc.Movies.Add(m);
+                            Document d = new Document();
+                            d.Add(new Field("NetflixId", title.FullId,
+                                Field.Store.YES, Field.Index.NO));
+                            d.Add(new Field("Title", title.FullTitle,
+                                Field.Store.YES, Field.Index.ANALYZED));
+                            d.Add(new Field("AltTitle", title.ShortTitle,
+                                Field.Store.YES, Field.Index.ANALYZED));
+                            iw.AddDocument(d);
 
-                        Role r = ftc.Roles.Create();
-                        r.Movie = m;
-                        r.Person = p;
-                        ftc.Roles.Add(r);
+                            ftc.Movies.Add(m);
+
+                            Role r = ftc.Roles.Create();
+                            r.Movie = m;
+                            r.Person = p;
+                            ftc.Roles.Add(r);
+                        }
+
+                        iw.Optimize();
                     }
-
-                    iw.Optimize();
-                    iw.Close();
                 }
             }
             p.Netflix.NeedsUpdate = false;

@@ -19,7 +19,8 @@ namespace FilmTrove.Code
     public class GeneralHelpers
     {
         #region Netflix
-        public static async Task<List<Models.Movie>> GetDatabaseMoviesNetflix(Titles results, FilmTroveContext ftc)
+        public static async Task<List<Models.Movie>> GetDatabaseMoviesNetflix(Titles results, 
+            FilmTroveContext ftc)
         {
             var netflixids = results.Select((m) => (m as FlixSharp.Holders.Netflix.Title).FullId);
 
@@ -39,65 +40,48 @@ namespace FilmTrove.Code
                 .ToList();
             if (unmatchedresults.Count > 0)
             {
-                RAMDirectory ramindex = (RAMDirectory)HttpContext.Current.Items["ftramindex"];
-                if (ramindex == null)
-                    throw new MissingMemberException("ramindex was null");
-
-                IndexWriter iw = new IndexWriter(ramindex,
-                    new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30),
-                    IndexWriter.MaxFieldLength.LIMITED);
-                
-                foreach (var netflixmovie in unmatchedresults)
+                //var Cache = new System.Web.Caching.Cache();
+                //var ramindex = (RAMDirectory)Cache.Get("ftramindex");
+                //RAMDirectory ramindex = (RAMDirectory)HttpContext.Current.Items["ftramindex"];
+                //if (ramindex == null)
+                //    throw new MissingMemberException("ramindex was null");
+                using (var index = FSDirectory.Open(HttpContext.Current.Server.MapPath("/App_Data/index")))
                 {
-                    //String nid = unmatched.FullId;
-                    ///check for FT record incase it was added using a different data source (like RT)
-                    Models.Movie movie = await GetExistingMovie(netflixmovie, ftc);
-                    ///create FT database records for each of these with the movies basic information for now
-                    Boolean wasempty = false;
-                    if (movie == null)
+                    using (IndexWriter iw = new IndexWriter(index,
+                        new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30),
+                        IndexWriter.MaxFieldLength.LIMITED))
                     {
-                        movie = ftc.Movies.Create();
-                        wasempty = true;
-                    }
-                    //FlixSharp.Holders.Netflix.Title netflixmovie = results.Find(movie.Netflix.Id) as FlixSharp.Holders.Netflix.Title;
-                    NetflixHelpers.FillBasicNetflixTitle(movie, netflixmovie);
-                    NetflixHelpers.FillNetflixGenres(movie, ftc, netflixmovie);
-                    //var dbgenreslocal = ftc.Genres.Local.Where(g => netflixmovie.Genres.Contains(g.Name));
-                    //var dbgenres = ftc.Genres.Where(g => netflixmovie.Genres.Contains(g.Name));
-                    //HashSet<Genre> genres = new HashSet<Genre>();
-                    //genres.AddRange(dbgenres);
-                    //genres.AddRange(dbgenreslocal);
+                        foreach (var netflixmovie in unmatchedresults)
+                        {
+                            //String nid = unmatched.FullId;
+                            ///check for FT record incase it was added using a different data source (like RT)
+                            Models.Movie movie = await GetExistingMovie(netflixmovie, ftc);
+                            ///create FT database records for each of these with the movies basic information for now
+                            Boolean wasempty = false;
+                            if (movie == null)
+                            {
+                                movie = ftc.Movies.Create();
+                                wasempty = true;
+                            }
+                            //FlixSharp.Holders.Netflix.Title netflixmovie = results.Find(movie.Netflix.Id) as FlixSharp.Holders.Netflix.Title;
+                            NetflixHelpers.FillBasicNetflixTitle(movie, netflixmovie);
+                            NetflixHelpers.FillNetflixGenres(movie, ftc, netflixmovie);
 
-                    //var genrenames = genres.Select(g => g.Name);
-                    //var missinggenres = netflixmovie.Genres.Where(g => !genrenames.Contains(g));
-                    //foreach (String genre in missinggenres)
-                    //{
-                    //    Genre g = new Genre() { Name = genre };
-                    //    genres.Add(g);
-                    //    ftc.Genres.Add(g);
-                    //}
-                    ////newmovie.Genres = netflixmovie.Genres;
-                    //foreach (Genre g in genres)
-                    //{
-                    //    MovieGenre gi = ftc.GenreItems.Create();
-                    //    gi.Genre = g;
-                    //    gi.Movie = movie;
-                    //    ftc.GenreItems.Add(gi);
-                    //}
-                    Document d = new Document();
-                    d.Add(new Field("NetflixId", netflixmovie.FullId,
-                        Field.Store.YES, Field.Index.NO));
-                    d.Add(new Field("Title", netflixmovie.FullTitle,
-                        Field.Store.YES, Field.Index.ANALYZED));
-                    d.Add(new Field("AltTitle", netflixmovie.ShortTitle,
-                        Field.Store.YES, Field.Index.ANALYZED));
-                    iw.AddDocument(d);
-                    
-                    if(wasempty)
-                        ftc.Movies.Add(movie);
+                            Document d = new Document();
+                            d.Add(new Field("NetflixId", netflixmovie.FullId,
+                                Field.Store.YES, Field.Index.NO));
+                            d.Add(new Field("Title", netflixmovie.FullTitle,
+                                Field.Store.YES, Field.Index.ANALYZED));
+                            d.Add(new Field("AltTitle", netflixmovie.ShortTitle,
+                                Field.Store.YES, Field.Index.ANALYZED));
+                            iw.AddDocument(d);
+
+                            if (wasempty)
+                                ftc.Movies.Add(movie);
+                        }
+                        iw.Optimize();
+                    }
                 }
-                iw.Optimize();
-                iw.Close();
             }
             ftc.SaveChanges();
 
@@ -154,7 +138,8 @@ namespace FilmTrove.Code
         }
         #endregion
         #region Rotten Tomatoes
-        public static async Task<List<Models.Movie>> GetDatabaseMoviesRottenTomatoes(Titles results, FilmTroveContext ftc)
+        public static async Task<List<Models.Movie>>
+            GetDatabaseMoviesRottenTomatoes(Titles results, FilmTroveContext ftc)
         {
             var rottentomatoesids = results.Select(m => m.Id);
 
@@ -174,72 +159,76 @@ namespace FilmTrove.Code
 
             if (unmatchedresults.Count > 0)
             {
-                RAMDirectory ramindex = (RAMDirectory)HttpContext.Current.Items["ftramindex"];
-                if (ramindex == null)
-                    throw new MissingMemberException("ramindex was null");
-
-                IndexWriter iw = new IndexWriter(ramindex,
-                    new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30),
-                    IndexWriter.MaxFieldLength.LIMITED);
-                
-                foreach (var unmatched in unmatchedresults)
+                //var Cache = new System.Web.Caching.Cache();
+                //var ramindex = (RAMDirectory)HttpContext.Current.Cache.Get("ftramindex"); 
+                //RAMDirectory ramindex = (RAMDirectory)HttpContext.Current.Items["ftramindex"];
+                //if (ramindex == null)
+                //    throw new MissingMemberException("ramindex was null");
+                using (var index = FSDirectory.Open(HttpContext.Current.Server.MapPath("/App_Data/index")))
                 {
-                    //String nid = unmatched.FullId;
-                    ///check for FT record incase it was added using a different data source (like RT)
-                    Models.Movie movie = await GetExistingMovie(unmatched, ftc);
-                    ///create FT database records for each of these with the movies basic information for now
-                    Boolean wasempty = false;
-                    if (movie == null)
+                    using (IndexWriter iw = new IndexWriter(index,
+                        new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30),
+                        IndexWriter.MaxFieldLength.LIMITED))
                     {
-                        movie = ftc.Movies.Create();
-                        wasempty = true;
-                    }
-
-                    //FlixSharp.Holders.RottenTomatoes.Title rottentomatoemovie = results.Find(movie.RottenTomatoes.Id) as FlixSharp.Holders.RottenTomatoes.Title;
-                    //if (rottentomatoemovie != null)
-                    //{
-                    RottenTomatoesHelpers.FillRottenTomatoesTitle(movie, unmatched);
-
-                    if (unmatched.Genres.Count > 0)
-                    {
-                        var dbgenreslocal = ftc.Genres.Local.Where(g => unmatched.Genres.Contains(g.Name));
-                        var dbgenres = ftc.Genres.Where(g => unmatched.Genres.Contains(g.Name));
-                        HashSet<Genre> genres = new HashSet<Genre>();
-                        genres.AddRange(dbgenres);
-                        genres.AddRange(dbgenreslocal);
-
-                        var genrenames = genres.Select(g => g.Name);
-                        var missinggenres = unmatched.Genres.Where(g => !genrenames.Contains(g));
-                        foreach (String genre in missinggenres)
+                        foreach (var unmatched in unmatchedresults)
                         {
-                            Genre g = new Genre() { Name = genre };
-                            genres.Add(g);
-                            ftc.Genres.Add(g);
-                        }
-                        //newmovie.Genres = netflixmovie.Genres;
-                        foreach (Genre g in genres)
-                        {
-                            MovieGenre gi = ftc.GenreItems.Create();
-                            gi.Genre = g;
-                            gi.Movie = movie;
-                            ftc.GenreItems.Add(gi);
-                        }
-                    }
+                            //String nid = unmatched.FullId;
+                            ///check for FT record incase it was added using a different data source (like RT)
+                            Models.Movie movie = await GetExistingMovie(unmatched, ftc);
+                            ///create FT database records for each of these with the movies basic information for now
+                            Boolean wasempty = false;
+                            if (movie == null)
+                            {
+                                movie = ftc.Movies.Create();
+                                wasempty = true;
+                            }
 
-                    Document d = new Document();
-                    d.Add(new Field("RottenTomatoesId", unmatched.FullId,
-                        Field.Store.YES, Field.Index.NO));
-                    d.Add(new Field("Title", unmatched.FullTitle,
-                        Field.Store.YES, Field.Index.ANALYZED));
-                    d.Add(new Field("AltTitle", unmatched.FullTitle,
-                        Field.Store.YES, Field.Index.ANALYZED));
-                    iw.AddDocument(d);
-                    
-                    if (wasempty)
-                        ftc.Movies.Add(movie);
+                            //FlixSharp.Holders.RottenTomatoes.Title rottentomatoemovie = results.Find(movie.RottenTomatoes.Id) as FlixSharp.Holders.RottenTomatoes.Title;
+                            //if (rottentomatoemovie != null)
+                            //{
+                            RottenTomatoesHelpers.FillRottenTomatoesTitle(movie, unmatched);
+
+                            if (unmatched.Genres.Count > 0)
+                            {
+                                var dbgenreslocal = ftc.Genres.Local.Where(g => unmatched.Genres.Contains(g.Name));
+                                var dbgenres = ftc.Genres.Where(g => unmatched.Genres.Contains(g.Name));
+                                HashSet<Genre> genres = new HashSet<Genre>();
+                                genres.AddRange(dbgenres);
+                                genres.AddRange(dbgenreslocal);
+
+                                var genrenames = genres.Select(g => g.Name);
+                                var missinggenres = unmatched.Genres.Where(g => !genrenames.Contains(g));
+                                foreach (String genre in missinggenres)
+                                {
+                                    Genre g = new Genre() { Name = genre };
+                                    genres.Add(g);
+                                    ftc.Genres.Add(g);
+                                }
+                                //newmovie.Genres = netflixmovie.Genres;
+                                foreach (Genre g in genres)
+                                {
+                                    MovieGenre gi = ftc.GenreItems.Create();
+                                    gi.Genre = g;
+                                    gi.Movie = movie;
+                                    ftc.GenreItems.Add(gi);
+                                }
+                            }
+
+                            Document d = new Document();
+                            d.Add(new Field("RottenTomatoesId", unmatched.FullId,
+                                Field.Store.YES, Field.Index.NO));
+                            d.Add(new Field("Title", unmatched.FullTitle,
+                                Field.Store.YES, Field.Index.ANALYZED));
+                            d.Add(new Field("AltTitle", unmatched.FullTitle,
+                                Field.Store.YES, Field.Index.ANALYZED));
+                            iw.AddDocument(d);
+
+                            if (wasempty)
+                                ftc.Movies.Add(movie);
+                        }
+                        iw.Optimize();
+                    }
                 }
-                iw.Optimize();
-                iw.Close();
             }
 
             ftc.SaveChanges();
@@ -266,9 +255,10 @@ namespace FilmTrove.Code
         /// <param name="title"></param>
         /// <param name="ftc"></param>
         /// <returns></returns>
-        public static async Task<Models.Movie> GetExistingMovie(ITitle title, FilmTroveContext ftc)
+        public static async Task<Models.Movie> GetExistingMovie(ITitle title, 
+            FilmTroveContext ftc)
         {
-            return LuceneSearch(title.FullTitle, ftc);
+            return TitleSearch(title.FullTitle, ftc, title.Year);
 
             Int32 maxlength = (Int32)(title.FullTitle.Length * 1.2);
             Int32 minlength = (Int32)(title.FullTitle.Length * .8);
@@ -307,45 +297,78 @@ namespace FilmTrove.Code
             }
         }
 
-        private static Movie LuceneSearch(String queryString, FilmTroveContext ftc)
+        public static Movie TitleSearch(String title, 
+            FilmTroveContext ftc, Int32 year = -1)
         {
-            RAMDirectory ramindex = (RAMDirectory)HttpContext.Current.Items["ftramindex"];
-            IndexReader reader = IndexReader.Open(ramindex, true);
-            
-            Searcher searcher = new IndexSearcher(reader);
-
-            MultiFieldQueryParser parser = 
-                new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
-                new[] { "Title", "AltTitle" },
-                new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30));
-            
-            Query query = parser.Parse(queryString);
-            
-            TopDocs td = searcher.Search(query, 5);
-
-            if (td.MaxScore > 80)
+            //var Cache = new System.Web.Caching.Cache();
+            //var ramindex = (RAMDirectory)Cache.Get("ftramindex");
+            //RAMDirectory ramindex = (RAMDirectory)HttpContext.Current.Items["ftramindex"];
+            using (var fsindex = FSDirectory.Open(HttpContext.Current.Server.MapPath("/App_Data/index")))
             {
-                Document doc = searcher.Doc(td.ScoreDocs[0].Doc);
-                //doc.Get("Title");
-                //doc.Get("AltTitle");
-                //doc.Get("NetflixId");
-                //doc.Get("Id");
-                //doc.Get("RottenTomatoesId");
-                String id = doc.Get("Id");
-                if (id != null && id != "")
-                    return ftc.Movies.Find(Int32.Parse(id));
-                
-                String netflixid = doc.Get("NetflixId");
-                if (netflixid != null && netflixid != "")
-                    return ftc.Movies.FirstOrDefault(m => m.Netflix.Id == netflixid);
-                String rottentomatoesid = doc.Get("RottenTomatoesId");
-                if (rottentomatoesid != null && rottentomatoesid != "")
-                    return ftc.Movies.FirstOrDefault(m => m.RottenTomatoes.Id == rottentomatoesid);
+                IndexReader reader = IndexReader.Open(fsindex, true);
 
-                return null;
+                Searcher searcher = new IndexSearcher(reader);
+
+                MultiFieldQueryParser parser =
+                    new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
+                    new[] { "Title", "AltTitle" },
+                    new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30));
+
+                Query query = parser.Parse(QueryParser.Escape(title));
+
+                TopDocs td = searcher.Search(query, 10);
+                var docs = td.ScoreDocs
+                    .Where(d => d.Score > 7.5f)
+                    .ToList();
+                if (docs.Count > 0)
+                {
+                    ///find the closest match of the "documents" with
+                    ///a score above some threshold (like 80?) and get the movies
+                    ///from the database and then check to see if the year is a match.
+                    ///the result set should only be a handful of titles at most.
+                    foreach (var scoredoc in docs)
+                    {
+                        Document doc = searcher.Doc(scoredoc.Doc);
+                        //doc.Get("Title");
+                        //doc.Get("AltTitle");
+                        //doc.Get("NetflixId");
+                        //doc.Get("Id");
+                        //doc.Get("RottenTomatoesId");
+                        Movie m = null;
+
+                        String id = doc.Get("Id");
+                        if (id != null && id != "")
+                            m = ftc.Movies.Find(Int32.Parse(id));
+                        if (m == null)
+                        {
+                            String netflixid = doc.Get("NetflixId");
+                            if (netflixid != null && netflixid != "")
+                                m = ftc.Movies.FirstOrDefault(movie => movie.Netflix.Id == netflixid);
+                            if (m == null)
+                            {
+                                String rottentomatoesid = doc.Get("RottenTomatoesId");
+                                if (rottentomatoesid != null && rottentomatoesid != "")
+                                    m = ftc.Movies.FirstOrDefault(movie => movie.RottenTomatoes.Id == rottentomatoesid);
+                            }
+                        }
+                        if (year > 0)
+                        {
+                            ///if i have a year then i care about it and 
+                            ///so the year should match as well
+                            if (m != null && (m.Year == year ||
+                                m.Year + 1 == year || m.Year - 1 == year))
+                                return m;
+                            else
+                                continue;
+                        }
+                        else
+                            return m;
+                    }
+                    return null;
+                }
+                else
+                    return null;
             }
-            else
-                return null;
         }
     }
 }

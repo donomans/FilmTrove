@@ -105,12 +105,12 @@ namespace FilmTrove.Controllers.Api
                 if (nfm != null)
                     netflixtitle = await nfm;
 
-                var ramindex = (RAMDirectory)HttpContext.Current.Cache.Get("ftramindex"); 
+                //var ramindex = (RAMDirectory)HttpContext.Current.Cache.Get("ftramindex"); 
 
                 NetflixHelpers.FillBasicNetflixTitle(m, netflixtitle);
                 NetflixHelpers.FillAdvancedNetflix(m, netflixtitle);
                 NetflixHelpers.FillNetflixRoles(m, ftc, netflixtitle);
-                NetflixHelpers.FillNetflixSimilars(m, ftc, netflixtitle, ramindex);
+                NetflixHelpers.FillNetflixSimilars(m, ftc, netflixtitle);
                 NetflixHelpers.FillNetflixGenres(m, ftc, netflixtitle);
 
                 m.Netflix.LastFullUpdate = DateTime.Now;

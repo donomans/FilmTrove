@@ -15,6 +15,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Documents;
 using System.Web;
+using System.Web.Hosting;
 
 namespace FilmTrove.Controllers.Api
 {
@@ -28,8 +29,7 @@ namespace FilmTrove.Controllers.Api
                 Person p = ftc.People
                     .Include("Roles.Movie")
                     .Where(person => person.PersonId == id).Single();
-                var ramindex = (RAMDirectory)HttpContext.Current.Cache.Get("ftramindex"); 
-                var n = UpdateNetflix(p, ftc, ramindex);
+                var n = UpdateNetflix(p, ftc);
 
                 await n;
 
@@ -39,7 +39,7 @@ namespace FilmTrove.Controllers.Api
             }
         }
 
-        private async Task UpdateNetflix(Person p, FilmTroveContext ftc, RAMDirectory ramindex)
+        private async Task UpdateNetflix(Person p, FilmTroveContext ftc)
         {
             Task<FlixSharp.Holders.Netflix.Person> nfp = null;
             Random ran = new Random();
@@ -69,35 +69,37 @@ namespace FilmTrove.Controllers.Api
                     //RAMDirectory ramindex = (RAMDirectory)HttpContext.Current.Items["ftramindex"];
                     //if (ramindex == null)
                     //    throw new MissingMemberException("ramindex was null");
-
-                    using (IndexWriter iw = new IndexWriter(ramindex,
-                    new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30),
-                    IndexWriter.MaxFieldLength.LIMITED))
+                    using (var index = FSDirectory.Open(HostingEnvironment.MapPath("/App_Data/index")))
                     {
-                        foreach (FlixSharp.Holders.Netflix.Title title in netflixmoviestoadd)
+                        using (IndexWriter iw = new IndexWriter(index,
+                        new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30),
+                        IndexWriter.MaxFieldLength.LIMITED))
                         {
-                            var m = ftc.Movies.Create();
-                            NetflixHelpers.FillBasicNetflixTitle(m, title);
-                            NetflixHelpers.FillNetflixGenres(m, ftc, title);
+                            foreach (FlixSharp.Holders.Netflix.Title title in netflixmoviestoadd)
+                            {
+                                var m = ftc.Movies.Create();
+                                NetflixHelpers.FillBasicNetflixTitle(m, title);
+                                NetflixHelpers.FillNetflixGenres(m, ftc, title);
 
-                            Document d = new Document();
-                            d.Add(new Field("NetflixId", title.FullId,
-                                Field.Store.YES, Field.Index.NO));
-                            d.Add(new Field("Title", title.FullTitle,
-                                Field.Store.YES, Field.Index.ANALYZED));
-                            d.Add(new Field("AltTitle", title.ShortTitle,
-                                Field.Store.YES, Field.Index.ANALYZED));
-                            iw.AddDocument(d);
+                                Document d = new Document();
+                                d.Add(new Field("NetflixId", title.FullId,
+                                    Field.Store.YES, Field.Index.NO));
+                                d.Add(new Field("Title", title.FullTitle,
+                                    Field.Store.YES, Field.Index.ANALYZED));
+                                d.Add(new Field("AltTitle", title.ShortTitle,
+                                    Field.Store.YES, Field.Index.ANALYZED));
+                                iw.AddDocument(d);
 
-                            ftc.Movies.Add(m);
+                                ftc.Movies.Add(m);
 
-                            Role r = ftc.Roles.Create();
-                            r.Movie = m;
-                            r.Person = p;
-                            ftc.Roles.Add(r);
+                                Role r = ftc.Roles.Create();
+                                r.Movie = m;
+                                r.Person = p;
+                                ftc.Roles.Add(r);
+                            }
+
+                            iw.Optimize();
                         }
-
-                        iw.Optimize();
                     }
                 }
             }

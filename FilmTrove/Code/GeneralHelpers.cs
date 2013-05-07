@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Hosting;
 namespace FilmTrove.Code
 {
     public class GeneralHelpers
@@ -45,7 +46,7 @@ namespace FilmTrove.Code
                 //RAMDirectory ramindex = (RAMDirectory)HttpContext.Current.Items["ftramindex"];
                 //if (ramindex == null)
                 //    throw new MissingMemberException("ramindex was null");
-                using (var index = FSDirectory.Open(HttpContext.Current.Server.MapPath("/App_Data/index")))
+                using (var index = FSDirectory.Open(HostingEnvironment.MapPath("/App_Data/index")))
                 {
                     using (IndexWriter iw = new IndexWriter(index,
                         new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30),
@@ -138,8 +139,8 @@ namespace FilmTrove.Code
         }
         #endregion
         #region Rotten Tomatoes
-        public static async Task<List<Models.Movie>>
-            GetDatabaseMoviesRottenTomatoes(Titles results, FilmTroveContext ftc)
+        public static async Task<List<Models.Movie>> GetDatabaseMoviesRottenTomatoes(Titles results, 
+            FilmTroveContext ftc)
         {
             var rottentomatoesids = results.Select(m => m.Id);
 
@@ -164,7 +165,7 @@ namespace FilmTrove.Code
                 //RAMDirectory ramindex = (RAMDirectory)HttpContext.Current.Items["ftramindex"];
                 //if (ramindex == null)
                 //    throw new MissingMemberException("ramindex was null");
-                using (var index = FSDirectory.Open(HttpContext.Current.Server.MapPath("/App_Data/index")))
+                using (var index = FSDirectory.Open(HostingEnvironment.MapPath("/App_Data/index")))
                 {
                     using (IndexWriter iw = new IndexWriter(index,
                         new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30),
@@ -303,7 +304,7 @@ namespace FilmTrove.Code
             //var Cache = new System.Web.Caching.Cache();
             //var ramindex = (RAMDirectory)Cache.Get("ftramindex");
             //RAMDirectory ramindex = (RAMDirectory)HttpContext.Current.Items["ftramindex"];
-            using (var fsindex = FSDirectory.Open(HttpContext.Current.Server.MapPath("/App_Data/index")))
+            using (var fsindex = FSDirectory.Open(HostingEnvironment.MapPath("/App_Data/index")))
             {
                 IndexReader reader = IndexReader.Open(fsindex, true);
 

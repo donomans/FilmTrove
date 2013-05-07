@@ -40,6 +40,8 @@ namespace FilmTrove
             
             Netflix.SetMethodForGettingCurrentUserAccount(FilmTrove.Models.NetflixAccount.GetCurrentUserNetflixUserInfo);
 
+            if(HttpContext.Current.Server.MachineName == "DEVBOXWIN8VM")
+                MiniProfilerEF.InitializeEF42();
             
             ///Set up Lucene's index
             #region Lucene
@@ -84,10 +86,7 @@ namespace FilmTrove
         protected void Application_BeginRequest(object sender, EventArgs e)
         {
             if (Request.IsLocal)
-            {
                 MiniProfiler.Start();
-                MiniProfilerEF.InitializeEF42();
-            }
 
             HttpContext.Current.Items["ftcontext"] = new FilmTroveContext();
         }

@@ -9,7 +9,9 @@ bin/
 obj/
 /publishprofiles/
 /*.publishsettings
+app_data/
 
 Thumbs.db
 Desktop.ini
 .DS_Store
+

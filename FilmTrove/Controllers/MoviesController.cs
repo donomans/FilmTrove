@@ -18,6 +18,9 @@ using Lucene.Net.Store;
 using Lucene.Net.Index;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Documents;
+using System.Web.Hosting;
+using Lucene.Net.Search;
+using Lucene.Net.QueryParsers;
 
 namespace FilmTrove.Controllers
 {
@@ -50,25 +53,61 @@ namespace FilmTrove.Controllers
                 {
                     ////need to find the best match
                     var searchtitles = await Netflix.Search.SearchTitles(m.Title);
-                    netflixtitle = searchtitles
-                        .Select(mv => mv as FlixSharp.Holders.Netflix.Title)
-                        .FirstOrDefault(mv => 
-                        {
-                            Int32 maxlength = (Int32)(m.Title.Length * 1.2);
-                            Int32 minlength = (Int32)(m.Title.Length * .8);
-                            //mv.ShortTitle == m.AltTitle ||
-                            ///this might be bad as it's potentilaly comparing a null value to a null value
-                            ///or a blank to a blank -- false positives
-                            return ((mv.FullTitle == m.Title && mv.FullTitle.Length >= minlength && mv.FullTitle.Length <= maxlength)
-                            || (mv.ShortTitle.Contains(m.Title) && mv.FullTitle.Length >= minlength && mv.FullTitle.Length <= maxlength)
-                            || (mv.FullTitle.Contains(m.Title) && mv.FullTitle.Length >= minlength && mv.FullTitle.Length <= maxlength)
-                            || (m.Title.Contains(mv.ShortTitle) && mv.FullTitle.Length >= minlength && mv.FullTitle.Length <= maxlength))
-                            && (mv.Year == m.Year
-                                || mv.Year + 1 == m.Year
-                                || mv.Year - 1 == m.Year);
-                        });
 
-                    nfm = Netflix.Fill.Titles.GetCompleteTitle(netflixtitle.IdUrl, OnUserBehalf: true);
+                    using (RAMDirectory ramindex = new RAMDirectory())
+                    {
+                        using (IndexWriter iw = new IndexWriter(ramindex,
+                            new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30),
+                            IndexWriter.MaxFieldLength.LIMITED))
+                        {
+                            foreach (var ntitle in searchtitles)
+                            {
+                                Document d = new Document();
+                                d.Add(new Field("NetflixId", ntitle.FullId.ToString(),
+                                    Field.Store.YES, Field.Index.ANALYZED));
+                                d.Add(new Field("Title", ntitle.FullTitle,
+                                    Field.Store.YES, Field.Index.ANALYZED));
+                                d.Add(new Field("Year", ntitle.Year.ToString(),
+                                    Field.Store.YES, Field.Index.ANALYZED));
+                                iw.AddDocument(d);
+                            }
+                            iw.Optimize();
+                            IndexReader reader = IndexReader.Open(ramindex, true);
+
+                            Searcher searcher = new IndexSearcher(reader);
+
+                            MultiFieldQueryParser parser =
+                                new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
+                                new[] { "Title", "Year" },
+                                new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30));
+
+                            Query query = parser.Parse(QueryParser.Escape(m.Title));
+
+                            TopDocs td = searcher.Search(query, 10);
+                            var docs = td.ScoreDocs
+                                .Where(d => d.Score > 7.5f)
+                                .ToList();
+                            //netflixtitle = searchtitles
+                            //    .Select(mv => mv as FlixSharp.Holders.Netflix.Title)
+                            //    .FirstOrDefault(mv =>
+                            //    {
+                            //        Int32 maxlength = (Int32)(m.Title.Length * 1.2);
+                            //        Int32 minlength = (Int32)(m.Title.Length * .8);
+                            //        //mv.ShortTitle == m.AltTitle ||
+                            //        ///this might be bad as it's potentilaly comparing a null value to a null value
+                            //        ///or a blank to a blank -- false positives
+                            //        return ((mv.FullTitle == m.Title && mv.FullTitle.Length >= minlength && mv.FullTitle.Length <= maxlength)
+                            //        || (mv.ShortTitle.Contains(m.Title) && mv.FullTitle.Length >= minlength && mv.FullTitle.Length <= maxlength)
+                            //        || (mv.FullTitle.Contains(m.Title) && mv.FullTitle.Length >= minlength && mv.FullTitle.Length <= maxlength)
+                            //        || (m.Title.Contains(mv.ShortTitle) && mv.FullTitle.Length >= minlength && mv.FullTitle.Length <= maxlength))
+                            //        && (mv.Year == m.Year
+                            //            || mv.Year + 1 == m.Year
+                            //            || mv.Year - 1 == m.Year);
+                            //    });
+
+                            nfm = Netflix.Fill.Titles.GetCompleteTitle(netflixtitle.IdUrl, OnUserBehalf: true);
+                        }
+                    }
                 }
             }
             using (profiler.Step("Populate Amazon Movie"))
@@ -335,35 +374,32 @@ namespace FilmTrove.Controllers
                             }).ToList();
                         if (titlesfordatabase.Count > 0)
                         {
-                            //var Cache = new System.Web.Caching.Cache();
-                            var ramindex = (RAMDirectory)HttpContext.Cache.Get("ftramindex");
-                            //RAMDirectory ramindex = (RAMDirectory)HttpContext.Items["ftramindex"];
-                            if (ramindex == null)
-                                throw new MissingMemberException("ramindex was null");
-
-                            using (IndexWriter iw = new IndexWriter(ramindex,
-                                new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30),
-                                IndexWriter.MaxFieldLength.LIMITED))
+                            using (var index = FSDirectory.Open(HostingEnvironment.MapPath("/App_Data/index")))
                             {
-                                foreach (FlixSharp.Holders.Netflix.Title t in titlesfordatabase)
+                                using (IndexWriter iw = new IndexWriter(index,
+                                    new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30),
+                                    IndexWriter.MaxFieldLength.LIMITED))
                                 {
-                                    FilmTrove.Models.Movie ftmovie = ftc.Movies.Create();
-                                    NetflixHelpers.FillBasicNetflixTitle(ftmovie, t);
-                                    NetflixHelpers.FillNetflixGenres(ftmovie, ftc, t);
-                                    
-                                    Document d = new Document();
-                                    d.Add(new Field("NetflixId", t.FullId,
-                                        Field.Store.YES, Field.Index.NO));
-                                    d.Add(new Field("Title", t.FullTitle,
-                                        Field.Store.YES, Field.Index.ANALYZED));
-                                    d.Add(new Field("AltTitle", t.ShortTitle,
-                                        Field.Store.YES, Field.Index.ANALYZED));
-                                    iw.AddDocument(d);
+                                    foreach (FlixSharp.Holders.Netflix.Title t in titlesfordatabase)
+                                    {
+                                        FilmTrove.Models.Movie ftmovie = ftc.Movies.Create();
+                                        NetflixHelpers.FillBasicNetflixTitle(ftmovie, t);
+                                        NetflixHelpers.FillNetflixGenres(ftmovie, ftc, t);
 
-                                    ftc.Movies.Add(ftmovie);
+                                        Document d = new Document();
+                                        d.Add(new Field("NetflixId", t.FullId,
+                                            Field.Store.YES, Field.Index.NO));
+                                        d.Add(new Field("Title", t.FullTitle,
+                                            Field.Store.YES, Field.Index.ANALYZED));
+                                        d.Add(new Field("AltTitle", t.ShortTitle,
+                                            Field.Store.YES, Field.Index.ANALYZED));
+                                        iw.AddDocument(d);
+
+                                        ftc.Movies.Add(ftmovie);
+                                    }
+
+                                    iw.Optimize();
                                 }
-
-                                iw.Optimize();
                             }
                         }
                         m.Netflix.SimilarTitles = netflixtitle.SimilarTitles.Select(t => t.IdUrl).ToList();

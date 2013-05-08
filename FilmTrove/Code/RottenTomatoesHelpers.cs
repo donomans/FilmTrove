@@ -1,6 +1,12 @@
 ﻿using FilmTrove.Models;
 using FlixSharp.Holders;
 using FlixSharp.Holders.RottenTomatoes;
+using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Documents;
+using Lucene.Net.Index;
+using Lucene.Net.QueryParsers;
+using Lucene.Net.Search;
+using Lucene.Net.Store;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -88,45 +94,34 @@ namespace FilmTrove.Code.RottenTomatoes
         {
             var searchtitles = await FlixSharp.RottenTomatoes.Search.SearchTitles(m.Title);
 
-            return searchtitles
-                .Select(mv => mv as Title)
-                .FirstOrDefault(mv =>
-                {
-                    Int32 maxlength = (Int32)(m.Title.Length * 1.2);
-                    Int32 minlength = (Int32)(m.Title.Length * .8);
-                    return ((mv.FullTitle == m.AltTitle && mv.FullTitle.Length > minlength && mv.FullTitle.Length < maxlength)
-                    || (mv.FullTitle == m.Title && mv.FullTitle.Length > minlength && mv.FullTitle.Length < maxlength)
-                    || (mv.FullTitle.Contains(m.Title) && mv.FullTitle.Length > minlength && mv.FullTitle.Length < maxlength)
-                    || (m.Title.Contains(mv.FullTitle) && mv.FullTitle.Length > minlength && mv.FullTitle.Length < maxlength)
-                    || (m.AltTitle.Contains(mv.FullTitle) && mv.FullTitle.Length > minlength && mv.FullTitle.Length < maxlength))
-                    && (mv.Year == m.Year
-                    || mv.Year + 1 == m.Year
-                    || mv.Year - 1 == m.Year);
-                });
+            return (Title)GeneralHelpers.FindTitleMatch(m, searchtitles);
         }
-        public static async Task<Movie> FindRottenTomatoesMatch(ITitle t, FilmTroveContext ftc)
-        {
-            var searchtitles = await FlixSharp.RottenTomatoes.Search.SearchTitles(t.FullTitle);
-            Boolean pars = t.FullTitle.Contains("(") && t.FullTitle.Contains(")");
-            Int32 maxlength = pars ? 200 : (Int32)(t.FullTitle.Length * 1.2);
-            Int32 minlength = pars ? 0 : (Int32)(t.FullTitle.Length * .8);
-            String tFullTitle = t.FullTitle.ToLower();
 
-            var match = searchtitles
-                .Select(mv => mv as FlixSharp.Holders.RottenTomatoes.Title)
-                .FirstOrDefault(mv =>
-                {
-                    String mvFullTitle = mv.FullTitle.ToLower();
-                    return ((mvFullTitle == tFullTitle)
-                    || (mvFullTitle.Contains(tFullTitle) && mvFullTitle.Length > minlength && mvFullTitle.Length < maxlength)
-                    || (tFullTitle.Contains(mv.FullTitle) && mvFullTitle.Length > minlength && mvFullTitle.Length < maxlength)
-                    && (mv.Year == t.Year
-                    || mv.Year + 1 == t.Year
-                    || mv.Year - 1 == t.Year));
-                });
-            if (match == null)
-                throw new Exception("crap.");
-            return ftc.Movies.Where(m => m.RottenTomatoes.Id == match.Id).FirstOrDefault();
-        }
+       //public static async Task<Movie> FindRottenTomatoesMatch(ITitle t, FilmTroveContext ftc)
+        //{
+        //    var searchtitles = await FlixSharp.RottenTomatoes.Search.SearchTitles(t.FullTitle);
+        //    Boolean pars = t.FullTitle.Contains("(") && t.FullTitle.Contains(")");
+        //    Int32 maxlength = pars ? 200 : (Int32)(t.FullTitle.Length * 1.2);
+        //    Int32 minlength = pars ? 0 : (Int32)(t.FullTitle.Length * .8);
+        //    String tFullTitle = t.FullTitle.ToLower();
+
+        //    var match = searchtitles
+        //        .Select(mv => mv as FlixSharp.Holders.RottenTomatoes.Title)
+        //        .FirstOrDefault(mv =>
+        //        {
+        //            String mvFullTitle = mv.FullTitle.ToLower();
+        //            return ((mvFullTitle == tFullTitle)
+        //            || (mvFullTitle.Contains(tFullTitle) && mvFullTitle.Length > minlength && mvFullTitle.Length < maxlength)
+        //            || (tFullTitle.Contains(mv.FullTitle) && mvFullTitle.Length > minlength && mvFullTitle.Length < maxlength)
+        //            && (mv.Year == t.Year
+        //            || mv.Year + 1 == t.Year
+        //            || mv.Year - 1 == t.Year));
+        //        });
+        //    if (match == null)
+        //        throw new Exception("crap.");
+        //    return ftc.Movies.Where(m => m.RottenTomatoes.Id == match.Id).FirstOrDefault();
+
+            
+        //}
     }
 }

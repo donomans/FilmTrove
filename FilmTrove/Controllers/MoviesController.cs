@@ -52,62 +52,9 @@ namespace FilmTrove.Controllers
                 else
                 {
                     ////need to find the best match
-                    var searchtitles = await Netflix.Search.SearchTitles(m.Title);
+                    netflixtitle = await NetflixHelpers.FindNetflixMatch(m);
 
-                    using (RAMDirectory ramindex = new RAMDirectory())
-                    {
-                        using (IndexWriter iw = new IndexWriter(ramindex,
-                            new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30),
-                            IndexWriter.MaxFieldLength.LIMITED))
-                        {
-                            foreach (var ntitle in searchtitles)
-                            {
-                                Document d = new Document();
-                                d.Add(new Field("NetflixId", ntitle.FullId.ToString(),
-                                    Field.Store.YES, Field.Index.ANALYZED));
-                                d.Add(new Field("Title", ntitle.FullTitle,
-                                    Field.Store.YES, Field.Index.ANALYZED));
-                                d.Add(new Field("Year", ntitle.Year.ToString(),
-                                    Field.Store.YES, Field.Index.ANALYZED));
-                                iw.AddDocument(d);
-                            }
-                            iw.Optimize();
-                            IndexReader reader = IndexReader.Open(ramindex, true);
-
-                            Searcher searcher = new IndexSearcher(reader);
-
-                            MultiFieldQueryParser parser =
-                                new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
-                                new[] { "Title", "Year" },
-                                new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30));
-
-                            Query query = parser.Parse(QueryParser.Escape(m.Title));
-
-                            TopDocs td = searcher.Search(query, 10);
-                            var docs = td.ScoreDocs
-                                .Where(d => d.Score > 7.5f)
-                                .ToList();
-                            //netflixtitle = searchtitles
-                            //    .Select(mv => mv as FlixSharp.Holders.Netflix.Title)
-                            //    .FirstOrDefault(mv =>
-                            //    {
-                            //        Int32 maxlength = (Int32)(m.Title.Length * 1.2);
-                            //        Int32 minlength = (Int32)(m.Title.Length * .8);
-                            //        //mv.ShortTitle == m.AltTitle ||
-                            //        ///this might be bad as it's potentilaly comparing a null value to a null value
-                            //        ///or a blank to a blank -- false positives
-                            //        return ((mv.FullTitle == m.Title && mv.FullTitle.Length >= minlength && mv.FullTitle.Length <= maxlength)
-                            //        || (mv.ShortTitle.Contains(m.Title) && mv.FullTitle.Length >= minlength && mv.FullTitle.Length <= maxlength)
-                            //        || (mv.FullTitle.Contains(m.Title) && mv.FullTitle.Length >= minlength && mv.FullTitle.Length <= maxlength)
-                            //        || (m.Title.Contains(mv.ShortTitle) && mv.FullTitle.Length >= minlength && mv.FullTitle.Length <= maxlength))
-                            //        && (mv.Year == m.Year
-                            //            || mv.Year + 1 == m.Year
-                            //            || mv.Year - 1 == m.Year);
-                            //    });
-
-                            nfm = Netflix.Fill.Titles.GetCompleteTitle(netflixtitle.IdUrl, OnUserBehalf: true);
-                        }
-                    }
+                    nfm = Netflix.Fill.Titles.GetCompleteTitle(netflixtitle.IdUrl, OnUserBehalf: true);
                 }
             }
             using (profiler.Step("Populate Amazon Movie"))

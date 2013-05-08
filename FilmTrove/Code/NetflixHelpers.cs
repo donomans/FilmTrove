@@ -12,6 +12,8 @@ using Lucene.Net.Index;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Documents;
 using System.Web.Hosting;
+using Lucene.Net.Search;
+using Lucene.Net.QueryParsers;
 
 namespace FilmTrove.Code.Netflix
 {
@@ -303,57 +305,42 @@ namespace FilmTrove.Code.Netflix
         public static async Task<Title> FindNetflixMatch(Movie m)
         {
             var searchtitles = await FlixSharp.Netflix.Search.SearchTitles(m.Title);
-            return searchtitles
-                .Select(mv => mv as FlixSharp.Holders.Netflix.Title)
-                .FirstOrDefault(mv =>
-                {
-                    Int32 maxlength = (Int32)(m.Title.Length * 1.2);
-                    Int32 minlength = (Int32)(m.Title.Length * .8);
-                    //mv.ShortTitle == m.AltTitle ||
-                    ///this might be bad as it's potentilaly comparing a null value to a null value
-                    ///or a blank to a blank -- false positives
-                    return ((mv.FullTitle == m.Title && mv.FullTitle.Length >= minlength && mv.FullTitle.Length <= maxlength)
-                    || (mv.ShortTitle.Contains(m.Title) && mv.FullTitle.Length >= minlength && mv.FullTitle.Length <= maxlength)
-                    || (mv.FullTitle.Contains(m.Title) && mv.FullTitle.Length >= minlength && mv.FullTitle.Length <= maxlength)
-                    || (m.Title.Contains(mv.ShortTitle) && mv.FullTitle.Length >= minlength && mv.FullTitle.Length <= maxlength))
-                    && (mv.Year == m.Year
-                        || mv.Year + 1 == m.Year
-                        || mv.Year - 1 == m.Year);
-                });
+
+            return (Title)GeneralHelpers.FindTitleMatch(m, searchtitles);
         }
-        public static async Task<Movie> FindNetflixMatch(ITitle t, FilmTroveContext ftc)
-        {
-            ///if the t.FullTitle has '(' and ')' then ignore the min/max lengths?
-            ///probably a foreign title that our only hope is to match on contains
-            ///
-            var searchtitles = await FlixSharp.Netflix.Search.SearchTitles(t.FullTitle);
-            String tFullTitle = t.FullTitle.ToLower();
-            Boolean pars =  t.FullTitle.Contains("(") && t.FullTitle.Contains(")");
-            Int32 maxlength = pars ? 200 : (Int32)(t.FullTitle.Length * 1.2);
-            Int32 minlength = pars ? 0 : (Int32)(t.FullTitle.Length * .8);
+        
+        //public static async Task<Movie> FindNetflixMatch(ITitle t, FilmTroveContext ftc)
+        //{
+        //    ///if the t.FullTitle has '(' and ')' then ignore the min/max lengths?
+        //    ///probably a foreign title that our only hope is to match on contains
+        //    ///
+        //    var searchtitles = await FlixSharp.Netflix.Search.SearchTitles(t.FullTitle);
+        //    String tFullTitle = t.FullTitle.ToLower();
+        //    Boolean pars =  t.FullTitle.Contains("(") && t.FullTitle.Contains(")");
+        //    Int32 maxlength = pars ? 200 : (Int32)(t.FullTitle.Length * 1.2);
+        //    Int32 minlength = pars ? 0 : (Int32)(t.FullTitle.Length * .8);
             
-            //await GeneralHelpers.GetDatabaseMoviesNetflix(searchtitles, ftc);
+        //    //await GeneralHelpers.GetDatabaseMoviesNetflix(searchtitles, ftc);
 
-            var match = searchtitles
-                .Select(mv => mv as Title)
-                .FirstOrDefault(mv =>
-                {
-                    String mvFullTitle = mv.FullTitle.ToLower();
-                    return ((mvFullTitle == tFullTitle)
-                    || (mvFullTitle.Contains(tFullTitle) && mvFullTitle.Length > minlength && mvFullTitle.Length < maxlength)
-                    || (tFullTitle.Contains(mvFullTitle) && mvFullTitle.Length > minlength && mvFullTitle.Length < maxlength)
-                    && (mv.Year == t.Year
-                    || mv.Year + 1 == t.Year
-                    || mv.Year - 1 == t.Year));
-                });
-            if (match == null)
-            {
-                //ugh.  bunohan (return to murder) vs bunohan: return to murder
-                return null;
-            }
-            return ftc.Movies.Where(m => m.Netflix.Id == match.FullId).FirstOrDefault();
-
-        }
+        //    var match = searchtitles
+        //        .Select(mv => mv as Title)
+        //        .FirstOrDefault(mv =>
+        //        {
+        //            String mvFullTitle = mv.FullTitle.ToLower();
+        //            return ((mvFullTitle == tFullTitle)
+        //            || (mvFullTitle.Contains(tFullTitle) && mvFullTitle.Length > minlength && mvFullTitle.Length < maxlength)
+        //            || (tFullTitle.Contains(mvFullTitle) && mvFullTitle.Length > minlength && mvFullTitle.Length < maxlength)
+        //            && (mv.Year == t.Year
+        //            || mv.Year + 1 == t.Year
+        //            || mv.Year - 1 == t.Year));
+        //        });
+        //    if (match == null)
+        //    {
+        //        //ugh.  bunohan (return to murder) vs bunohan: return to murder
+        //        return null;
+        //    }
+        //    return ftc.Movies.Where(m => m.Netflix.Id == match.FullId).FirstOrDefault();
+        //}
         public static void FillBasicNetflixPerson(FilmTrove.Models.Person person, FlixSharp.Holders.Netflix.Person nperson)
         {
             person.Netflix.Id = nperson.Id;

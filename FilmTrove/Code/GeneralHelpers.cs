@@ -261,41 +261,41 @@ namespace FilmTrove.Code
         {
             return TitleSearch(title.FullTitle, ftc, title.Year);
 
-            Int32 maxlength = (Int32)(title.FullTitle.Length * 1.2);
-            Int32 minlength = (Int32)(title.FullTitle.Length * .8);
-            var match =
-                (from m
-                in ftc.Movies
-                let mAltTitle = m.AltTitle.ToLower()
-                let mTitle = m.Title.ToLower()
-                let tFullTitle = title.FullTitle.ToLower()
-                where (m.Netflix.Id == title.FullId 
-                || m.RottenTomatoes.Id == title.FullId
-                || (mAltTitle == tFullTitle)
-                || (mTitle == tFullTitle)
-                || (mAltTitle.Contains(tFullTitle) && mAltTitle.Length > minlength && mAltTitle.Length < maxlength)
-                || (mTitle.Contains(tFullTitle) && mTitle.Length > minlength && mTitle.Length < maxlength)
-                || (tFullTitle.Contains(mAltTitle) && mAltTitle.Length > minlength && mAltTitle.Length < maxlength)
-                || (tFullTitle.Contains(mTitle) && mTitle.Length > minlength && mTitle.Length < maxlength))
-                && (m.Year == title.Year
-                    || title.Year + 1 == m.Year
-                    || title.Year - 1 == m.Year)
-                select m).FirstOrDefault();
+            //Int32 maxlength = (Int32)(title.FullTitle.Length * 1.2);
+            //Int32 minlength = (Int32)(title.FullTitle.Length * .8);
+            //var match =
+            //    (from m
+            //    in ftc.Movies
+            //    let mAltTitle = m.AltTitle.ToLower()
+            //    let mTitle = m.Title.ToLower()
+            //    let tFullTitle = title.FullTitle.ToLower()
+            //    where (m.Netflix.Id == title.FullId 
+            //    || m.RottenTomatoes.Id == title.FullId
+            //    || (mAltTitle == tFullTitle)
+            //    || (mTitle == tFullTitle)
+            //    || (mAltTitle.Contains(tFullTitle) && mAltTitle.Length > minlength && mAltTitle.Length < maxlength)
+            //    || (mTitle.Contains(tFullTitle) && mTitle.Length > minlength && mTitle.Length < maxlength)
+            //    || (tFullTitle.Contains(mAltTitle) && mAltTitle.Length > minlength && mAltTitle.Length < maxlength)
+            //    || (tFullTitle.Contains(mTitle) && mTitle.Length > minlength && mTitle.Length < maxlength))
+            //    && (m.Year == title.Year
+            //        || title.Year + 1 == m.Year
+            //        || title.Year - 1 == m.Year)
+            //    select m).FirstOrDefault();
 
-            if (match != null)
-                return match;
-            else
-            {
-                switch (title.Source)
-                {
-                    case TitleSource.Netflix:
-                        return await RottenTomatoesHelpers.FindRottenTomatoesMatch(title, ftc);
-                    case TitleSource.RottenTomatoes:
-                        return await NetflixHelpers.FindNetflixMatch(title, ftc);
-                    default:
-                        throw new NotImplementedException("Title type of: " + title.Source.ToString() + " is not implemented");
-                }
-            }
+            //if (match != null)
+            //    return match;
+            //else
+            //{
+            //    switch (title.Source)
+            //    {
+            //        case TitleSource.Netflix:
+            //            return await RottenTomatoesHelpers.FindRottenTomatoesMatch(title, ftc);
+            //        case TitleSource.RottenTomatoes:
+            //            return await NetflixHelpers.FindNetflixMatch(title, ftc);
+            //        default:
+            //            throw new NotImplementedException("Title type of: " + title.Source.ToString() + " is not implemented");
+            //    }
+            //}
         }
 
         public static Movie TitleSearch(String title, 
@@ -371,5 +371,60 @@ namespace FilmTrove.Code
                     return null;
             }
         }
+
+        public static ITitle FindTitleMatch(Movie m, Titles searchtitles)
+        {
+            using (RAMDirectory ramindex = new RAMDirectory())
+            {
+                using (IndexWriter iw = new IndexWriter(ramindex,
+                    new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30),
+                    IndexWriter.MaxFieldLength.LIMITED))
+                {
+                    foreach (var title in searchtitles)
+                    {
+                        Document d = new Document();
+                        d.Add(new Field("Id", title.FullId.ToString(),
+                            Field.Store.YES, Field.Index.ANALYZED));
+                        d.Add(new Field("Title", title.FullTitle,
+                            Field.Store.YES, Field.Index.ANALYZED));
+                        d.Add(new Field("Year", title.Year.ToString(),
+                            Field.Store.YES, Field.Index.ANALYZED));
+                        iw.AddDocument(d);
+                    }
+                    iw.Optimize();
+                    IndexReader reader = IndexReader.Open(ramindex, true);
+
+                    Searcher searcher = new IndexSearcher(reader);
+
+                    MultiFieldQueryParser parser =
+                        new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
+                        new[] { "Title", "Year" },
+                        new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30));
+
+                    Query query = parser.Parse(QueryParser.Escape(m.Title));
+
+                    TopDocs td = searcher.Search(query, 10);
+                    var docs = td.ScoreDocs
+                        .Where(d => d.Score > 7.5f)
+                        .ToList();
+
+                    if (docs.Count > 0)
+                    {
+                        return (Title)docs.Select(d =>
+                        {
+                            Document doc = searcher.Doc(d.Doc);
+                            String id = doc.Get("Id");
+                            return searchtitles.Single(t => t.FullId == id);
+                        }).FirstOrDefault(t =>
+                            m.Year == t.Year ||
+                            m.Year + 1 == t.Year ||
+                            m.Year - 1 == t.Year);
+                    }
+                    else
+                        return null;
+                }
+            }
+        }
+        
     }
 }

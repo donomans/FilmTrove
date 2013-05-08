@@ -156,7 +156,8 @@ namespace FilmTrove.Controllers.Api
                 ///9) studio
                 ///10) synopsis
                 RottenTomatoesHelpers.FillRottenTomatoesTitle(m, rottentomatoestitle);
-                
+                RottenTomatoesHelpers.FillRottenTomatoesGenres(m, ftc, rottentomatoestitle);
+
                 m.RottenTomatoes.LastFullUpdate = DateTime.Now;
                 m.RottenTomatoes.NeedsUpdate = false;
             }

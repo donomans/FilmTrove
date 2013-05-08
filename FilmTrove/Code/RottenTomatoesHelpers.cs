@@ -90,6 +90,35 @@ namespace FilmTrove.Code.RottenTomatoes
                 movie.RottenTomatoes.TheatricalRelase = theatricalrelease.Date;
         }
 
+        public static void FillRottenTomatoesGenres(Movie movie, FilmTroveContext ftc, FlixSharp.Holders.RottenTomatoes.Title unmatched)
+        {
+            if (unmatched.Genres.Count > 0)
+            {
+                var dbgenreslocal = ftc.Genres.Local.Where(g => unmatched.Genres.Contains(g.Name));
+                var dbgenres = ftc.Genres.Where(g => unmatched.Genres.Contains(g.Name));
+                HashSet<Genre> genres = new HashSet<Genre>();
+                genres.AddRange(dbgenres);
+                genres.AddRange(dbgenreslocal);
+
+                var genrenames = genres.Select(g => g.Name);
+                var missinggenres = unmatched.Genres.Where(g => !genrenames.Contains(g));
+                foreach (String genre in missinggenres)
+                {
+                    Genre g = new Genre() { Name = genre };
+                    genres.Add(g);
+                    ftc.Genres.Add(g);
+                }
+                //newmovie.Genres = netflixmovie.Genres;
+                foreach (Genre g in genres)
+                {
+                    MovieGenre gi = ftc.GenreItems.Create();
+                    gi.Genre = g;
+                    gi.Movie = movie;
+                    ftc.GenreItems.Add(gi);
+                }
+            }
+        }
+
         public static async Task<Title> FindRottenTomatoesMatch(Movie m)
         {
             var searchtitles = await FlixSharp.RottenTomatoes.Search.SearchTitles(m.Title);

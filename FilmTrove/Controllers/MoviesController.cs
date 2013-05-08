@@ -356,28 +356,7 @@ namespace FilmTrove.Controllers
                     #region Populate Genres
                     using (profiler.Step("Populate Genres"))
                     {
-                        var dbgl = ftc.Genres.Local.Where(g => netflixtitle.Genres.Contains(g.Name));
-                        var dbg = ftc.Genres.Where(g => netflixtitle.Genres.Contains(g.Name));
-                        HashSet<Genre> gs = new HashSet<Genre>();
-                        gs.AddRange(dbg);
-                        gs.AddRange(dbgl);
-
-                        var gn = gs.Select(g => g.Name);
-                        var mgs = netflixtitle.Genres.Where(g => !gn.Contains(g));
-                        foreach (String genre in mgs)
-                        {
-                            Genre g = new Genre() { Name = genre };
-                            gs.Add(g);
-                            ftc.Genres.Add(g);
-                        }
-                        //newmovie.Genres = netflixmovie.Genres;
-                        foreach (Genre g in gs)
-                        {
-                            MovieGenre gi = ftc.GenreItems.Create();
-                            gi.Genre = g;
-                            gi.Movie = m;
-                            ftc.GenreItems.Add(gi);
-                        }
+                        NetflixHelpers.FillNetflixGenres(m, ftc, netflixtitle);
                     }
                     #endregion
                     m.Netflix.Synopsis = netflixtitle.Synopsis;

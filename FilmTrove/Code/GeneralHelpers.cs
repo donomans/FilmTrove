@@ -189,31 +189,7 @@ namespace FilmTrove.Code
                             //{
                             RottenTomatoesHelpers.FillRottenTomatoesTitle(movie, unmatched);
 
-                            if (unmatched.Genres.Count > 0)
-                            {
-                                var dbgenreslocal = ftc.Genres.Local.Where(g => unmatched.Genres.Contains(g.Name));
-                                var dbgenres = ftc.Genres.Where(g => unmatched.Genres.Contains(g.Name));
-                                HashSet<Genre> genres = new HashSet<Genre>();
-                                genres.AddRange(dbgenres);
-                                genres.AddRange(dbgenreslocal);
-
-                                var genrenames = genres.Select(g => g.Name);
-                                var missinggenres = unmatched.Genres.Where(g => !genrenames.Contains(g));
-                                foreach (String genre in missinggenres)
-                                {
-                                    Genre g = new Genre() { Name = genre };
-                                    genres.Add(g);
-                                    ftc.Genres.Add(g);
-                                }
-                                //newmovie.Genres = netflixmovie.Genres;
-                                foreach (Genre g in genres)
-                                {
-                                    MovieGenre gi = ftc.GenreItems.Create();
-                                    gi.Genre = g;
-                                    gi.Movie = movie;
-                                    ftc.GenreItems.Add(gi);
-                                }
-                            }
+                            RottenTomatoesHelpers.FillRottenTomatoesGenres(movie, ftc, unmatched);
 
                             Document d = new Document();
                             d.Add(new Field("RottenTomatoesId", unmatched.FullId,
@@ -243,6 +219,8 @@ namespace FilmTrove.Code
                     r.RottenTomatoes.Id == m.FullId)).ToList();
             //}
         }
+
+        
         public static List<Models.Person> GetDatabasePeopleRottenTomatoes(Titles results, FilmTroveContext ftc)
         {
             return null;
@@ -298,7 +276,7 @@ namespace FilmTrove.Code
             //}
         }
 
-        public static Movie TitleSearch(String title, 
+        public static Movie TitleSearch(String title,
             FilmTroveContext ftc, Int32 year = -1)
         {
             //var Cache = new System.Web.Caching.Cache();
@@ -306,69 +284,67 @@ namespace FilmTrove.Code
             //RAMDirectory ramindex = (RAMDirectory)HttpContext.Current.Items["ftramindex"];
             using (var fsindex = FSDirectory.Open(HostingEnvironment.MapPath("/App_Data/index")))
             {
-                IndexReader reader = IndexReader.Open(fsindex, true);
-
-                Searcher searcher = new IndexSearcher(reader);
-
-                MultiFieldQueryParser parser =
-                    new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
-                    new[] { "Title", "AltTitle" },
-                    new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30));
-
-                Query query = parser.Parse(QueryParser.Escape(title));
-
-                TopDocs td = searcher.Search(query, 10);
-                var docs = td.ScoreDocs
-                    .Where(d => d.Score > 7.5f)
-                    .ToList();
-                if (docs.Count > 0)
+                using (IndexReader reader = IndexReader.Open(fsindex, true))
                 {
-                    ///find the closest match of the "documents" with
-                    ///a score above some threshold (like 80?) and get the movies
-                    ///from the database and then check to see if the year is a match.
-                    ///the result set should only be a handful of titles at most.
-                    foreach (var scoredoc in docs)
+                    using (Searcher searcher = new IndexSearcher(reader))
                     {
-                        Document doc = searcher.Doc(scoredoc.Doc);
-                        //doc.Get("Title");
-                        //doc.Get("AltTitle");
-                        //doc.Get("NetflixId");
-                        //doc.Get("Id");
-                        //doc.Get("RottenTomatoesId");
-                        Movie m = null;
 
-                        String id = doc.Get("Id");
-                        if (id != null && id != "")
-                            m = ftc.Movies.Find(Int32.Parse(id));
-                        if (m == null)
+                        MultiFieldQueryParser parser =
+                            new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
+                            new[] { "Title", "AltTitle" },
+                            new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30));
+
+                        Query query = parser.Parse(QueryParser.Escape(title));
+
+                        TopDocs td = searcher.Search(query, 10);
+                        var docs = td.ScoreDocs
+                            .Where(d => d.Score > 7.5f)
+                            .ToList();
+                        if (docs.Count > 0)
                         {
-                            String netflixid = doc.Get("NetflixId");
-                            if (netflixid != null && netflixid != "")
-                                m = ftc.Movies.FirstOrDefault(movie => movie.Netflix.Id == netflixid);
-                            if (m == null)
+                            ///find the closest match of the "documents" with
+                            ///a score above some threshold (like 80?) and get the movies
+                            ///from the database and then check to see if the year is a match.
+                            ///the result set should only be a handful of titles at most.
+                            foreach (var scoredoc in docs)
                             {
-                                String rottentomatoesid = doc.Get("RottenTomatoesId");
-                                if (rottentomatoesid != null && rottentomatoesid != "")
-                                    m = ftc.Movies.FirstOrDefault(movie => movie.RottenTomatoes.Id == rottentomatoesid);
+                                Document doc = searcher.Doc(scoredoc.Doc);
+                                Movie m = null;
+
+                                String id = doc.Get("Id");
+                                if (id != null && id != "")
+                                    m = ftc.Movies.Find(Int32.Parse(id));
+                                if (m == null)
+                                {
+                                    String netflixid = doc.Get("NetflixId");
+                                    if (netflixid != null && netflixid != "")
+                                        m = ftc.Movies.FirstOrDefault(movie => movie.Netflix.Id == netflixid);
+                                    if (m == null)
+                                    {
+                                        String rottentomatoesid = doc.Get("RottenTomatoesId");
+                                        if (rottentomatoesid != null && rottentomatoesid != "")
+                                            m = ftc.Movies.FirstOrDefault(movie => movie.RottenTomatoes.Id == rottentomatoesid);
+                                    }
+                                }
+                                if (year > 0)
+                                {
+                                    ///if i have a year then i care about it and 
+                                    ///so the year should match as well
+                                    if (m != null && (m.Year == year ||
+                                        m.Year + 1 == year || m.Year - 1 == year))
+                                        return m;
+                                    else
+                                        continue;
+                                }
+                                else
+                                    return m;
                             }
-                        }
-                        if (year > 0)
-                        {
-                            ///if i have a year then i care about it and 
-                            ///so the year should match as well
-                            if (m != null && (m.Year == year ||
-                                m.Year + 1 == year || m.Year - 1 == year))
-                                return m;
-                            else
-                                continue;
+                            return null;
                         }
                         else
-                            return m;
+                            return null;
                     }
-                    return null;
                 }
-                else
-                    return null;
             }
         }
 
@@ -392,36 +368,38 @@ namespace FilmTrove.Code
                         iw.AddDocument(d);
                     }
                     iw.Optimize();
-                    IndexReader reader = IndexReader.Open(ramindex, true);
-
-                    Searcher searcher = new IndexSearcher(reader);
-
-                    MultiFieldQueryParser parser =
-                        new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
-                        new[] { "Title", "Year" },
-                        new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30));
-
-                    Query query = parser.Parse(QueryParser.Escape(m.Title));
-
-                    TopDocs td = searcher.Search(query, 10);
-                    var docs = td.ScoreDocs
-                        .Where(d => d.Score > 7.5f)
-                        .ToList();
-
-                    if (docs.Count > 0)
+                }
+                using (IndexReader reader = IndexReader.Open(ramindex, true))
+                {
+                    using (Searcher searcher = new IndexSearcher(reader))
                     {
-                        return (Title)docs.Select(d =>
+                        QueryParser parser =
+                            new QueryParser(Lucene.Net.Util.Version.LUCENE_30,
+                            "Title",
+                            new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30));
+
+                        Query query = parser.Parse(QueryParser.Escape(m.Title));
+
+                        TopDocs td = searcher.Search(query, 10);
+                        var docs = td.ScoreDocs
+                            .Where(d => d.Score > 7.5f)
+                            .ToList();
+
+                        if (docs.Count > 0)
                         {
-                            Document doc = searcher.Doc(d.Doc);
-                            String id = doc.Get("Id");
-                            return searchtitles.Single(t => t.FullId == id);
-                        }).FirstOrDefault(t =>
-                            m.Year == t.Year ||
-                            m.Year + 1 == t.Year ||
-                            m.Year - 1 == t.Year);
+                            return (Title)docs.Select(d =>
+                            {
+                                Document doc = searcher.Doc(d.Doc);
+                                String id = doc.Get("Id");
+                                return searchtitles.Single(t => t.FullId == id);
+                            }).FirstOrDefault(t =>
+                                m.Year == t.Year ||
+                                m.Year + 1 == t.Year ||
+                                m.Year - 1 == t.Year);
+                        }
+                        else
+                            return null;
                     }
-                    else
-                        return null;
                 }
             }
         }

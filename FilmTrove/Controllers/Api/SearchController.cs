@@ -20,13 +20,13 @@ namespace FilmTrove.Controllers.Api
         {
             using (FilmTroveContext ftc = new FilmTroveContext())
             {
-                Titles nfresults = await Netflix.Search.SearchTitles(term, limit);
+                var nfresults = Netflix.Search.SearchTitles(term, limit);
 
-                Titles rtresults = await RottenTomatoes.Search.SearchTitles(term, limit);
+                var rtresults = RottenTomatoes.Search.SearchTitles(term, limit);
                 //var ramindex = (RAMDirectory)HttpContext.Current.Cache.Get("ftramindex"); 
                 ///need to check if the results are in the database and populate it if not
                 List<Movie> rtmovies = await GeneralHelpers.GetDatabaseMoviesRottenTomatoes(rtresults, ftc);
-                List<Movie> nfmovies = await GeneralHelpers.GetDatabaseMoviesNetflix(nfresults, ftc);
+                List<Movie> nfmovies = await GeneralHelpers.GetDatabaseMoviesNetflix(await nfresults, ftc);
                 return nfmovies.Uniques(rtmovies);
             }
         }

@@ -331,7 +331,7 @@ namespace FilmTrove.Controllers
                                     {
                                         FilmTrove.Models.Movie ftmovie = ftc.Movies.Create();
                                         NetflixHelpers.FillBasicNetflixTitle(ftmovie, t);
-                                        NetflixHelpers.FillNetflixGenres(ftmovie, ftc, t);
+                                        NetflixHelpers.AddNetflixGenres(ftmovie, ftc, t);
 
                                         Document d = new Document();
                                         d.Add(new Field("NetflixId", t.FullId,
@@ -356,7 +356,7 @@ namespace FilmTrove.Controllers
                     #region Populate Genres
                     using (profiler.Step("Populate Genres"))
                     {
-                        NetflixHelpers.FillNetflixGenres(m, ftc, netflixtitle);
+                        NetflixHelpers.AddNetflixGenres(m, ftc, netflixtitle);
                     }
                     #endregion
                     m.Netflix.Synopsis = netflixtitle.Synopsis;

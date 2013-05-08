@@ -111,7 +111,7 @@ namespace FilmTrove.Controllers.Api
                 NetflixHelpers.FillAdvancedNetflix(m, netflixtitle);
                 NetflixHelpers.FillNetflixRoles(m, ftc, netflixtitle);
                 NetflixHelpers.FillNetflixSimilars(m, ftc, netflixtitle);
-                NetflixHelpers.FillNetflixGenres(m, ftc, netflixtitle);
+                NetflixHelpers.AddNetflixGenres(m, ftc, netflixtitle);
 
                 m.Netflix.LastFullUpdate = DateTime.Now;
                 m.Netflix.NeedsUpdate = false;
@@ -156,7 +156,7 @@ namespace FilmTrove.Controllers.Api
                 ///9) studio
                 ///10) synopsis
                 RottenTomatoesHelpers.FillRottenTomatoesTitle(m, rottentomatoestitle);
-                RottenTomatoesHelpers.FillRottenTomatoesGenres(m, ftc, rottentomatoestitle);
+                RottenTomatoesHelpers.AddRottenTomatoesGenres(m, ftc, rottentomatoestitle);
 
                 m.RottenTomatoes.LastFullUpdate = DateTime.Now;
                 m.RottenTomatoes.NeedsUpdate = false;

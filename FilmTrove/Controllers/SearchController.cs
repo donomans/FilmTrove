@@ -22,14 +22,15 @@ namespace FilmTrove.Controllers
             FilmTroveContext ftc = (FilmTroveContext)HttpContext.Items["ftcontext"];
             //String term = form["searchterm"].ToString();
             //Netflix n = new Netflix();
-            SearchResults results = await Netflix.Search.SearchEverything(searchterm, Limit: 30);//Randomized().
+            var results = Netflix.Search.SearchEverything(searchterm, Limit: 30);//Randomized().
             //var ramindex = (RAMDirectory)HttpContext.Cache.Get("ftramindex"); 
-            Titles rtresults = await RottenTomatoes.Search.SearchTitles(searchterm, Limit: 30);
+            var rtresults = RottenTomatoes.Search.SearchTitles(searchterm, Limit: 30);
             ///need to check if the results are in the database and populate it if not
-            List<Movie> rtmovies = await GeneralHelpers.GetDatabaseMoviesRottenTomatoes(rtresults, ftc);
-            List<Movie> nfmovies = await GeneralHelpers.GetDatabaseMoviesNetflix(results.MovieResults, ftc);
-            ViewBag.MovieResults = nfmovies.Uniques(rtmovies);
-            ViewBag.PeopleResults = GeneralHelpers.GetDatabasePeopleNetflix(results.PeopleResults, ftc);
+
+            var rtmovies = GeneralHelpers.GetDatabaseMoviesRottenTomatoes(rtresults, ftc);
+            var nfmovies = GeneralHelpers.GetDatabaseMoviesNetflix((await results).MovieResults, ftc);
+            ViewBag.MovieResults = (await nfmovies).Uniques(await rtmovies);
+            ViewBag.PeopleResults = GeneralHelpers.GetDatabasePeopleNetflix(results.Result.PeopleResults, ftc);
 
             //ViewBag.SearchResults = results;
             ViewBag.Term = searchterm;

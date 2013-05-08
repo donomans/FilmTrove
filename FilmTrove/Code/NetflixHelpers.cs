@@ -93,7 +93,7 @@ namespace FilmTrove.Code.Netflix
                         {
                             FilmTrove.Models.Movie ftmovie = ftc.Movies.Create();
                             FillBasicNetflixTitle(ftmovie, t);
-                            FillNetflixGenres(ftmovie, ftc, t);
+                            AddNetflixGenres(ftmovie, ftc, t);
 
                             Document d = new Document();
                             d.Add(new Field("NetflixId", t.FullId,
@@ -239,7 +239,7 @@ namespace FilmTrove.Code.Netflix
             }
         }
 
-        public static void FillNetflixGenres(Movie m, FilmTroveContext ftc, FlixSharp.Holders.Netflix.Title netflixtitle)
+        public static void AddNetflixGenres(Movie m, FilmTroveContext ftc, FlixSharp.Holders.Netflix.Title netflixtitle)
         {
             var dbgl = ftc.Genres.Local.Where(g => netflixtitle.Genres.Contains(g.Name));
             var dbg = ftc.Genres.Where(g => netflixtitle.Genres.Contains(g.Name));
@@ -272,18 +272,26 @@ namespace FilmTrove.Code.Netflix
             {
                 ///need to find the roles that are already added (under the RoleType.None) so i can correct those
                 ///need to find the noneroles that are actors now
-                var nftitle = new FlixSharp.Holders.Netflix.Title();
-                nftitle.Actors = await FlixSharp.Netflix.Fill.Titles.GetActors(m.Netflix.IdUrl);
-                nftitle.Directors = await FlixSharp.Netflix.Fill.Titles.GetDirectors(m.Netflix.IdUrl);
+                //var nftitle = new FlixSharp.Holders.Netflix.Title();
+                var actors = FlixSharp.Netflix.Fill.Titles.GetActors(m.Netflix.IdUrl);
+                var directors = FlixSharp.Netflix.Fill.Titles.GetDirectors(m.Netflix.IdUrl);
+                var Actors = await actors;
+                var Directors = await directors;
 
                 foreach (var nonerole in noneroles)
                 {
-                    FlixSharp.Holders.Netflix.Person nfactor = nftitle.Actors.Where(p => p.Id == nonerole.Person.Netflix.Id).SingleOrDefault() as FlixSharp.Holders.Netflix.Person;
+                    FlixSharp.Holders.Netflix.Person nfactor = Actors
+                        .FirstOrDefault(p => p.Id == nonerole.Person.Netflix.Id) 
+                        as FlixSharp.Holders.Netflix.Person;
+
                     if (nfactor != null)
                     {
                         nonerole.InRole = RoleType.Actor;
                     }
-                    FlixSharp.Holders.Netflix.Person nfdirector = nftitle.Directors.Where(p => p.Id == nonerole.Person.Netflix.Id).SingleOrDefault() as FlixSharp.Holders.Netflix.Person;
+                    FlixSharp.Holders.Netflix.Person nfdirector = Directors
+                        .FirstOrDefault(p => p.Id == nonerole.Person.Netflix.Id) 
+                        as FlixSharp.Holders.Netflix.Person;
+
                     if (nfdirector != null)
                     {
                         if (nonerole.InRole != RoleType.None)
@@ -341,6 +349,7 @@ namespace FilmTrove.Code.Netflix
         //    }
         //    return ftc.Movies.Where(m => m.Netflix.Id == match.FullId).FirstOrDefault();
         //}
+
         public static void FillBasicNetflixPerson(FilmTrove.Models.Person person, FlixSharp.Holders.Netflix.Person nperson)
         {
             person.Netflix.Id = nperson.Id;

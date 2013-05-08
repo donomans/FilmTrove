@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Hosting;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -39,7 +40,7 @@ namespace FilmTrove
                 "FilmTrove");
             
             Netflix.SetMethodForGettingCurrentUserAccount(FilmTrove.Models.NetflixAccount.GetCurrentUserNetflixUserInfo);
-
+            
             if(HttpContext.Current.Server.MachineName == "DEVBOXWIN8VM")
                 MiniProfilerEF.InitializeEF42();
             
@@ -61,7 +62,7 @@ namespace FilmTrove
                         {
                             Document d = new Document();
                             d.Add(new Field("Id", title.MovieId.ToString(),
-                                Field.Store.YES, Field.Index.ANALYZED));
+                                Field.Store.YES, Field.Index.NO));
                             d.Add(new Field("Title", title.Title,
                                 Field.Store.YES, Field.Index.ANALYZED));
                             d.Add(new Field("AltTitle", title.AltTitle,
@@ -86,7 +87,9 @@ namespace FilmTrove
         protected void Application_BeginRequest(object sender, EventArgs e)
         {
             if (Request.IsLocal)
+            {
                 MiniProfiler.Start();
+            }
 
             HttpContext.Current.Items["ftcontext"] = new FilmTroveContext();
         }

@@ -90,7 +90,7 @@ namespace FilmTrove.Code.RottenTomatoes
                 movie.RottenTomatoes.TheatricalRelase = theatricalrelease.Date;
         }
 
-        public static void FillRottenTomatoesGenres(Movie movie, FilmTroveContext ftc, FlixSharp.Holders.RottenTomatoes.Title unmatched)
+        public static void AddRottenTomatoesGenres(Movie movie, FilmTroveContext ftc, FlixSharp.Holders.RottenTomatoes.Title unmatched)
         {
             if (unmatched.Genres.Count > 0)
             {

@@ -87,7 +87,7 @@ namespace FilmTrove.Controllers
                                 {
                                     var m = ftc.Movies.Create();
                                     NetflixHelpers.FillBasicNetflixTitle(m, title);
-                                    NetflixHelpers.FillNetflixGenres(m, ftc, title);
+                                    NetflixHelpers.AddNetflixGenres(m, ftc, title);
 
                                     Document d = new Document();
                                     d.Add(new Field("NetflixId", title.FullId,

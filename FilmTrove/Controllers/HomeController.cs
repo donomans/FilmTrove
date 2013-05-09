@@ -35,23 +35,18 @@ namespace FilmTrove.Controllers
                     var upcomingdvds = (List<Movie>)HttpContext.Cache.Get("UpcomingDVDs");
                     if (openingmovies == null || upcomingmovies == null || newreleasedvds == null || upcomingdvds == null) 
                     {
-                        var o = FlixSharp.Helpers.RottenTomatoes.UrlBuilder.OpeningMoviesUrl("us", 20);
-                        var u = FlixSharp.Helpers.RottenTomatoes.UrlBuilder.UpcomingMoviesUrl("us", 20);
-                        var n = FlixSharp.Helpers.RottenTomatoes.UrlBuilder.NewReleaseDVDsUrl("us", 20);
-                        var f = FlixSharp.Helpers.RottenTomatoes.UrlBuilder.UpcomingDVDsUrl("us", 20);
-                        
-                        var OpeningMoviesTask = RottenTomatoes.Fill.Lists.GetOpeningMovies(Limit: 20);
-                        var UpcomingMoviesTask = RottenTomatoes.Fill.Lists.GetUpcomingMovies(Limit: 20);
-                        var NewReleaseDVDsTask = RottenTomatoes.Fill.Lists.GetNewReleaseDVDs(Limit: 20);
-                        var UpcomingDVDsTask = RottenTomatoes.Fill.Lists.GetUpcomingDVDs(Limit: 20);
+                        var NewReleaseDVDsTask = RottenTomatoes.Fill.Lists.GetNewReleaseDVDs(Limit: 30);
+                        var OpeningMoviesTask = RottenTomatoes.Fill.Lists.GetOpeningMovies(Limit: 30);
+                        var UpcomingDVDsTask = RottenTomatoes.Fill.Lists.GetUpcomingDVDs(Limit: 30);
+                        var UpcomingMoviesTask = RottenTomatoes.Fill.Lists.GetUpcomingMovies(Limit: 30);
                         
                         using (profiler.Step("GetDatabaseMoviesRottenTomatoes and Awaits"))
                         {
                             //var ramindex = (RAMDirectory)HttpContext.Cache.Get("ftramindex"); 
-                            var NewReleaseDVDs = GeneralHelpers.GetDatabaseMoviesRottenTomatoes(NewReleaseDVDsTask, ftc, profiler);
-                            var UpcomingDVDs = GeneralHelpers.GetDatabaseMoviesRottenTomatoes(UpcomingDVDsTask, ftc, profiler);
-                            var OpeningMovies = GeneralHelpers.GetDatabaseMoviesRottenTomatoes(OpeningMoviesTask, ftc, profiler);
-                            var UpcomingMovies = GeneralHelpers.GetDatabaseMoviesRottenTomatoes(UpcomingMoviesTask, ftc, profiler);
+                            var NewReleaseDVDs = GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await NewReleaseDVDsTask, ftc, profiler);
+                            var UpcomingDVDs = GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await UpcomingDVDsTask, ftc, profiler);
+                            var OpeningMovies = GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await OpeningMoviesTask, ftc, profiler);
+                            var UpcomingMovies = GeneralHelpers.GetDatabaseMoviesRottenTomatoes(await UpcomingMoviesTask, ftc, profiler);
                             HttpContext.Cache.Insert("OpeningMovies", await OpeningMovies, 
                                 null, DateTime.Now.AddHours(6), System.Web.Caching.Cache.NoSlidingExpiration);
                             HttpContext.Cache.Insert("NewReleaseDVDs", await NewReleaseDVDs, 

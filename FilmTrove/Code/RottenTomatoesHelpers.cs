@@ -7,6 +7,7 @@ using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
+using StackExchange.Profiling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -119,11 +120,11 @@ namespace FilmTrove.Code.RottenTomatoes
             }
         }
 
-        public static async Task<Title> FindRottenTomatoesMatch(Movie m)
+        public static async Task<Title> FindRottenTomatoesMatch(Movie m, MiniProfiler profiler = null)
         {
             var searchtitles = await FlixSharp.RottenTomatoes.Search.SearchTitles(m.Title);
 
-            return (Title)GeneralHelpers.FindTitleMatch(m, searchtitles);
+            return (Title)GeneralHelpers.FindTitleMatch(m, searchtitles, profiler);
         }
 
        //public static async Task<Movie> FindRottenTomatoesMatch(ITitle t, FilmTroveContext ftc)

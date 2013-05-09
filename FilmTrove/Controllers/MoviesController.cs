@@ -44,17 +44,19 @@ namespace FilmTrove.Controllers
             FlixSharp.Holders.RottenTomatoes.Title rottentomatoestitle = null;
 
             Random ran = new Random();
-
-            if (m.Netflix.NeedsUpdate || (m.DateLastModified.HasValue && m.DateLastModified > DateTime.Now.AddDays(20).AddDays(ran.Next(-5, 5))))
+            using (profiler.Step("Populate/Find Netflix Movie"))
             {
-                if (m.Netflix.IdUrl != "")
-                    nfm = Netflix.Fill.Titles.GetCompleteTitle(m.Netflix.IdUrl, OnUserBehalf: true);//Randomized().
-                else
+                if (m.Netflix.NeedsUpdate || (m.DateLastModified.HasValue && m.DateLastModified > DateTime.Now.AddDays(20).AddDays(ran.Next(-5, 5))))
                 {
-                    ////need to find the best match
-                    netflixtitle = await NetflixHelpers.FindNetflixMatch(m);
-
-                    nfm = Netflix.Fill.Titles.GetCompleteTitle(netflixtitle.IdUrl, OnUserBehalf: true);
+                    if (m.Netflix.IdUrl != "")
+                        nfm = Netflix.Fill.Titles.GetCompleteTitle(m.Netflix.IdUrl, OnUserBehalf: true);//Randomized().
+                    else
+                    {
+                        ////need to find the best match
+                        netflixtitle = await NetflixHelpers.FindNetflixMatch(m, profiler);
+                        if(netflixtitle != null)
+                            nfm = Netflix.Fill.Titles.GetCompleteTitle(netflixtitle.IdUrl, OnUserBehalf: true);
+                    }
                 }
             }
             using (profiler.Step("Populate Amazon Movie"))
@@ -96,24 +98,10 @@ namespace FilmTrove.Controllers
                     }
                     else
                     {
-                        ////need to find the best match
-                        var searchtitles = await RottenTomatoes.Search.SearchTitles(m.Title);
+                        rottentomatoestitle = await RottenTomatoesHelpers.FindRottenTomatoesMatch(m, profiler);
+                        if(rottentomatoestitle != null)
+                            rtm = FlixSharp.RottenTomatoes.Fill.Titles.GetMoviesInfo(rottentomatoestitle.Id);
                         
-                        rottentomatoestitle = searchtitles
-                            .Select(mv => mv as FlixSharp.Holders.RottenTomatoes.Title)
-                            .FirstOrDefault(mv => 
-                                {
-                                    Int32 maxlength = (Int32)(m.Title.Length * 1.2);
-                                    Int32 minlength = (Int32)(m.Title.Length * .8);
-                                    return ((mv.FullTitle == m.AltTitle && mv.FullTitle.Length > minlength && mv.FullTitle.Length < maxlength)
-                                    || (mv.FullTitle == m.Title && mv.FullTitle.Length > minlength && mv.FullTitle.Length < maxlength)
-                                    || (mv.FullTitle.Contains(m.Title) && mv.FullTitle.Length > minlength && mv.FullTitle.Length < maxlength)
-                                    || (m.Title.Contains(mv.FullTitle) && mv.FullTitle.Length > minlength && mv.FullTitle.Length < maxlength)
-                                    || (m.AltTitle.Contains(mv.FullTitle) && mv.FullTitle.Length > minlength && mv.FullTitle.Length < maxlength))
-                                    && (mv.Year == m.Year
-                                    || mv.Year + 1 == m.Year
-                                    || mv.Year - 1 == m.Year);
-                                });
                         m.RottenTomatoes.NeedsUpdate = false; //gave it a try, wait a while
                     }
                 //}
@@ -413,30 +401,33 @@ namespace FilmTrove.Controllers
             {
                 using (profiler.Step("Fill Rotten Tomatoes Movie"))
                 {
-                    using (profiler.Step("Await Rotten Tomatoes Title"))
+                    using (profiler.Step("Await title and save"))
                     {
                         if(rtm != null)
                             rottentomatoestitle = await rtm;
+
+                        ///1.5) loop through the cast and match them with the current cast to get the role name filled.
+                        ///2) Critic score
+                        ///3) critic consensus
+                        ///4) poster medium
+                        ///5) poster large
+                        ///6) theatrical release
+                        ///7) dvd release
+                        ///8) average rating
+                        ///9) studio
+                        ///10) synopsis
+                        RottenTomatoesHelpers.FillRottenTomatoesTitle(m, rottentomatoestitle);
+                        RottenTomatoesHelpers.AddRottenTomatoesGenres(m, ftc, rottentomatoestitle);
+                        m.RottenTomatoes.LastFullUpdate = DateTime.Now;
+                        m.RottenTomatoes.NeedsUpdate = false;
+                        ftc.SaveChanges();
                     }
-                    ///1.5) loop through the cast and match them with the current cast to get the role name filled.
-                    ///2) Critic score
-                    ///3) critic consensus
-                    ///4) poster medium
-                    ///5) poster large
-                    ///6) theatrical release
-                    ///7) dvd release
-                    ///8) average rating
-                    ///9) studio
-                    ///10) synopsis
-                    RottenTomatoesHelpers.FillRottenTomatoesTitle(m, rottentomatoestitle);
-                    m.RottenTomatoes.NeedsUpdate = false;
-                    ftc.SaveChanges();
                 }
             }
             #endregion
             using (profiler.Step("Get Similar titles ready"))
             {
-                if (m.Netflix.SimilarTitles.Count > 0)
+                if (m.Netflix.SimilarTitles != null && m.Netflix.SimilarTitles.Count > 0)
                 {
                     var similars = m.Netflix.SimilarTitles.Take(20).Select(f =>
                         {

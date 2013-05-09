@@ -5,6 +5,7 @@ using FilmTrove.Models;
 using FlixSharp;
 using FlixSharp.Holders;
 using Lucene.Net.Store;
+using StackExchange.Profiling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,7 +53,7 @@ namespace FilmTrove.Controllers.Api
             using (FilmTroveContext ftc = new FilmTroveContext())
             {
                 Movie m = ftc.Movies.Find(id);
-                if (m.Netflix.SimilarTitles.Count > 0)
+                if (m.Netflix.SimilarTitles != null && m.Netflix.SimilarTitles.Count > 0)
                 {
                     var similars = m.Netflix.SimilarTitles.Take(20).Select(f =>
                     {
@@ -98,7 +99,7 @@ namespace FilmTrove.Controllers.Api
                     nfm = Netflix.Fill.Titles.GetCompleteTitle(m.Netflix.IdUrl);//Randomized().
                 else
                 {
-                    netflixtitle = await NetflixHelpers.FindNetflixMatch(m);
+                    netflixtitle = await NetflixHelpers.FindNetflixMatch(m, MiniProfiler.Current);
                     nfm = Netflix.Fill.Titles.GetCompleteTitle(netflixtitle.IdUrl);
                 }
 
@@ -125,7 +126,6 @@ namespace FilmTrove.Controllers.Api
             Random ran = new Random();
 
             Task<FlixSharp.Holders.RottenTomatoes.Title> rtm = null;
-            FlixSharp.Holders.RottenTomatoes.Title rottentomatoestitle = null;
 
             if (m.RottenTomatoes.Id != "" &&
                 (!m.RottenTomatoes.LastFullUpdate.HasValue ||
@@ -137,7 +137,7 @@ namespace FilmTrove.Controllers.Api
             else if(m.RottenTomatoes.Id == "")
             {
                 ////need to find the best match
-                rottentomatoestitle = await RottenTomatoesHelpers.FindRottenTomatoesMatch(m);
+                FlixSharp.Holders.RottenTomatoes.Title rottentomatoestitle = await RottenTomatoesHelpers.FindRottenTomatoesMatch(m, MiniProfiler.Current);
                 rtm = FlixSharp.RottenTomatoes.Fill.Titles.GetMoviesInfo(rottentomatoestitle.Id);
             }
 
@@ -155,8 +155,8 @@ namespace FilmTrove.Controllers.Api
                 ///8) average rating
                 ///9) studio
                 ///10) synopsis
-                RottenTomatoesHelpers.FillRottenTomatoesTitle(m, rottentomatoestitle);
-                RottenTomatoesHelpers.AddRottenTomatoesGenres(m, ftc, rottentomatoestitle);
+                RottenTomatoesHelpers.FillRottenTomatoesTitle(m, await rtm);
+                RottenTomatoesHelpers.AddRottenTomatoesGenres(m, ftc, rtm.Result);
 
                 m.RottenTomatoes.LastFullUpdate = DateTime.Now;
                 m.RottenTomatoes.NeedsUpdate = false;

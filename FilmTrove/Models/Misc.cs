@@ -65,22 +65,21 @@ namespace FilmTrove.Models
             get { return _SimilarTitles; }
             set { _SimilarTitles = value; }
         }
-        private List<String> _SimilarTitles { get; set; }
+        private List<String> _SimilarTitles = new List<String>();
         public String SimilarTitlesCompact
         {
-            get { return _SimilarTitles != null ? String.Join(";#!", _SimilarTitles) : null; }
+            get { return _SimilarTitles != null && _SimilarTitles.Count > 0 ? String.Join(";#!", _SimilarTitles) : null; }
             set { _SimilarTitles = value != null ? value.Split(new[] { ";#!" }, StringSplitOptions.RemoveEmptyEntries).ToList() : null; }
         }
-
         public List<String> Awards
         {
             get { return _Awards; }
             set { _Awards = value; }
         }
-        private List<String> _Awards { get; set; }
+        private List<String> _Awards = new List<String>();
         public String AwardsCompact
         {
-            get { return _Awards != null ? String.Join(";#!", _Awards) : null; }
+            get { return _Awards != null && _Awards.Count > 0 ? String.Join(";#!", _Awards) : null; }
             set { _Awards = value != null ? value.Split(new[] { ";#!" }, StringSplitOptions.RemoveEmptyEntries).ToList() : null; }
         }
 

@@ -26,9 +26,9 @@ namespace FilmTrove
         {
             AreaRegistration.RegisterAllAreas();
 
-            WebApiConfig.Register(GlobalConfiguration.Configuration);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
+            WebApiConfig.Register(GlobalConfiguration.Configuration);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AuthConfig.RegisterAuth();
 
@@ -77,13 +77,6 @@ namespace FilmTrove
             #endregion
         }
 
-        //public class MovieTitleHolder
-        //{
-        //    public Int32 MovieId = -1;
-        //    public String Title = "";
-        //    public String AltTitle = "";
-        //}
-
         protected void Application_BeginRequest(object sender, EventArgs e)
         {
             if (Request.IsLocal)
@@ -96,10 +89,8 @@ namespace FilmTrove
         protected void Application_EndRequest(object sender, EventArgs e)
         {
             FilmTroveContext ftc = (FilmTroveContext)HttpContext.Current.Items["ftcontext"];
-            ftc.Dispose();
-
-            //AzureDirectory ad = (AzureDirectory)HttpContext.Current.Items["ftlucene"];
-            //ad.Dispose();
+            if(ftc != null)
+                ftc.Dispose();
 
             MiniProfiler.Stop();
         }

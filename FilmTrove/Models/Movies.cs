@@ -54,7 +54,7 @@ namespace FilmTrove.Models
         }
         public String GetAwards()
         {
-            if (Netflix.AwardsCompact != "")
+            if (Netflix.AwardsCompact != null && Netflix.AwardsCompact != "")
             {
                 String s = "<ul>";
                 foreach (String award in Netflix.Awards)

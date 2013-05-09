@@ -25,7 +25,7 @@ namespace FilmTrove
             #region Lists
             config.Routes.MapHttpRoute(
                 name: "V1Lists",
-                routeTemplate: "api/v1/Lists/{action}/{id}",
+                routeTemplate: "api/v1/lists/{action}/{id}",
                 defaults: new { controller = "ListServices", id = RouteParameter.Optional },
                 constraints: new { id = @"^\d+$" }
             );

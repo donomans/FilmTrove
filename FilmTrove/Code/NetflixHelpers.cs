@@ -14,6 +14,7 @@ using Lucene.Net.Documents;
 using System.Web.Hosting;
 using Lucene.Net.Search;
 using Lucene.Net.QueryParsers;
+using StackExchange.Profiling;
 
 namespace FilmTrove.Code.Netflix
 {
@@ -310,11 +311,11 @@ namespace FilmTrove.Code.Netflix
             }
         }
         
-        public static async Task<Title> FindNetflixMatch(Movie m)
+        public static async Task<Title> FindNetflixMatch(Movie m, MiniProfiler profiler = null)
         {
             var searchtitles = await FlixSharp.Netflix.Search.SearchTitles(m.Title);
 
-            return (Title)GeneralHelpers.FindTitleMatch(m, searchtitles);
+            return (Title)GeneralHelpers.FindTitleMatch(m, searchtitles, profiler);
         }
         
         //public static async Task<Movie> FindNetflixMatch(ITitle t, FilmTroveContext ftc)

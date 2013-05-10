@@ -1,0 +1,184 @@
+﻿@using FilmTrove.Code
+@{
+    FilmTrove.Models.Movie m = ViewBag.Movie;
+    ViewBag.SimilarsExist = ViewBag.Similars != null;
+    ViewBag.Title = m.ToString() + " Details";
+    ViewBag.Description = ViewBag.Title + " - Add it to your collection.";
+    ViewBag.Keywords = m.ToString() + ", " + m.Title + ", Lists, Ratings, Information, Description, Details, Synopsis, Collection";
+    ICollection<FilmTrove.Models.Role> roles = ViewBag.Roles;
+    List<FilmTrove.Models.Role> directors = roles.Where(r => r.InRole == FilmTrove.Models.RoleType.Director).ToList();
+    List<FilmTrove.Models.Role> actors = roles.Where(r => r.InRole == FilmTrove.Models.RoleType.Actor).ToList();
+    List<FilmTrove.Models.Role> writers = roles.Where(r => r.InRole == FilmTrove.Models.RoleType.Writer).ToList();
+    List<FilmTrove.Models.Role> producers = roles.Where(r => r.InRole == FilmTrove.Models.RoleType.Producer).ToList();
+}
+<div id="portfolio-wrapper">
+    <div class="container">
+        <section id="page-title">
+            <h2>@m.ToString()</h2>
+        </section>
+    </div>
+    <div class="eight columns portfolio-item">
+        <div class="movie"><img src="@m.BestPosterUrl" alt="@m.Title" /></div>
+    </div>
+    <div class="one-fourth column portfolio-item" id="basicinfo">
+        <div class="movie">
+        @* Need to display:
+            0) Title (in page title)
+            1) Netflix rating
+            2) Rotten Tomatoes rating (critic and public) and freshness status
+            XX3) Amazon ratings
+            --4) Imdb rating
+            5) Relase dates (theatrical + dvd if available)
+            6) Studio
+            7) Awards
+            8) Genres
+         *@
+            @if(m.Netflix.AvgRating.HasValue){<p>Netflix User Rating: @m.Netflix.AvgRating Stars</p>}
+            @if(m.RottenTomatoes.AvgRating.HasValue){<p>Rotten Tomatoes User Rating: @m.RottenTomatoes.AvgRating</p>}
+            @if(m.RottenTomatoes.CriticScore.HasValue){<p>Rotten Tomatoes Critic Rating: @m.RottenTomatoes.CriticScore</p>}
+            @*<span>@m.Amazon.AvgRating</span>*@
+            @if(m.RottenTomatoes.TheatricalRelase.HasValue){<p>Theatrical Release: @m.RottenTomatoes.TheatricalRelase</p>}
+            @if(m.RottenTomatoes.DvdRelease.HasValue){<p>DVD/BR Release: @m.RottenTomatoes.DvdRelease</p>}
+            @if(m.Year > 0){<p>Year: @m.Year</p>}
+            @if(m.RottenTomatoes.Studio != null && m.RottenTomatoes.Studio == ""){<p>Studio: @m.RottenTomatoes.Studio</p>}
+            @if(m.Netflix.AwardsCompact != ""){<span>Awards: @Html.Raw(m.GetAwards())</span><br />}
+            <p>Genres: @String.Join(", ", m.Genres)</p>
+        </div>
+    </div>
+    <div class="one-fourth column portfolio-item" id="supplierdata">
+        <div class="movie">
+        @* Need to display:
+            1) Amazon DVD buy link (w/ price)
+            2) Amazon Blu-ray buy link (w/ price)
+            3) Netflix movie link
+            4) Add to queue/instant watch?    
+            5) Rotten Tomatoes link
+            --6) Imdb link
+            7) Formats
+         *@
+            <p><a href="@m.Netflix.Url">@m.Title on Netflix</a></p>
+        </div>
+    </div>
+    
+    <div class="container">
+        <section class="section-title">
+            <h4>Synopsis</h4>
+        </section>
+    </div>
+    <div class="sixteen columns portfolio-item" id="synopsis">
+        <div class="movie">
+        @* Need to display:
+            1) Netflix synopsis
+            2) Rotten tomatoes synopsis
+            3) Amazon synopsis
+            --4) Imdb synopsis
+         *@
+            <h4>Netflix:</h4>
+            <p>@Html.Raw(m.Netflix.Synopsis)</p>
+            @if (m.RottenTomatoes.CriticConsensus != null && m.RottenTomatoes.CriticConsensus != "")
+            {<h4>Rotten Tomatoes Critic Consensus:</h4>
+            <p>@Html.Raw(m.RottenTomatoes.CriticConsensus)</p>}
+            @if (m.RottenTomatoes.Synopsis != null && m.RottenTomatoes.Synopsis != "")
+            {<h4>Rotten Tomatoes:</h4>
+            <p>@Html.Raw(m.RottenTomatoes.Synopsis)</p>}
+            @if(m.Amazon.Synopsis != null && m.Amazon.Synopsis != "")
+            {<h4>Amazon:</h4>
+            <p>@Html.Raw(m.Amazon.Synopsis)</p>}
+        </div>
+    </div>
+    <div class="container">
+        <section class="section-title">
+            <h4>People</h4>
+        </section>
+    </div>
+    <div class="eight columns portfolio-item" id="cast">
+        <div class="movie">
+        @* Need to display:
+            1) Actors w/ link to person page
+            2) Role name (from RT/Imdb)
+         *@
+            <h4>Cast:</h4>
+            <ul>
+            @foreach (var r in actors)
+            {
+                <li><a href="@r.Person.GetDetailsUrl()">@r.Person.Name</a> as ... @r.RoleName</li>
+            }
+            </ul>
+        </div>
+    </div>
+    <div class="eight columns portfolio-item" id="creators">
+        <div class="movie">
+        @* Need to display:
+            1) Directors w/ link to person page
+            2) Writers w/ link to person page
+            3) Producers w/ link to person page
+         *@
+            <h4>Director(s):</h4>
+            <ul>
+            @foreach (var r in directors)
+            {
+                <li><a href="@r.Person.GetDetailsUrl()">@r.Person.Name</a></li>
+            }
+            </ul>
+        @if(writers.Count > 0){
+            <h4>Writer(s):</h4>
+            <ul>
+            @foreach (var r in writers)
+            {
+                <li><a href="@r.Person.GetDetailsUrl()">@r.Person.Name</a></li>
+            }
+            </ul>
+        }
+        @if(producers.Count > 0){    
+            <h4>Producer(s):</h4>
+            <ul>
+            @foreach (var r in producers)
+            {
+                <li><a href="@r.Person.GetDetailsUrl()">@r.Person.Name</a></li>
+            }
+            </ul>
+        }
+        </div>
+    </div> 
+    @if(ViewBag.SimilarsExist)
+    {
+    <div class="container">
+        <section class="section-title">
+            <h4>Similar Titles</h4>
+        </section>
+    </div>
+        foreach(FilmTrove.Models.Movie similars in ViewBag.Similars)
+        {
+            String friendlytitle = similars.Title.UrlFriendly(similars.Year);
+    <div class="one-fourth column portfolio-item">
+        <div class="movie">
+            <a href="/movies/details/@similars.MovieId/@friendlytitle" title="@similars.Title">
+            <img src="@similars.BestPosterUrl" alt="@similars.Title"/>@*<div class="image-overlay-link"></div>*@</a>
+			<div class="item-description alt">
+				<h5><a href="/movies/details/@similars.MovieId/@friendlytitle">@similars.Title</a></h5>
+                <p>
+				@Html.Raw(similars.Description)
+				</p>
+			</div>
+			<div class="post-meta center">
+                <span>
+                    <span>@similars.Year</span>
+                    <span>@similars.Rating</span>
+                    <span><a href="/lists/links/@similars.MovieId/@friendlytitle" class="button color addtocollection">Add To...</a></span>
+                </span>
+            </div>	
+		</div>
+    </div>
+        }
+    }
+    <div class="container">
+        <section class="section-title">
+            <h4>Trailers</h4>
+        </section>
+    </div>
+    <div class="sixteen columns protfolio-item" id="trailers">
+        <div class="movie">
+            <p>Sorry, we're missing them.</p>
+        </div>
+    </div>
+</div>

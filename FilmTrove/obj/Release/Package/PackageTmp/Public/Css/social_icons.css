@@ -1,0 +1,130 @@
+/* Social Icons - small
+=================================================================== */
+
+.social-icons {
+	margin: 0;
+	float: right;
+}
+
+.social-icons.about {
+	float: left;
+	margin: 0 0 0 -5px;
+}
+
+.social-icons li {
+	display: inline;
+	list-style: none;
+	text-indent: -9999px;
+	margin-left: 5px;
+	margin-bottom: 5px;
+	float: left;
+	-webkit-transition: all 0.3s ease-in-out;
+	-moz-transition: all 0.3s ease-in-out;
+	-o-transition: all 0.3s ease-in-out;
+	-ms-transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
+}
+		
+.social-icons li a {
+	background-repeat: no-repeat;
+	background-position: 0 0;
+	display: block;
+	height: 28px;
+	width: 28px;
+}
+
+.social-icons li:hover {background-position: 0 -38px;}
+
+/* Social Widget Icons */
+#social a {
+	width: 28px;
+	height: 28px;
+	margin: 0 6px 6px 0;
+	display: block;
+	float: left;
+	text-indent: -9999px;
+	background-position: 0 -38px;
+}
+
+#social a img{
+	border: none;
+}
+
+.facebook {background: url(http://cdn.filmtrove.com/img/facebook-sm.png) no-repeat;}
+.github {background: url(http://cdn.filmtrove.com/img/github-sm.png) no-repeat;}
+.googleplus {background: url(http://cdn.filmtrove.com/img/googleplus-sm.png) no-repeat;}
+.twitter {background: url(http://cdn.filmtrove.com/img/twitter-sm.png) no-repeat;}
+
+/* Social Icons - big
+=================================================================== */
+
+.social-bookmarks {
+	padding: 0!important;
+	margin: 0!important;
+	list-style-type: none!important;
+}
+
+.social-bookmarks li{
+	float: left!important;
+	padding: 0px!important;
+	display: inline!important;
+	width: auto!important;
+	background: #fff;
+	-webkit-transition: all 0.3s ease-in-out;
+	-moz-transition: all 0.3s ease-in-out;
+	-o-transition: all 0.3s ease-in-out;
+	-ms-transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
+}			
+
+.social-bookmarks li a {
+	-webkit-transition: all 0.3s ease-in-out;
+	-moz-transition: all 0.3s ease-in-out;
+	-o-transition: all 0.3s ease-in-out;
+	-ms-transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
+	display: block!important;
+	float: left!important;
+	height: 100%!important;
+	margin: 0!important;
+	padding: 0!important;
+	width: 40px!important;
+	height: 40px!important;
+	text-indent: -9999px!important;
+	border-right: 1px solid #eee;
+}
+
+.social-bookmarks li:last-child  a{
+	border-right: none;
+}
+.social-bookmarks li a:hover {
+	background-position: 0 -40px!important;
+	
+}
+.social-bookmarks li a {
+	background-color:transparent;
+}
+.social-bookmarks li.facebook a {
+	background: url(http://cdn.filmtrove.com/img/facebook.png) no-repeat 0 0;
+}
+.social-bookmarks li.facebook a:hover {
+	background-color: #3b5998;
+}
+.social-bookmarks li.github a {
+	background: url(http://cdn.filmtrove.com/img/github.png) no-repeat 0 0;
+}
+.social-bookmarks li.github a:hover {
+	background-color: #7292a2;
+}
+.social-bookmarks li.googleplus a {
+	background: url(http://cdn.filmtrove.com/img/googleplus.png) no-repeat 0 0;
+}
+.social-bookmarks li.googleplus a:hover {
+	background-color: #d94a39;
+}
+.social-bookmarks li.twitter a {
+	background: url(http://cdn.filmtrove.com/img/twitter.png) no-repeat 0 0;
+}
+.social-bookmarks li.twitter a:hover {
+	background-color: #48c4d2;
+}

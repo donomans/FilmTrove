@@ -4,12 +4,9 @@
 *.mdf
 *.ldf
 
-packages/
-bin/
-obj/
 /publishprofiles/
 /*.publishsettings
-app_data/
+app_data/index/
 
 Thumbs.db
 Desktop.ini

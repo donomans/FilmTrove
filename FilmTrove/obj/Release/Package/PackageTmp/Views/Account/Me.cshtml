@@ -1,0 +1,106 @@
+﻿@using Microsoft.Web.Helpers
+@{
+    ViewBag.Title = "Me - My Account";
+}
+
+@*<div class="container">
+    <section id="page-title">
+        <h2>Your account details-</h2>
+    </section>
+</div>*@
+<div id="wrapper" class="white-wrapper">
+    <div class="container" style="border-bottom: 1px solid #eee; margin-bottom:20px; padding-bottom:10px">
+    <section id="page-title">
+        <h2>Your account details</h2>
+    </section>
+    @if (!WebSecurity.IsAuthenticated)
+    {
+        <div class="sixteen columns">
+            <div class="notification error">
+                <p><span>Error</span> Please login above to edit your account.</p>
+            </div>
+        </div>
+    }
+
+        <div class="sixteen columns">
+		@*<ul class="tabs-nav">
+			<li class="active"><a href="#tab1"><i class="mini-ico-glass"></i>Update Details</a></li>
+			<li><a href="#tab2"><i class="mini-ico-list"></i>Netflix</a></li>
+            <li><a href="#Friends"><i class="mini-ico-list"></i>Friends</a></li>
+		</ul>*@
+				
+		@*<div class="tabs-container">
+			<div class="tab-content" id="tab1">*@
+            <div class="one-third column">
+                <h4>Account information:</h4>
+                @if (WebSecurity.IsAuthenticated)
+                {
+                @model FilmTrove.Models.UserUpdate
+                    
+                <div class="field">
+                    <label>Gravatar</label>
+                    <img src="@Gravatar.GetUrl(Model.Email)" title="@Model.Name" />
+                </div><br />
+
+                using (Html.BeginForm("Me", "Account", FormMethod.Post, new { id = "accountupdateform" }))
+                {
+                    <div class="field">
+                        @Html.LabelFor(m => m.Name)
+                        @Html.TextBoxFor(m=> m.Name)
+                    </div>
+                    <div class="field">
+                        @Html.LabelFor(m => m.Email)
+                        @Html.TextBoxFor(m => m.Email, new { type = "email" })
+                    </div>
+                    <a href="javascript: document.forms['accountupdateform'].submit();" class="button color">Update</a>
+                }
+                }
+                else
+                {
+                    <div>Stop looking here. Log in to edit your account details.</div>
+                }
+			</div>
+			@*<div class="tab-content" id="tab2">  *@
+            <div class="one-third column">
+                <h4>Netflix settings:</h4>      
+                @if(WebSecurity.IsAuthenticated)
+                {        
+                if (ViewBag.Success != null)
+                {
+                    <p>@ViewBag.Message</p>
+                }
+                if(ViewBag.NetflixLinked == null)
+                {
+                    <p>Click the button to link your Netflix account so we can do awesome things like let your friends add movies to your queue and compare ratings with friends.</p>
+                    <a href="@Url.Action("NetflixLogin", "Account")" class="button color">Link Netflix</a>
+                }
+                else
+                {
+                    <p>Your Netflix account is already linked.</p>
+                    <p>If you would like to unlink your account, click the button below and then deauthorize FilmTrove from your Netflix account in the "Your Account" section of the Netflix website.</p>
+                    <a href="@Url.Action("NetflixUnlink", "Account")" class="button color">Un-link Netflix</a>
+                }
+                }
+                else
+                {
+                    <div>Stop looking here. Log in to Link or Un-link your Netflix account.</div>
+                }
+			</div>
+           @* <div class="tab-content" id="Friends">*@
+            <div class="one-third column">
+                <h4>Friends</h4>
+                @if (WebSecurity.IsAuthenticated)
+                {
+                }
+                else
+                {
+                    <div>Stop looking here. Log in to view your Friends.</div>
+                }
+            </div>
+		</div>
+		
+	</div>
+    </div>
+
+
+</div>

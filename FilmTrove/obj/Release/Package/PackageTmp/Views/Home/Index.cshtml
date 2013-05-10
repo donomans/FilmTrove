@@ -1,0 +1,41 @@
+﻿@using FilmTrove.Code
+@{
+    ViewBag.Title = "FilmTrove. beta.";
+    Layout = "~/Views/Shared/_viewlayout.cshtml";
+    ViewBag.Description = "Make a list out of your movie collection and share with your friends.  Link your Netflix account and add a friend.  Create your collection.  Get detailed information on movies.";
+    ViewBag.Keywords = "movies,films,actors,directors,actresses,lists,collection,queue";
+}
+
+<div id="portfolio-wrapper">
+    @foreach (FilmTrove.Models.Movie m in ViewBag.Movies)
+    {
+        String friendlytitle = m.Title.UrlFriendly(m.Year);
+    <div class="one-fourth column portfolio-item">
+        <div class="movie">
+            <a href="/movies/details/@m.MovieId/@friendlytitle" title="@m.Title"><img src="@m.BestPosterUrl" alt="@m.Title"/></a>
+			<div class="item-description alt">
+				<h5><a href="/movies/details/@m.MovieId/@friendlytitle">@m.Title</a></h5>
+				<p>
+				@Html.Raw(m.Description)
+				</p>
+                @*need actors, directors, writers here*@
+			</div>
+			<div class="post-meta center">
+                <span>
+                    <span>@m.Year</span>
+                    <span>@m.Rating</span>
+                    <span><a href="/lists/links/@m.MovieId/@friendlytitle" class="button color addtocollection">Add To...</a></span>
+                </span>
+                @*<span>
+                <span>@m.Actors.Count</span>
+                <span>@m.Director.Count</span>
+                <span>@m.SimilarTitles.Count</span>
+                <span><i class="mini-ico-calendar"></i>@m.Year</span>
+                <span>@m.Rating</span> 
+                <span><i class="mini-ico-comment"></i>@(m.RunTime/60) m</span>
+                </span>*@
+            </div>	
+		</div>
+    </div>
+    }
+</div>

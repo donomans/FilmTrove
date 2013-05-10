@@ -25,6 +25,7 @@ namespace FilmTrove.Controllers.Api
         {
             using (FilmTroveContext ftc = new FilmTroveContext())
             {
+                ftc.Configuration.ProxyCreationEnabled = false;
                 var OpeningMoviesTask = RottenTomatoes.Fill.Lists.GetOpeningMovies(Limit: 20); 
                 return await GeneralHelpers.GetDatabaseMoviesRottenTomatoes(OpeningMoviesTask, ftc);
             }
@@ -34,8 +35,8 @@ namespace FilmTrove.Controllers.Api
         {
             using (FilmTroveContext ftc = new FilmTroveContext())
             {
+                ftc.Configuration.ProxyCreationEnabled = false;
                 var UpcomingMoviesTask = RottenTomatoes.Fill.Lists.GetUpcomingMovies(Limit: 20);
-                //var ramindex = (RAMDirectory)HttpContext.Current.Cache.Get("ftramindex"); 
                 return await GeneralHelpers.GetDatabaseMoviesRottenTomatoes(UpcomingMoviesTask, ftc);
             }
         }
@@ -44,8 +45,8 @@ namespace FilmTrove.Controllers.Api
         {
             using (FilmTroveContext ftc = new FilmTroveContext())
             {
+                ftc.Configuration.ProxyCreationEnabled = false;
                 var NewReleaseDVDsTask = RottenTomatoes.Fill.Lists.GetNewReleaseDVDs(Limit: 20);
-                //var ramindex = (RAMDirectory)HttpContext.Current.Cache.Get("ftramindex"); 
                 return await GeneralHelpers.GetDatabaseMoviesRottenTomatoes(NewReleaseDVDsTask, ftc);
             }
         }
@@ -54,8 +55,8 @@ namespace FilmTrove.Controllers.Api
         {
             using (FilmTroveContext ftc = new FilmTroveContext())
             {
+                ftc.Configuration.ProxyCreationEnabled = false;
                 var UpcomingDVDsTask = RottenTomatoes.Fill.Lists.GetUpcomingDVDs(Limit: 20);
-                //var ramindex = (RAMDirectory)HttpContext.Current.Cache.Get("ftramindex"); 
                 return await GeneralHelpers.GetDatabaseMoviesRottenTomatoes(UpcomingDVDsTask, ftc);
             }
         }

@@ -20,14 +20,14 @@ namespace FilmTrove.Controllers.Api
         {
             using (FilmTroveContext ftc = new FilmTroveContext())
             {
+                ftc.Configuration.ProxyCreationEnabled = false;
                 var nfresults = Netflix.Search.SearchTitles(term, limit);
-
                 var rtresults = RottenTomatoes.Search.SearchTitles(term, limit);
                 //var ramindex = (RAMDirectory)HttpContext.Current.Cache.Get("ftramindex"); 
                 ///need to check if the results are in the database and populate it if not
-                List<Movie> rtmovies = await GeneralHelpers.GetDatabaseMoviesRottenTomatoes(rtresults, ftc);
-                List<Movie> nfmovies = await GeneralHelpers.GetDatabaseMoviesNetflix(await nfresults, ftc);
-                return nfmovies.Uniques(rtmovies);
+                var rtmovies = GeneralHelpers.GetDatabaseMoviesRottenTomatoes(rtresults, ftc);
+                var nfmovies = GeneralHelpers.GetDatabaseMoviesNetflix(await nfresults, ftc);
+                return (await nfmovies).Uniques(await rtmovies);
             }
         }
 
@@ -35,6 +35,7 @@ namespace FilmTrove.Controllers.Api
         {
             using (FilmTroveContext ftc = new FilmTroveContext())
             {
+                ftc.Configuration.ProxyCreationEnabled = false;
                 People nfresults = await Netflix.Search.SearchPeople(name, limit);
                 return GeneralHelpers.GetDatabasePeopleNetflix(nfresults, ftc);
             }

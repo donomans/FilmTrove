@@ -46,7 +46,9 @@ namespace FilmTrove.Controllers
             Random ran = new Random();
             using (profiler.Step("Populate/Find Netflix Movie"))
             {
-                if (m.Netflix.NeedsUpdate || (m.DateLastModified.HasValue && m.DateLastModified > DateTime.Now.AddDays(20).AddDays(ran.Next(-5, 5))))
+                if (m.Netflix.NeedsUpdate || 
+                    (m.DateLastModified.HasValue && 
+                    m.DateLastModified > DateTime.Now.AddDays(20).AddDays(ran.Next(-5, 5))))
                 {
                     if (m.Netflix.IdUrl != "")
                         nfm = Netflix.Fill.Titles.GetCompleteTitle(m.Netflix.IdUrl, OnUserBehalf: true);//Randomized().

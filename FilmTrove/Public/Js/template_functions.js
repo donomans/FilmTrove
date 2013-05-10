@@ -37,7 +37,7 @@ jQuery(document).ready(function() {
 	            return;
 	        }
                 
-	        $.getJSON("/api/v1/netflixsearch",
+	        $.getJSON("/api/v1/search/netflix/autocomplete",
                 request,
                 function (data, status, xhr) {
                     cache[term] = data;

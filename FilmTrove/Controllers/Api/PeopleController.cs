@@ -26,6 +26,7 @@ namespace FilmTrove.Controllers.Api
         {
             using (FilmTroveContext ftc = new FilmTroveContext())
             {
+                ftc.Configuration.ProxyCreationEnabled = false;
                 Person p = ftc.People
                     .Include("Roles.Movie")
                     .Where(person => person.PersonId == id).Single();

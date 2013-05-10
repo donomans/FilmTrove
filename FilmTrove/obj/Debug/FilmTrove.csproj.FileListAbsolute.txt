@@ -80,3 +80,4 @@ C:\Development\FilmTrove\FilmTrove\obj\Debug\FilmTrove.Migrations.rtyear.resourc
 C:\Development\FilmTrove\FilmTrove\obj\Debug\FilmTrove.Migrations.FullUpdateDTForNetflix.resources
 C:\Development\FilmTrove\FilmTrove\obj\Debug\FilmTrove.Migrations.LastFullUpdateToProviderInfo.resources
 C:\Development\FilmTrove\FilmTrove\bin\Lucene.Net.pdb
+C:\Development\FilmTrove\FilmTrove\bin\System.Web.Mvc.xml

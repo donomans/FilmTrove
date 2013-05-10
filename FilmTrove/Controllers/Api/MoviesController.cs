@@ -93,19 +93,19 @@ namespace FilmTrove.Controllers.Api
             Task<FlixSharp.Holders.Netflix.Title> nfm = null;
             FlixSharp.Holders.Netflix.Title netflixtitle = null;
 
-            if (m.Netflix.Id != "" &&
-                (m.Netflix.NeedsUpdate || !m.Netflix.LastFullUpdate.HasValue || //this field was only added recently
-                m.Netflix.LastFullUpdate > DateTime.Now.AddDays(25).AddDays(ran.Next(-5, 5))))
+            if (m.Netflix.NeedsUpdate || !m.Netflix.LastFullUpdate.HasValue || //this field was only added recently
+                m.Netflix.LastFullUpdate > DateTime.Now.AddDays(20).AddDays(ran.Next(-5, 5)))
             {
-
-                nfm = Netflix.Fill.Titles.GetCompleteTitle(m.Netflix.IdUrl);//Randomized().
+                if (m.Netflix.Id == "")
+                {
+                    netflixtitle = await NetflixHelpers.FindNetflixMatch(m, MiniProfiler.Current);
+                    if (netflixtitle != null)
+                        nfm = Netflix.Fill.Titles.GetCompleteTitle(netflixtitle.IdUrl);
+                }
+                else
+                    nfm = Netflix.Fill.Titles.GetCompleteTitle(m.Netflix.IdUrl);//Randomized().
             }
-            else if (m.Netflix.Id == "")
-            {
-                netflixtitle = await NetflixHelpers.FindNetflixMatch(m, MiniProfiler.Current);
-                if (netflixtitle != null)
-                    nfm = Netflix.Fill.Titles.GetCompleteTitle(netflixtitle.IdUrl);
-            }
+            
 
             if (nfm != null)
             {
@@ -118,11 +118,10 @@ namespace FilmTrove.Controllers.Api
                 NetflixHelpers.FillNetflixSimilars(m, ftc, netflixtitle);
                 NetflixHelpers.AddNetflixGenres(m, ftc, netflixtitle);
 
-                m.Netflix.LastFullUpdate = DateTime.Now;
-                m.Netflix.NeedsUpdate = false;
-
                 await noneroles;
             }
+            m.Netflix.LastFullUpdate = DateTime.Now;
+            m.Netflix.NeedsUpdate = false;
         }
 
         private async Task UpdateRottenTomatoes(Movie m, FilmTroveContext ftc)
@@ -132,21 +131,20 @@ namespace FilmTrove.Controllers.Api
             Task<FlixSharp.Holders.RottenTomatoes.Title> rtm = null;
             FlixSharp.Holders.RottenTomatoes.Title rottentomatoestitle = null;
 
-            if (m.RottenTomatoes.Id != "" &&
-                (m.RottenTomatoes.NeedsUpdate || !m.RottenTomatoes.LastFullUpdate.HasValue ||
-                m.RottenTomatoes.LastFullUpdate > DateTime.Now.AddDays(25).AddDays(ran.Next(-5, 5))))
+            if (m.RottenTomatoes.NeedsUpdate || !m.RottenTomatoes.LastFullUpdate.HasValue ||
+                m.RottenTomatoes.LastFullUpdate > DateTime.Now.AddDays(20).AddDays(ran.Next(-5, 5)))
             {
-                ///1) title match like with amazon or use Id if present
-                rtm = FlixSharp.RottenTomatoes.Fill.Titles.GetMoviesInfo(m.RottenTomatoes.Id);
+                if (m.RottenTomatoes.Id == "")
+                {
+                    ////need to find the best match
+                    rottentomatoestitle = await RottenTomatoesHelpers.FindRottenTomatoesMatch(m, MiniProfiler.Current);
+                    if (rottentomatoestitle != null)
+                        rtm = FlixSharp.RottenTomatoes.Fill.Titles.GetMoviesInfo(rottentomatoestitle.Id);
+                    m.RottenTomatoes.LastFullUpdate = DateTime.Now;
+                } 
+                else
+                    rtm = FlixSharp.RottenTomatoes.Fill.Titles.GetMoviesInfo(m.RottenTomatoes.Id);                
             }
-            else if (m.RottenTomatoes.Id == "")
-            {
-                ////need to find the best match
-                rottentomatoestitle = await RottenTomatoesHelpers.FindRottenTomatoesMatch(m, MiniProfiler.Current);
-                if (rottentomatoestitle != null)
-                    rtm = FlixSharp.RottenTomatoes.Fill.Titles.GetMoviesInfo(rottentomatoestitle.Id);
-            }
-
             if (rtm != null)
             {
                 rottentomatoestitle = await rtm;
@@ -162,10 +160,10 @@ namespace FilmTrove.Controllers.Api
                 ///10) synopsis
                 RottenTomatoesHelpers.FillRottenTomatoesTitle(m, await rtm);
                 RottenTomatoesHelpers.AddRottenTomatoesGenres(m, ftc, rtm.Result);
-
-                m.RottenTomatoes.LastFullUpdate = DateTime.Now;
-                m.RottenTomatoes.NeedsUpdate = false;
             }
+            ///gave a best effort
+            m.RottenTomatoes.LastFullUpdate = DateTime.Now;
+            m.RottenTomatoes.NeedsUpdate = false;
         }
         
         private async Task UpdateAmazon(Movie m, FilmTroveContext ftc)

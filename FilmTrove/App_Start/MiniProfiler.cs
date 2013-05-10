@@ -39,7 +39,7 @@ namespace FilmTrove.App_Start
 			// var profiled = new ProfiledDbConnection(cnn, MiniProfiler.Current);
 
             //TODO: If you are profiling EF code first try: 
-			// MiniProfilerEF.Initialize();
+			MiniProfilerEF.InitializeEF42();
 
             //Make sure the MiniProfiler handles BeginRequest and EndRequest
             DynamicModuleUtility.RegisterModule(typeof(MiniProfilerStartupModule));

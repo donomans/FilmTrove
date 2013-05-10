@@ -5573,6 +5573,15 @@
             <param name="requestHandler">The request handler.</param>
             <param name="parts">The parts to include in the POST entity.</param>
         </member>
+        <member name="M:DotNetOpenAuth.Messaging.MessagingUtilities.AssembleAuthorizationHeader(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.String}})">
+            <summary>
+            Assembles the content of the HTTP Authorization or WWW-Authenticate header.
+            </summary>
+            <param name="fields">The fields to include.</param>
+            <returns>
+            A value prepared for an HTTP header.
+            </returns>
+        </member>
         <member name="M:DotNetOpenAuth.Messaging.MessagingUtilities.AssembleAuthorizationHeader(System.String,System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.String}})">
             <summary>
             Assembles the content of the HTTP Authorization or WWW-Authenticate header.
@@ -5629,13 +5638,16 @@
             <returns>A base64 encoding of the generated random data, 
             whose length in characters will likely be greater than <paramref name="binaryLength"/>.</returns>
         </member>
-        <member name="M:DotNetOpenAuth.Messaging.MessagingUtilities.GetNonCryptoRandomDataAsBase64(System.Int32)">
+        <member name="M:DotNetOpenAuth.Messaging.MessagingUtilities.GetNonCryptoRandomDataAsBase64(System.Int32,System.Boolean)">
             <summary>
             Gets a NON-cryptographically strong random string of base64 characters.
             </summary>
             <param name="binaryLength">The length of the byte sequence to generate.</param>
-            <returns>A base64 encoding of the generated random data,
-            whose length in characters will likely be greater than <paramref name="binaryLength"/>.</returns>
+            <param name="useWeb64">A value indicating whether web64 encoding is used to avoid the need to escape characters.</param>
+            <returns>
+            A base64 encoding of the generated random data,
+            whose length in characters will likely be greater than <paramref name="binaryLength" />.
+            </returns>
         </member>
         <member name="M:DotNetOpenAuth.Messaging.MessagingUtilities.GetRandomString(System.Int32,System.String)">
             <summary>
@@ -5955,6 +5967,13 @@
             <typeparam name="TValue">The type of the value.</typeparam>
             <param name="sequence">The sequence.</param>
             <returns>A dictionary.</returns>
+        </member>
+        <member name="M:DotNetOpenAuth.Messaging.MessagingUtilities.AsKeyValuePairs(System.Collections.Specialized.NameValueCollection)">
+            <summary>
+            Enumerates all members of the collection as key=value pairs.
+            </summary>
+            <param name="nvc">The collection to enumerate.</param>
+            <returns>A sequence of pairs.</returns>
         </member>
         <member name="M:DotNetOpenAuth.Messaging.MessagingUtilities.ToDictionary(System.Collections.Specialized.NameValueCollection)">
             <summary>

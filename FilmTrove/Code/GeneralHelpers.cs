@@ -76,8 +76,9 @@ namespace FilmTrove.Code
                                     Field.Store.YES, Field.Index.NO));
                                 d.Add(new Field("Title", netflixmovie.FullTitle,
                                     Field.Store.YES, Field.Index.ANALYZED));
-                                d.Add(new Field("AltTitle", netflixmovie.ShortTitle,
-                                    Field.Store.YES, Field.Index.ANALYZED));
+                                //if(netflixmovie.Year > 0)
+                                //    d.Add(new Field("Year", netflixmovie.Year.ToString(),
+                                //        Field.Store.YES, Field.Index.ANALYZED));
                                 iw.AddDocument(d);
 
                                 if (wasempty)
@@ -215,8 +216,9 @@ namespace FilmTrove.Code
                                         Field.Store.YES, Field.Index.NO));
                                     d.Add(new Field("Title", unmatched.FullTitle,
                                         Field.Store.YES, Field.Index.ANALYZED));
-                                    //d.Add(new Field("AltTitle", unmatched.FullTitle,
-                                    //    Field.Store.YES, Field.Index.ANALYZED));
+                                    //if(unmatched.Year > 0)
+                                    //    d.Add(new Field("Year", unmatched.Year.ToString(),
+                                    //        Field.Store.YES, Field.Index.ANALYZED));
                                     iw.AddDocument(d);
 
                                     if (wasempty)
@@ -273,16 +275,17 @@ namespace FilmTrove.Code
                 using (Searcher searcher = new IndexSearcher(reader))
                 {
 
-                    MultiFieldQueryParser parser =
-                        new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
-                        new[] { "Title", "AltTitle" },
+                    QueryParser parser = new QueryParser(
+                        Lucene.Net.Util.Version.LUCENE_30,
+                        "Title",
                         new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30));
-
+                    
+                    //var querytext = title + (year > 0 ? " " + year.ToString() : "");
                     Query query = parser.Parse(QueryParser.Escape(title));
 
-                    TopDocs td = searcher.Search(query, 10);
+                    TopDocs td = searcher.Search(query, 5);
                     var docs = td.ScoreDocs
-                        .Where(d => d.Score > 7.5f)
+                        .Where(d => d.Score > .9f)
                         .ToList();
                     if (docs.Count > 0)
                     {
@@ -349,41 +352,58 @@ namespace FilmTrove.Code
                                 Field.Store.YES, Field.Index.NO));
                             d.Add(new Field("Title", title.FullTitle,
                                 Field.Store.YES, Field.Index.ANALYZED));
-                            d.Add(new Field("Year", title.Year.ToString(),
-                                Field.Store.YES, Field.Index.NO));
+                            //d.Add(new Field("Year", title.Year.ToString(),
+                            //    Field.Store.YES, Field.Index.ANALYZED));
                             iw.AddDocument(d);
                         }
                         iw.Optimize();
-                        Int32 totaldocs = iw.NumDocs();
+                        //Int32 totaldocs = iw.NumDocs();
                     }
                     using (IndexReader reader = IndexReader.Open(ramindex, true))
                     {
-                        Int32 totaldocs = reader.NumDocs();
+                        //Int32 totaldocs = reader.NumDocs();
                         using (Searcher searcher = new IndexSearcher(reader))
                         {
-                            QueryParser parser =
-                                new QueryParser(Lucene.Net.Util.Version.LUCENE_30,
+                            QueryParser parser = new QueryParser(
+                                Lucene.Net.Util.Version.LUCENE_30,
                                 "Title",
                                 new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30));
 
                             Query query = parser.Parse(QueryParser.Escape(m.Title));
 
-                            TopDocs td = searcher.Search(query, 10);
+                            TopDocs td = searcher.Search(query, 5);
                             var docs = td.ScoreDocs
-                                //.Where(d => d.Score > 7.5f)
+                                .Where(d => d.Score > .375f)
                                 .ToList();
 
                             if (docs.Count > 0)
                             {
-                                return docs.Select(d =>
-                                {
-                                    Document doc = searcher.Doc(d.Doc);
-                                    String id = doc.Get("Id");
-                                    return searchtitles.Single(t => t.FullId == id);
-                                }).FirstOrDefault(t =>
-                                    m.Year == t.Year ||
-                                    m.Year + 1 == t.Year ||
-                                    m.Year - 1 == t.Year);
+                                var result = docs
+                                    .Select(d =>
+                                    {
+                                        Document doc = searcher.Doc(d.Doc);
+                                    
+                                        String id = doc.Get("Id");
+                                        return searchtitles
+                                                .First(t => t.FullId == id);
+                                    })
+                                    .FirstOrDefault(t =>
+                                        m.Year == t.Year ||
+                                        m.Year + 1 == t.Year ||
+                                        m.Year - 1 == t.Year 
+                                        //||
+                                        //(t.score > .95f && 
+                                        /////hopefully this takes care of things like 
+                                        /////Finding Nemo 3D without messing with 
+                                        /////titles that have the same name
+                                        //(t.movie.FullTitle.Contains(m.Title) ||
+                                        //m.Title.Contains(t.movie.FullTitle)))
+                                    );
+
+                                if (result != null)
+                                    return result;
+                                else
+                                    return null;
                             }
                             else
                                 return null;

@@ -41,15 +41,15 @@ namespace FilmTrove
             
             Netflix.SetMethodForGettingCurrentUserAccount(FilmTrove.Models.NetflixAccount.GetCurrentUserNetflixUserInfo);
             
-            if(HttpContext.Current.Server.MachineName == "DEVBOXWIN8VM")
-                MiniProfilerEF.InitializeEF42();
+            //if(HttpContext.Current.Server.MachineName == "DEVBOXWIN8VM")
+            //    MiniProfilerEF.InitializeEF42();
             
             ///Set up Lucene's index
             #region Lucene
             using (FilmTroveContext ftc = new FilmTroveContext())
             {
                 var titles = ftc.Movies
-                    .Select(m => new { MovieId = m.MovieId, Title = m.Title, AltTitle = m.AltTitle })
+                    .Select(m => new { MovieId = m.MovieId, Title = m.Title, Year = m.Year })
                     .ToList();
                 using (var index = FSDirectory.Open(Server.MapPath("/App_Data/index")))
                 {
@@ -65,8 +65,8 @@ namespace FilmTrove
                                 Field.Store.YES, Field.Index.NO));
                             d.Add(new Field("Title", title.Title,
                                 Field.Store.YES, Field.Index.ANALYZED));
-                            d.Add(new Field("AltTitle", title.AltTitle,
-                                Field.Store.YES, Field.Index.ANALYZED));
+                            //d.Add(new Field("Year", title.Year.ToString(),
+                            //    Field.Store.YES, Field.Index.ANALYZED));
                             iw.AddDocument(d);
                         }
                         iw.Optimize();
@@ -79,10 +79,10 @@ namespace FilmTrove
 
         protected void Application_BeginRequest(object sender, EventArgs e)
         {
-            if (Request.IsLocal)
-            {
-                MiniProfiler.Start();
-            }
+            //if (Request.IsLocal)
+            //{
+            //    MiniProfiler.Start();
+            //}
 
             HttpContext.Current.Items["ftcontext"] = new FilmTroveContext();
         }
@@ -92,7 +92,7 @@ namespace FilmTrove
             if(ftc != null)
                 ftc.Dispose();
 
-            MiniProfiler.Stop();
+            //MiniProfiler.Stop();
         }
     }
 }

@@ -46,20 +46,47 @@ namespace FilmTrove.Controllers
             Random ran = new Random();
             using (profiler.Step("Populate/Find Netflix Movie"))
             {
-                if (m.Netflix.NeedsUpdate || 
-                    (m.DateLastModified.HasValue && 
-                    m.DateLastModified > DateTime.Now.AddDays(20).AddDays(ran.Next(-5, 5))))
+                if (m.Netflix.NeedsUpdate || !m.Netflix.LastFullUpdate.HasValue || //this field was only added recently
+                m.Netflix.LastFullUpdate > DateTime.Now.AddDays(20).AddDays(ran.Next(-5, 5)))
                 {
-                    if (m.Netflix.IdUrl != "")
-                        nfm = Netflix.Fill.Titles.GetCompleteTitle(m.Netflix.IdUrl, OnUserBehalf: true);//Randomized().
-                    else
+                    if (m.Netflix.Id == "")
                     {
-                        ////need to find the best match
                         netflixtitle = await NetflixHelpers.FindNetflixMatch(m, profiler);
-                        if(netflixtitle != null)
-                            nfm = Netflix.Fill.Titles.GetCompleteTitle(netflixtitle.IdUrl, OnUserBehalf: true);
+                        if (netflixtitle != null)
+                            nfm = Netflix.Fill.Titles.GetCompleteTitle(netflixtitle.IdUrl);
                     }
+                    else
+                        nfm = Netflix.Fill.Titles.GetCompleteTitle(m.Netflix.IdUrl);//Randomized().
                 }
+                //if (m.Netflix.Id != "" &&
+                //(m.Netflix.NeedsUpdate || !m.Netflix.LastFullUpdate.HasValue || //this field was only added recently
+                //m.Netflix.LastFullUpdate > DateTime.Now.AddDays(25).AddDays(ran.Next(-5, 5))))
+                //{
+
+                //    nfm = Netflix.Fill.Titles.GetCompleteTitle(m.Netflix.IdUrl);//Randomized().
+                //}
+                //else if (m.Netflix.Id == "")
+                //{
+                //    netflixtitle = await NetflixHelpers.FindNetflixMatch(m, profiler);
+                //    if (netflixtitle != null)
+                //        nfm = Netflix.Fill.Titles.GetCompleteTitle(netflixtitle.IdUrl);
+                //}
+                //if (m.Netflix.NeedsUpdate || 
+                //    (m.DateLastModified.HasValue && 
+                //    m.DateLastModified > DateTime.Now.AddDays(20).AddDays(ran.Next(-5, 5))))
+                //{
+                //    if (m.Netflix.IdUrl != "")
+                //        nfm = Netflix.Fill.Titles.GetCompleteTitle(m.Netflix.IdUrl, OnUserBehalf: true);//Randomized().
+                //    else
+                //    {
+                //        ////need to find the best match
+                //        netflixtitle = await NetflixHelpers.FindNetflixMatch(m, profiler);
+                //        if(netflixtitle != null)
+                //            nfm = Netflix.Fill.Titles.GetCompleteTitle(netflixtitle.IdUrl, OnUserBehalf: true);
+                //    }
+                //}
+                m.Netflix.LastFullUpdate = DateTime.Now;
+                m.Netflix.NeedsUpdate = false;
             }
             using (profiler.Step("Populate Amazon Movie"))
             {
@@ -89,24 +116,54 @@ namespace FilmTrove.Controllers
             }
             using (profiler.Step("Populate Rotten Tomatoes Movie"))
             {
+                if (m.RottenTomatoes.NeedsUpdate || !m.RottenTomatoes.LastFullUpdate.HasValue ||
+                m.RottenTomatoes.LastFullUpdate > DateTime.Now.AddDays(20).AddDays(ran.Next(-5, 5)))
+                {
+                    if (m.RottenTomatoes.Id == "")
+                    {
+                        ////need to find the best match
+                        rottentomatoestitle = await RottenTomatoesHelpers.FindRottenTomatoesMatch(m, profiler);
+                        if (rottentomatoestitle != null)
+                            rtm = FlixSharp.RottenTomatoes.Fill.Titles.GetMoviesInfo(rottentomatoestitle.Id);
+                        m.RottenTomatoes.LastFullUpdate = DateTime.Now;
+                    }
+                    else
+                        rtm = FlixSharp.RottenTomatoes.Fill.Titles.GetMoviesInfo(m.RottenTomatoes.Id);
+                }
+                //if (m.RottenTomatoes.Id != "" &&
+                //(m.RottenTomatoes.NeedsUpdate || !m.RottenTomatoes.LastFullUpdate.HasValue ||
+                //m.RottenTomatoes.LastFullUpdate > DateTime.Now.AddDays(25).AddDays(ran.Next(-5, 5))))
+                //{
+                //    ///1) title match like with amazon or use Id if present
+                //    rtm = FlixSharp.RottenTomatoes.Fill.Titles.GetMoviesInfo(m.RottenTomatoes.Id);
+                //}
+                //else if (m.RottenTomatoes.Id == "")
+                //{
+                //    ////need to find the best match
+                //    rottentomatoestitle = await RottenTomatoesHelpers.FindRottenTomatoesMatch(m, profiler);
+                //    if (rottentomatoestitle != null)
+                //        rtm = FlixSharp.RottenTomatoes.Fill.Titles.GetMoviesInfo(rottentomatoestitle.Id);
+                //}
                 //if (m.RottenTomatoes.NeedsUpdate ||
                 //    (m.RottenTomatoes.LastFullUpdate.HasValue &&
                 //    (m.RottenTomatoes.LastFullUpdate > DateTime.Now.AddDays(20).AddDays(ran.Next(-5, 5)))))
                 //{
-                    if (m.RottenTomatoes.Id != "")
-                    {
-                        ///1) title match like with amazon or use Id if present
-                        rtm = FlixSharp.RottenTomatoes.Fill.Titles.GetMoviesInfo(m.RottenTomatoes.Id);
-                    }
-                    else
-                    {
-                        rottentomatoestitle = await RottenTomatoesHelpers.FindRottenTomatoesMatch(m, profiler);
-                        if(rottentomatoestitle != null)
-                            rtm = FlixSharp.RottenTomatoes.Fill.Titles.GetMoviesInfo(rottentomatoestitle.Id);
+                //    if (m.RottenTomatoes.Id != "")
+                //    {
+                //        ///1) title match like with amazon or use Id if present
+                //        rtm = FlixSharp.RottenTomatoes.Fill.Titles.GetMoviesInfo(m.RottenTomatoes.Id);
+                //    }
+                //    else
+                //    {
+                //        rottentomatoestitle = await RottenTomatoesHelpers.FindRottenTomatoesMatch(m, profiler);
+                //        if(rottentomatoestitle != null)
+                //            rtm = FlixSharp.RottenTomatoes.Fill.Titles.GetMoviesInfo(rottentomatoestitle.Id);
                         
-                        m.RottenTomatoes.NeedsUpdate = false; //gave it a try, wait a while
-                    }
+                //        m.RottenTomatoes.NeedsUpdate = false; //gave it a try, wait a while
+                //    }
                 //}
+                m.RottenTomatoes.LastFullUpdate = DateTime.Now;
+                m.RottenTomatoes.NeedsUpdate = false;
             }
             #region Fill Netflix
             if (nfm != null || netflixtitle != null)

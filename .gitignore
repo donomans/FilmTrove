@@ -6,7 +6,7 @@
 
 /publishprofiles/
 /*.publishsettings
-app_data/index/
+app_data/
 
 Thumbs.db
 Desktop.ini

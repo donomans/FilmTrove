@@ -26,7 +26,12 @@ namespace FilmTrove
             //        value = RouteParameter.Optional
             //    }
             //);
-            
+            config.Routes.MapHttpRoute(
+                name: "Home",
+                routeTemplate: "",
+                defaults: new { controller = "Home" }//,
+                //constraints: new { id = @"^\d+$" }
+            );
 
             #region Lists
             config.Routes.MapHttpRoute(

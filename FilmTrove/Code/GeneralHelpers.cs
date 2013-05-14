@@ -451,9 +451,11 @@ namespace FilmTrove.Code
                                 if (m != null && (m.Year == year ||
                                     m.Year + 1 == year || m.Year - 1 == year))
                                 {
-                                    MergeCandidate record = ftc.MergeCandidates.FirstOrDefault(mc =>
+                                    var movieid = m.MovieId.ToString();
+                                    MergeCandidate record = ftc.MergeCandidates
+                                        .FirstOrDefault(mc =>
                                         mc.PrimaryId == ititle.FullId &&
-                                        mc.SecondaryId == m.MovieId.ToString());
+                                        mc.SecondaryId == movieid);
                                     if(record != null)
                                         ftc.MergeCandidates.Remove(record);
                                     ftc.SaveChanges();

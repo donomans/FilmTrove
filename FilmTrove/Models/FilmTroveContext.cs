@@ -29,6 +29,8 @@ namespace FilmTrove.Models
         public DbSet<MovieGenre> GenreItems { get; set; }
         public DbSet<UserListItem> ListItems { get; set; }
 
+        public DbSet<MergeCandidate> MergeCandidates { get; set; }
+
         public override Int32 SaveChanges()
         {
             ObjectContext context = ((IObjectContextAdapter)this).ObjectContext;

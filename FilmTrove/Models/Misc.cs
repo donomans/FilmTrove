@@ -226,5 +226,27 @@ namespace FilmTrove.Models
         public DateTime? DateLastModified { get; set; }
     }
 
+    public class MergeCandidate
+    {
+        [Key]
+        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
+        public Int32 Id { get; set; }
+        
+        [MaxLength(20)]
+        public String PrimaryId { get; set; }
+        [MaxLength(20)]
+        public String SecondaryId { get; set; }
 
+        public MovieType PrimaryType { get; set; }
+        public MovieType SecondaryType { get; set; }
+    }
+    public enum MovieType
+    { 
+        FilmTrove,
+        Netflix,
+        RottenTomatoes,
+        IMDB,
+        Amazon,
+        RedBox
+    }
 }

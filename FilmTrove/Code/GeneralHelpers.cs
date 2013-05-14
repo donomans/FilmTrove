@@ -263,36 +263,166 @@ namespace FilmTrove.Code
         {
             using (profiler.Step("GetExistingMovie"))
             {
-                return TitleSearch(title.FullTitle, ftc, index, title.Year);
+                return TitleSearch(title, ftc, index, title.Year);
             }
         }
 
-        public static Movie TitleSearch(String title,
+        public static Movie TitleSearch(ITitle ititle,
             FilmTroveContext ftc, FSDirectory index, Int32 year = -1)
         {
             using (IndexReader reader = IndexReader.Open(index, true))
             {
                 using (Searcher searcher = new IndexSearcher(reader))
                 {
-
                     QueryParser parser = new QueryParser(
                         Lucene.Net.Util.Version.LUCENE_30,
                         "Title",
                         new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30));
                     
                     //var querytext = title + (year > 0 ? " " + year.ToString() : "");
-                    Query query = parser.Parse(QueryParser.Escape(title));
+                    Query query = parser.Parse(QueryParser.Escape(ititle.FullTitle));
 
                     TopDocs td = searcher.Search(query, 5);
                     var docs = td.ScoreDocs
                         .Where(d => d.Score > .9f)
                         .ToList();
+                    var mergedocs = td.ScoreDocs
+                                 .Where(d => d.Score > .5f) //&& d.Score <= .9f)
+                                 .ToList();
+
+                    foreach (var mergedoc in mergedocs)
+                    {
+                        Document doc = searcher.Doc(mergedoc.Doc);
+                        Movie m = null;
+
+                        String id = doc.Get("Id");
+                        if (id != null && id != "")
+                            m = ftc.Movies.Find(Int32.Parse(id));
+                        if (m == null)
+                        {
+                            String netflixid = doc.Get("NetflixId");
+                            if (netflixid != null && netflixid != "")
+                                m = ftc.Movies.FirstOrDefault(movie => movie.Netflix.Id == netflixid);
+                            if (m == null)
+                            {
+                                String rottentomatoesid = doc.Get("RottenTomatoesId");
+                                if (rottentomatoesid != null && rottentomatoesid != "")
+                                    m = ftc.Movies.FirstOrDefault(movie => movie.RottenTomatoes.Id == rottentomatoesid);
+                            }
+                        }
+                        if (m != null)
+                        {
+                            MergeCandidate mc = ftc.MergeCandidates.Create();
+
+                            mc.PrimaryId = ititle.FullId;
+                            mc.PrimaryType = (MovieType)Enum.Parse(typeof(MovieType), ititle.Source.ToString(), true);
+                            mc.SecondaryId = m.MovieId.ToString();
+                            mc.SecondaryType = MovieType.FilmTrove;
+
+                            ftc.MergeCandidates.Add(mc);
+                        }
+                    }
+                    ftc.SaveChanges();
                     if (docs.Count > 0)
                     {
                         ///find the closest match of the "documents" with
-                        ///a score above some threshold (like 80?) and get the movies
+                        ///a score above some threshold (like .8?) and get the movies
                         ///from the database and then check to see if the year is a match.
                         ///the result set should only be a handful of titles at most.
+                        #region dumb
+                        //var resultdocs = docs.Select(scoredoc =>
+                        //{
+                        //    Document doc = searcher.Doc(scoredoc.Doc);
+                        //    String id = doc.Get("Id");
+                        //    if (id != null && id != "")
+                        //        return new { score = scoredoc.Score, id = id, type = MovieType.FilmTrove };
+                        //    else
+                        //    {
+                        //        id = doc.Get("NetflixId");
+                        //        if (id != null && id != "")
+                        //            return new { score = scoredoc.Score, id = id, type = MovieType.Netflix };
+                        //        else
+                        //        {
+                        //            id = doc.Get("RottenTomatoesId");
+                        //            if (id != null && id != "")
+                        //                return new { score = scoredoc.Score, id = id, type = MovieType.RottenTomatoes };
+                        //        }
+                        //    }
+
+                        //    throw new Exception("all of those IDs were null - how what??");
+                        //})
+                        //.ToList();
+
+                        //Movie m = null;
+                        //Boolean foundmovie = false;
+
+                        //var result = resultdocs
+                        //    .OrderByDescending(d => d.score)
+                        //    .Where(d =>
+                        //    {
+                        //        if (m == null)
+                        //        {
+                        //            switch (d.type)
+                        //            {
+                        //                case MovieType.FilmTrove:
+                        //                    m = ftc.Movies.Find(Int32.Parse(d.id));
+                        //                    break;
+                        //                case MovieType.Netflix:
+                        //                    m = ftc.Movies.FirstOrDefault(movie => movie.Netflix.Id == d.id);
+                        //                    break;
+                        //                case MovieType.RottenTomatoes:
+                        //                    m = ftc.Movies.FirstOrDefault(movie => movie.RottenTomatoes.Id == d.id);
+                        //                    break;
+                        //            }
+                        //        }
+
+                        //        if (year > 0)
+                        //        {
+                        //            if (m != null)
+                        //            {
+                        //                if (m.Year == year ||
+                        //                    m.Year + 1 == year ||
+                        //                    m.Year - 1 == year)
+                        //                {
+                        //                    foundmovie = true;
+                        //                    return false;
+                        //                }
+                        //                else
+                        //                {
+                        //                    m = null;
+                        //                    return true;
+                        //                }
+                        //            }
+                        //            else
+                        //                return true;
+                        //        }
+                        //        else
+                        //        {
+                        //            if (m != null && !foundmovie)
+                        //            {
+                        //                foundmovie = true;
+                        //                return false;
+                        //            }
+                        //            else
+                        //                return true;
+                        //        }
+                        //        //if (!(m != null &&
+                        //        //(year > 0 ?
+                        //        //(m.Year == year ||
+                        //        //m.Year + 1 == year ||
+                        //        //m.Year - 1 == year)
+                        //        //: true)))
+                        //        //{
+                        //        //    m = null;
+                        //        //    return true;
+                        //        //}
+                        //        //else
+                        //        //    return false;
+                        //    })
+                        //    .ToList();
+                        //return m;
+                        #endregion
+
                         foreach (var scoredoc in docs)
                         {
                             Document doc = searcher.Doc(scoredoc.Doc);
@@ -313,18 +443,35 @@ namespace FilmTrove.Code
                                         m = ftc.Movies.FirstOrDefault(movie => movie.RottenTomatoes.Id == rottentomatoesid);
                                 }
                             }
+
                             if (year > 0)
                             {
                                 ///if i have a year then i care about it and 
                                 ///so the year should match as well
                                 if (m != null && (m.Year == year ||
                                     m.Year + 1 == year || m.Year - 1 == year))
+                                {
+                                    MergeCandidate record = ftc.MergeCandidates.FirstOrDefault(mc =>
+                                        mc.PrimaryId == ititle.FullId &&
+                                        mc.SecondaryId == m.MovieId.ToString());
+                                    if(record != null)
+                                        ftc.MergeCandidates.Remove(record);
+                                    ftc.SaveChanges();
                                     return m;
+                                }
                                 else
                                     continue;
                             }
                             else
+                            {
+                                MergeCandidate record = ftc.MergeCandidates.FirstOrDefault(mc =>
+                                    mc.PrimaryId == ititle.FullId &&
+                                    mc.SecondaryId == m.MovieId.ToString());
+                                if (record != null)
+                                    ftc.MergeCandidates.Remove(record);
+                                ftc.SaveChanges();
                                 return m;
+                            }
                         }
                         return null;
                     }
@@ -335,7 +482,7 @@ namespace FilmTrove.Code
             }
         }
 
-        public static ITitle FindTitleMatch(Movie m, Titles searchtitles, MiniProfiler profiler = null)
+        public static ITitle FindTitleMatch(Movie m, Titles searchtitles, FilmTroveContext ftc, MiniProfiler profiler = null)
         {
             using (profiler.Step("FindTitleMatch"))
             {
@@ -373,35 +520,67 @@ namespace FilmTrove.Code
 
                             TopDocs td = searcher.Search(query, 5);
                             var docs = td.ScoreDocs
-                                .Where(d => d.Score > .375f)
+                                .Where(d => d.Score > .6f)
                                 .ToList();
+
+                            var mergedocs = td.ScoreDocs
+                                .Where(d => d.Score > .375f && d.Score <= .6f)
+                                .ToList();
+
+                            foreach (var mergedoc in mergedocs)
+                            {
+                                MergeCandidate mc = ftc.MergeCandidates.Create();
+
+                                Document doc = searcher.Doc(mergedoc.Doc);
+                                String id = doc.Get("Id");
+                                ITitle it = searchtitles.First(t => t.FullId == id);
+                                mc.PrimaryId = m.MovieId.ToString();
+                                mc.PrimaryType = MovieType.FilmTrove;
+                                mc.SecondaryId = it.FullId;
+                                mc.SecondaryType = (MovieType)Enum.Parse(typeof(MovieType), it.Source.ToString(), true);
+                                
+                                ftc.MergeCandidates.Add(mc);
+                            }
 
                             if (docs.Count > 0)
                             {
-                                var result = docs
+                                var resultdocs = docs
                                     .Select(d =>
                                     {
                                         Document doc = searcher.Doc(d.Doc);
                                     
                                         String id = doc.Get("Id");
-                                        return searchtitles
-                                                .First(t => t.FullId == id);
-                                    })
-                                    .FirstOrDefault(t =>
-                                        m.Year == t.Year ||
-                                        m.Year + 1 == t.Year ||
-                                        m.Year - 1 == t.Year 
-                                        //||
-                                        //(t.score > .95f && 
-                                        /////hopefully this takes care of things like 
-                                        /////Finding Nemo 3D without messing with 
-                                        /////titles that have the same name
-                                        //(t.movie.FullTitle.Contains(m.Title) ||
-                                        //m.Title.Contains(t.movie.FullTitle)))
-                                    );
+                                        return new
+                                        {
+                                            title = searchtitles
+                                                .First(t => t.FullId == id),
+                                            docid = d.Doc
+                                        };
+                                    });
+                                var result = resultdocs.FirstOrDefault(t =>
+                                    m.Year == t.title.Year ||
+                                    m.Year + 1 == t.title.Year ||
+                                    m.Year - 1 == t.title.Year
+                                    //||
+                                    //(t.score > .95f && 
+                                    /////hopefully this takes care of things like 
+                                    /////Finding Nemo 3D without messing with 
+                                    /////titles that have the same name
+                                    //(t.movie.FullTitle.Contains(m.Title) ||
+                                    //m.Title.Contains(t.movie.FullTitle)))
+                                );
+                                foreach (var doc in resultdocs.Where(sd => sd.docid != result.docid))
+                                {
+                                    MergeCandidate mc = ftc.MergeCandidates.Create();
+                                    mc.PrimaryId = m.MovieId.ToString();
+                                    mc.PrimaryType = MovieType.FilmTrove;
+                                    mc.SecondaryId = doc.title.FullId;
+                                    mc.SecondaryType = (MovieType)Enum.Parse(typeof(MovieType), doc.title.Source.ToString(), true);
+                                    ftc.MergeCandidates.Add(mc);
+                                }
 
                                 if (result != null)
-                                    return result;
+                                    return result.title;
                                 else
                                     return null;
                             }

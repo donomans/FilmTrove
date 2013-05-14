@@ -257,6 +257,18 @@
     <Compile Include="Migrations\201304232309314_LastFullUpdateToProviderInfo.Designer.cs">
       <DependentUpon>201304232309314_LastFullUpdateToProviderInfo.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201305131842022_merges.cs" />
+    <Compile Include="Migrations\201305131842022_merges.Designer.cs">
+      <DependentUpon>201305131842022_merges.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201305131850090_merges2.cs" />
+    <Compile Include="Migrations\201305131850090_merges2.Designer.cs">
+      <DependentUpon>201305131850090_merges2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201305142049224_merges3.cs" />
+    <Compile Include="Migrations\201305142049224_merges3.Designer.cs">
+      <DependentUpon>201305142049224_merges3.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\FilmTroveContext.cs" />
     <Compile Include="Models\Misc.cs" />
@@ -454,6 +466,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201304232309314_LastFullUpdateToProviderInfo.resx">
       <DependentUpon>201304232309314_LastFullUpdateToProviderInfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201305131842022_merges.resx">
+      <DependentUpon>201305131842022_merges.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201305131850090_merges2.resx">
+      <DependentUpon>201305131850090_merges2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201305142049224_merges3.resx">
+      <DependentUpon>201305142049224_merges3.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

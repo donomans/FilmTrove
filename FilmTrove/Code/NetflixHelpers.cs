@@ -313,9 +313,12 @@ namespace FilmTrove.Code.Netflix
         
         public static async Task<Title> FindNetflixMatch(Movie m, MiniProfiler profiler = null)
         {
-            var searchtitles = await FlixSharp.Netflix.Search.SearchTitles(m.Title);
+            using (FilmTroveContext ftc = new FilmTroveContext())
+            {
+                var searchtitles = await FlixSharp.Netflix.Search.SearchTitles(m.Title);
 
-            return (Title)GeneralHelpers.FindTitleMatch(m, searchtitles, profiler);
+                return (Title)GeneralHelpers.FindTitleMatch(m, searchtitles, ftc, profiler);
+            }
         }
         
         //public static async Task<Movie> FindNetflixMatch(ITitle t, FilmTroveContext ftc)

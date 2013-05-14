@@ -81,3 +81,6 @@ C:\Development\FilmTrove\FilmTrove\obj\Debug\FilmTrove.Migrations.FullUpdateDTFo
 C:\Development\FilmTrove\FilmTrove\obj\Debug\FilmTrove.Migrations.LastFullUpdateToProviderInfo.resources
 C:\Development\FilmTrove\FilmTrove\bin\Lucene.Net.pdb
 C:\Development\FilmTrove\FilmTrove\bin\System.Web.Mvc.xml
+C:\Development\FilmTrove\FilmTrove\obj\Debug\FilmTrove.Migrations.merges.resources
+C:\Development\FilmTrove\FilmTrove\obj\Debug\FilmTrove.Migrations.merges2.resources
+C:\Development\FilmTrove\FilmTrove\obj\Debug\FilmTrove.Migrations.merges3.resources

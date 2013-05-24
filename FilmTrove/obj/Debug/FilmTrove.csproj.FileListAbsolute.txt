@@ -84,3 +84,4 @@ C:\Development\FilmTrove\FilmTrove\bin\System.Web.Mvc.xml
 C:\Development\FilmTrove\FilmTrove\obj\Debug\FilmTrove.Migrations.merges.resources
 C:\Development\FilmTrove\FilmTrove\obj\Debug\FilmTrove.Migrations.merges2.resources
 C:\Development\FilmTrove\FilmTrove\obj\Debug\FilmTrove.Migrations.merges3.resources
+C:\Development\FilmTrove\FilmTrove\bin\NewRelic.Api.Agent.dll

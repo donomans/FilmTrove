@@ -102,6 +102,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\MiniProfiler.EF.2.1.0\lib\net40\MiniProfiler.EntityFramework.dll</HintPath>
     </Reference>
+    <Reference Include="NewRelic.Api.Agent">
+      <HintPath>..\packages\NewRelic.Azure.WebSites.2.7.61.0\lib\NewRelic.Api.Agent.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.5.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -195,25 +198,18 @@
     <Compile Include="Code\GeneralExtensions.cs" />
     <Compile Include="Code\NetflixHelpers.cs" />
     <Compile Include="Code\RottenTomatoesHelpers.cs" />
-    <Compile Include="Code\SeedHelpers.cs" />
     <Compile Include="Code\OAuthHelpers.cs" />
     <Compile Include="App_Start\AuthConfig.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Api\HomeController.cs" />
     <Compile Include="Controllers\Api\ListsController.cs" />
     <Compile Include="Controllers\Api\MoviesController.cs" />
     <Compile Include="Controllers\Api\PeopleController.cs" />
     <Compile Include="Controllers\Api\SearchController.cs" />
-    <Compile Include="Controllers\PeopleController.cs" />
-    <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Controllers\Api\UserServicesController.cs" />
-    <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\ListsController.cs" />
-    <Compile Include="Controllers\MoviesController.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -279,123 +275,17 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Public\Css\jquery.fancybox.css" />
-    <Content Include="Public\Css\roboto.css" />
-    <Content Include="Public\Fonts\Google Android License.txt" />
-    <Content Include="Public\Fonts\Roboto-Black-webfont.svg" />
-    <Content Include="Public\Fonts\Roboto-BlackItalic-webfont.svg" />
-    <Content Include="Public\Fonts\Roboto-Bold-webfont.svg" />
-    <Content Include="Public\Fonts\Roboto-BoldCondensed-webfont.svg" />
-    <Content Include="Public\Fonts\Roboto-BoldCondensedItalic-webfont.svg" />
-    <Content Include="Public\Fonts\Roboto-BoldItalic-webfont.svg" />
-    <Content Include="Public\Fonts\Roboto-Condensed-webfont.svg" />
-    <Content Include="Public\Fonts\Roboto-CondensedItalic-webfont.svg" />
-    <Content Include="Public\Fonts\Roboto-Italic-webfont.svg" />
-    <Content Include="Public\Fonts\Roboto-Light-webfont.svg" />
-    <Content Include="Public\Fonts\Roboto-LightItalic-webfont.svg" />
-    <Content Include="Public\Fonts\Roboto-Medium-webfont.svg" />
-    <Content Include="Public\Fonts\Roboto-MediumItalic-webfont.svg" />
-    <Content Include="Public\Fonts\Roboto-Regular-webfont.svg" />
-    <Content Include="Public\Fonts\Roboto-Thin-webfont.svg" />
-    <Content Include="Public\Fonts\Roboto-ThinItalic-webfont.svg" />
-    <Content Include="Public\Images\blank.gif" />
-    <Content Include="Public\Images\fancybox_loading.gif" />
-    <Content Include="Public\Images\fancybox_overlay.png" />
-    <Content Include="Public\Images\fancybox_sprite.png" />
-    <Content Include="Public\Images\filmtrove.gif" />
-    <Content Include="Public\Images\nav-bg.png" />
-    <Content Include="Public\Images\netflix.png" />
-    <Content Include="Public\Js\jquery.fancybox.pack.js" />
-    <Content Include="Public\Js\libs.js" />
-    <Content Include="Public\themes\base\minified\images\ui-bg_flat_75_ffffff_40x100.png" />
-    <Content Include="Public\themes\base\minified\images\ui-bg_glass_75_dadada_1x400.png" />
-    <Content Include="Public\themes\base\minified\jquery-ui.min.css" />
-    <Content Include="Public\themes\base\minified\jquery.ui.autocomplete.min.css" />
+    <Content Include="newrelic\extensions\CoreInstrumentation.xml" />
+    <Content Include="newrelic\NewRelic.Agent.Core.dll" />
+    <Content Include="newrelic\NewRelic.Profiler.dll" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
-    <Content Include="Public\Css\base.css" />
-    <Content Include="Public\Css\color.css" />
-    <Content Include="Public\Css\fancybox.css" />
-    <Content Include="Public\Css\icons.css" />
-    <Content Include="Public\Css\skeleton.css" />
-    <Content Include="Public\Css\social_icons.css" />
-    <Content Include="Public\Css\style.css" />
-    <Content Include="Public\Images\Icons\facebook-sm.png" />
-    <Content Include="Public\Images\Icons\facebook.png" />
-    <Content Include="Public\Images\Icons\github-sm.png" />
-    <Content Include="Public\Images\Icons\github.png" />
-    <Content Include="Public\Images\Icons\googleplus-sm.png" />
-    <Content Include="Public\Images\Icons\googleplus.png" />
-    <Content Include="Public\Images\Icons\loading.gif" />
-    <Content Include="Public\Images\Icons\search.png" />
-    <Content Include="Public\Images\Icons\twitter-sm.png" />
-    <Content Include="Public\Images\Icons\twitter.png" />
-    <Content Include="Public\Images\Icons\twittergrey.png" />
-    <Content Include="Public\Images\texture.jpg" />
-    <Content Include="Public\Js\carousel.js" />
-    <Content Include="Public\Js\effects.js" />
-    <Content Include="Public\Js\fancybox.js" />
-    <Content Include="Public\Js\flexslider.js" />
-    <Content Include="Public\Js\isotope.js" />
-    <Content Include="Public\Js\selectnav.js" />
-    <Content Include="Public\Js\template_functions.js" />
-    <Content Include="Public\Js\tooltip.js" />
-    <Content Include="Public\Fonts\Roboto-Black-webfont.eot" />
-    <Content Include="Public\Fonts\Roboto-Black-webfont.ttf" />
-    <Content Include="Public\Fonts\Roboto-Black-webfont.woff" />
-    <Content Include="Public\Fonts\Roboto-BlackItalic-webfont.eot" />
-    <Content Include="Public\Fonts\Roboto-BlackItalic-webfont.ttf" />
-    <Content Include="Public\Fonts\Roboto-BlackItalic-webfont.woff" />
-    <Content Include="Public\Fonts\Roboto-Bold-webfont.eot" />
-    <Content Include="Public\Fonts\Roboto-Bold-webfont.ttf" />
-    <Content Include="Public\Fonts\Roboto-Bold-webfont.woff" />
-    <Content Include="Public\Fonts\Roboto-BoldCondensed-webfont.eot" />
-    <Content Include="Public\Fonts\Roboto-BoldCondensed-webfont.ttf" />
-    <Content Include="Public\Fonts\Roboto-BoldCondensed-webfont.woff" />
-    <Content Include="Public\Fonts\Roboto-BoldCondensedItalic-webfont.eot" />
-    <Content Include="Public\Fonts\Roboto-BoldCondensedItalic-webfont.ttf" />
-    <Content Include="Public\Fonts\Roboto-BoldCondensedItalic-webfont.woff" />
-    <Content Include="Public\Fonts\Roboto-BoldItalic-webfont.eot" />
-    <Content Include="Public\Fonts\Roboto-BoldItalic-webfont.ttf" />
-    <Content Include="Public\Fonts\Roboto-BoldItalic-webfont.woff" />
-    <Content Include="Public\Fonts\Roboto-Condensed-webfont.eot" />
-    <Content Include="Public\Fonts\Roboto-Condensed-webfont.ttf" />
-    <Content Include="Public\Fonts\Roboto-Condensed-webfont.woff" />
-    <Content Include="Public\Fonts\Roboto-CondensedItalic-webfont.eot" />
-    <Content Include="Public\Fonts\Roboto-CondensedItalic-webfont.ttf" />
-    <Content Include="Public\Fonts\Roboto-CondensedItalic-webfont.woff" />
-    <Content Include="Public\Fonts\Roboto-Italic-webfont.eot" />
-    <Content Include="Public\Fonts\Roboto-Italic-webfont.ttf" />
-    <Content Include="Public\Fonts\Roboto-Italic-webfont.woff" />
-    <Content Include="Public\Fonts\Roboto-Light-webfont.eot" />
-    <Content Include="Public\Fonts\Roboto-Light-webfont.ttf" />
-    <Content Include="Public\Fonts\Roboto-Light-webfont.woff" />
-    <Content Include="Public\Fonts\Roboto-LightItalic-webfont.eot" />
-    <Content Include="Public\Fonts\Roboto-LightItalic-webfont.ttf" />
-    <Content Include="Public\Fonts\Roboto-LightItalic-webfont.woff" />
-    <Content Include="Public\Fonts\Roboto-Medium-webfont.eot" />
-    <Content Include="Public\Fonts\Roboto-Medium-webfont.ttf" />
-    <Content Include="Public\Fonts\Roboto-Medium-webfont.woff" />
-    <Content Include="Public\Fonts\Roboto-MediumItalic-webfont.eot" />
-    <Content Include="Public\Fonts\Roboto-MediumItalic-webfont.ttf" />
-    <Content Include="Public\Fonts\Roboto-MediumItalic-webfont.woff" />
-    <Content Include="Public\Fonts\Roboto-Regular-webfont.eot" />
-    <Content Include="Public\Fonts\Roboto-Regular-webfont.ttf" />
-    <Content Include="Public\Fonts\Roboto-Regular-webfont.woff" />
-    <Content Include="Public\Fonts\Roboto-Thin-webfont.eot" />
-    <Content Include="Public\Fonts\Roboto-Thin-webfont.ttf" />
-    <Content Include="Public\Fonts\Roboto-Thin-webfont.woff" />
-    <Content Include="Public\Fonts\Roboto-ThinItalic-webfont.eot" />
-    <Content Include="Public\Fonts\Roboto-ThinItalic-webfont.ttf" />
-    <Content Include="Public\Fonts\Roboto-ThinItalic-webfont.woff" />
+    <Content Include="newrelic\newrelic.config" />
+    <Content Include="newrelic\extensions\extension.xsd">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Properties\PublishProfiles\filmtrove - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\filmtrove - Web Deploy.pubxml" />
-    <None Include="Public\Js\jquery\jquery-1.8.2.intellisense.js" />
-    <Content Include="Public\Js\jquery\jquery-1.8.2.js" />
-    <Content Include="Public\Js\jquery\jquery-1.8.2.min.js" />
-    <Content Include="Public\Js\jquery\jquery-ui-1.9.0.js" />
-    <Content Include="Public\Js\jquery\jquery-ui-1.9.0.min.js" />
-    <Content Include="Public\Js\modernizr-2.6.2.js" />
     <Content Include="robots.txt" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -407,22 +297,6 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Shared\Error.cshtml" />
-    <Content Include="Views\Web.config" />
-    <Content Include="Views\Shared\_viewlayout.cshtml" />
-    <Content Include="Views\view.cshtml" />
-    <Content Include="Views\Account\Me.cshtml" />
-    <Content Include="Views\Search\Query.cshtml" />
-    <Content Include="Views\Lists\Links.cshtml" />
-    <Content Include="Views\Movies\Details.cshtml" />
-    <Content Include="Views\Lists\Collection.cshtml" />
-    <Content Include="Views\People\Details.cshtml" />
-    <Content Include="Views\Shared\_MINIPROFILER UPDATED Layout.cshtml" />
-    <Content Include="Views\Shared\_homelayout.cshtml">
-      <BrowseToURL>~/Views/Shared/_homelayout.cshtml</BrowseToURL>
     </Content>
   </ItemGroup>
   <ItemGroup>
